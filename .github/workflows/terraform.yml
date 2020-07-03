@@ -1,5 +1,11 @@
 name: "Terraform GitHub Actions"
-on: [pull_request]
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
 env:
   tf_version: "latest"
   tf_working_dir: "."

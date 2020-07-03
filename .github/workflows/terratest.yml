@@ -2,7 +2,10 @@ name: Terratest
 on:
   pull_request:
     branches:
-      - prod
+      - main
+  push:
+    branches:
+      - main
 env:
   GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
   GOOGLE_PROJECT: ${{ secrets.GOOGLE_PROJECT }}
