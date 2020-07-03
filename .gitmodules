@@ -1,6 +1,6 @@
-[submodule "modules/terraform-google-kubernetes-engine"]
-	path = modules/terraform-google-kubernetes-engine
-	url = https://github.com/terraform-google-modules/terraform-google-kubernetes-engine.git
 [submodule "modules/terraform-google-network"]
 	path = modules/terraform-google-network
 	url = https://github.com/terraform-google-modules/terraform-google-network.git
+[submodule "modules/terraform-google-kubernetes-engine"]
+	path = modules/terraform-google-kubernetes-engine
+	url = https://github.com/terraform-google-modules/terraform-google-kubernetes-engine.git
