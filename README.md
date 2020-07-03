@@ -1,3 +1,5 @@
+![Terratest](https://github.com/Honestbank/terraform-gcp-gke/workflows/Terratest/badge.svg) ![Terraform GitHub Actions](https://github.com/Honestbank/terraform-gcp-gke/workflows/Terraform%20GitHub%20Actions/badge.svg)
+
 # Terraform scripts for GCP GKE  
 This script/module creates a basic public GKE cluster.  
 
