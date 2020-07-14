@@ -116,5 +116,15 @@ func TestTerraformGcpExample(t *testing.T) {
 			assert.Equal(t, 0, resourceCount.Change)
 			assert.Equal(t, 0, resourceCount.Add)
 		})
+
+		test_structure.RunTestStage(t, "verify_istio", func() {
+			kubectlOptions := test_structure.LoadKubectlOptions(t, workingDir)
+
+			_, istioOperatorNamespaceError := k8s.GetNamespaceE(t, kubectlOptions, "istio-operator")
+			assert.Nil(t, istioOperatorNamespaceError, "Could not find istio-operator namespace")
+
+			_, istioSystemNamespaceError := k8s.GetNamespaceE(t, kubectlOptions, "istio-system")
+			assert.Nil(t, istioSystemNamespaceError, "Could not find istio-system namespace")
+		})
 	})
 }
