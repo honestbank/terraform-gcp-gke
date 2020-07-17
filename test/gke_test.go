@@ -126,5 +126,12 @@ func TestTerraformGcpExample(t *testing.T) {
 			_, istioSystemNamespaceError := k8s.GetNamespaceE(t, kubectlOptions, "istio-system")
 			assert.Nil(t, istioSystemNamespaceError, "Could not find istio-system namespace")
 		})
+
+		test_structure.RunTestStage(t, "verify_kiali", func() {
+			kubectlOptions := test_structure.LoadKubectlOptions(t, workingDir)
+
+			_, kialiPodError := k8s.GetPodE(t, kubectlOptions, "kiali")
+			assert.Nil(t, kialiPodError, "Could not find a Pod named 'kiali'")
+		})
 	})
 }

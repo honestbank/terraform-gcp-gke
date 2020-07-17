@@ -72,7 +72,7 @@ module "primary-cluster" {
   ip_range_services          = module.primary-cluster-networking.subnets_secondary_ranges[0][1]["range_name"]
   http_load_balancing        = false
   horizontal_pod_autoscaling = false
-  network_policy             = true //Required for Istio
+  network_policy             = true //Required for GKE-installed Istio
   service_account            = var.cluster_service_account_name
   # create_service_account     = true
 
@@ -215,21 +215,7 @@ resource "kubernetes_cluster_role_binding" "user" {
     api_group = "rbac.authorization.k8s.io"
   }
 
-  depends_on = [module.primary-cluster]
-}
-
-# ---------------------------------------------------------------------------------------------------------------------
-# DEPLOY A SAMPLE CHART
-# A chart repository is a location where packaged charts can be stored and shared. Define Bitnami Helm repository location,
-# so Helm can install the nginx chart.
-# ---------------------------------------------------------------------------------------------------------------------
-
-resource "helm_release" "nginx" {
-  depends_on = [module.primary-cluster]
-
-  repository = "https://charts.bitnami.com/bitnami"
-  name       = "nginx"
-  chart      = "nginx"
+  depends_on = [null_resource.configure_kubectl]
 }
 
 # Install Istio Operator using istioctl
@@ -239,6 +225,7 @@ resource "null_resource" "install_istio_operator" {
 curl -sL https://istio.io/downloadIstioctl | sh -
 export PATH=$PATH:$HOME/.istioctl/bin
 istioctl operator init
+kubectl label namespace default istio-injection=enabled
 EOH
   }
 
@@ -271,7 +258,7 @@ EOH
   depends_on = [null_resource.install_istio_operator]
 }
 
-# Install IstioOperator resource manifest
+# Install IstioOperator resource manifest to trigger mesh installation
 resource "null_resource" "install_IstioOperator_manifest" {
   provisioner "local-exec" {
     command = <<EOH
