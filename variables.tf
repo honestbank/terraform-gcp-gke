@@ -28,7 +28,7 @@ variable "environment" {
 
 variable "cluster_purpose" {
   description = "Name to assign to GKE cluster built in this run."
-  default     = "terraform-gcp-gke-template"
+  default     = "tf-gke-template"
 }
 
 variable "cluster_number" {
