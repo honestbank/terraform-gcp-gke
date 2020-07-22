@@ -2,5 +2,5 @@
 	path = modules/terraform-google-network
 	url = https://github.com/terraform-google-modules/terraform-google-network.git
 [submodule "modules/terraform-google-kubernetes-engine"]
-	path = modules/terraform-google-kubernetes-engine
+	path = gcp-gke/modules
 	url = https://github.com/terraform-google-modules/terraform-google-kubernetes-engine.git
