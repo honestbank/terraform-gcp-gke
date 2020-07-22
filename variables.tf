@@ -1,4 +1,13 @@
+locals {
+  cluster_name = "${var.environment}-${var.cluster_purpose}-${var.cluster_number}"
 
+  network_name           = "${local.cluster_name}-network"
+  primary_subnet_name    = "${local.network_name}-subnet-01"
+  pods_ip_range_name     = "${local.cluster_name}-pods-ip-range"
+  services_ip_range_name = "${local.cluster_name}-services-ip-range"
+
+  primary_node_pool_name = "${local.cluster_name}-node-pool-01"
+}
 
 variable "project" {
   description = "The GCP project to use for this run"
@@ -10,29 +19,18 @@ variable "region" {
   default     = "asia-southeast2"
 }
 
-variable "cluster_name" {
+variable "environment" {
+  description = "Environment: [test, dev, prod...] used as prefix for all resources."
+  default     = "test"
+}
+
+variable "cluster_purpose" {
   description = "Name to assign to GKE cluster built in this run."
-  default     = "test-gcp-jkt-cluster-00"
+  default     = "terraform-gcp-gke-template"
 }
 
-variable "network_name" {
-  description = "Name of the VPC network where GKE cluster will be placed."
-  default     = "test-gcp-jkt-cluster-00-network-00"
-}
-
-variable "subnet_name" {
-  description = "Subnet (aka subnetwork) within the VPC for the GKE cluster."
-  default     = "test-gcp-jkt-cluster-00-network-00-subnet-00"
-}
-
-variable "ip_range_pods_name" {
-  description = "Pods IP subnet name."
-  default     = "test-gcp-jkt-cluster-00-pods-ip-range"
-}
-
-variable "ip_range_services_name" {
-  description = "Services (Kubernetes Service objects) IP range."
-  default     = "test-gcp-jkt-cluster-00-services-ip-range"
+variable "cluster_number" {
+  default = 00
 }
 
 variable "node_pool_name" {
@@ -46,7 +44,8 @@ variable "cluster_service_account_name" {
 }
 
 variable "zones" {
-  default = ["asia-southeast2-a", "asia-southeast2-b", "asia-southeast2-c"]
+  description = "Zones for the VMs in the cluster. Default is set to Jakarta (all zones)."
+  default     = ["asia-southeast2-a", "asia-southeast2-b", "asia-southeast2-c"]
 }
 
 variable "release_channel" {

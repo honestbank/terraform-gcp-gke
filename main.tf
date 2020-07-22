@@ -63,7 +63,7 @@ module "primary-cluster" {
   # source                     = "./modules/terraform-google-kubernetes-engine/modules/beta-public-cluster-update-variant"
   source                     = "./modules/terraform-google-kubernetes-engine/"
   project_id                 = var.project
-  name                       = var.cluster_name
+  name                       = local.cluster_name
   region                     = var.region
   zones                      = var.zones
   network                    = module.primary-cluster-networking.network_name
@@ -81,7 +81,7 @@ module "primary-cluster" {
 
   node_pools = [
     {
-      name               = var.node_pool_name
+      name               = local.primary_node_pool_name
       machine_type       = var.machine_type
       min_count          = var.minimum_node_count
       max_count          = var.maximum_node_count
@@ -91,7 +91,7 @@ module "primary-cluster" {
       image_type         = "COS"
       auto_repair        = true
       auto_upgrade       = true
-      service_account    = "test-terraform-service-account@test-terraform-project-01.iam.gserviceaccount.com"
+      service_account    = var.cluster_service_account_name
       preemptible        = false
       initial_node_count = var.initial_node_count
     },
@@ -133,26 +133,26 @@ module "primary-cluster" {
 module "primary-cluster-networking" {
   source       = "./modules/terraform-google-network"
   project_id   = var.project
-  network_name = "${var.cluster_name}-network"
+  network_name = local.network_name
   routing_mode = "REGIONAL"
 
   subnets = [
     {
-      subnet_name   = "${var.cluster_name}-subnet"
+      subnet_name   = local.primary_subnet_name
       subnet_ip     = "10.10.0.0/16"
       subnet_region = var.region
     },
   ]
 
   secondary_ranges = {
-    "${var.cluster_name}-subnet" = [
+    "${local.primary_subnet_name}" = [
       {
-        range_name = "${var.cluster_name}-pods-ip-range"
+        range_name = local.pods_ip_range_name
         # ip_cidr_range = "192.168.0.0/18"
         ip_cidr_range = "10.11.0.0/16"
       },
       {
-        range_name = "${var.cluster_name}-services-ip-range"
+        range_name = local.services_ip_range_name
         # ip_cidr_range = "192.168.64.0/18"
         ip_cidr_range = "10.12.0.0/16"
       },
@@ -164,7 +164,7 @@ module "primary-cluster-auth" {
   source = "./modules/terraform-google-kubernetes-engine/modules/auth"
 
   project_id   = var.project
-  cluster_name = var.cluster_name
+  cluster_name = local.cluster_name
   location     = module.primary-cluster.location
 }
 
@@ -192,31 +192,31 @@ resource "null_resource" "configure_kubectl" {
   depends_on = [module.primary-cluster]
 }
 
-resource "kubernetes_cluster_role_binding" "user" {
-  metadata {
-    name = "admin-user"
-  }
+# resource "kubernetes_cluster_role_binding" "user" {
+#   metadata {
+#     name = "admin-user"
+#   }
 
-  role_ref {
-    kind      = "ClusterRole"
-    name      = "cluster-admin"
-    api_group = "rbac.authorization.k8s.io"
-  }
+#   role_ref {
+#     kind      = "ClusterRole"
+#     name      = "cluster-admin"
+#     api_group = "rbac.authorization.k8s.io"
+#   }
 
-  subject {
-    kind      = "User"
-    name      = data.google_client_openid_userinfo.terraform_user.email
-    api_group = "rbac.authorization.k8s.io"
-  }
+#   subject {
+#     kind      = "User"
+#     name      = data.google_client_openid_userinfo.terraform_user.email
+#     api_group = "rbac.authorization.k8s.io"
+#   }
 
-  subject {
-    kind      = "Group"
-    name      = "system:masters"
-    api_group = "rbac.authorization.k8s.io"
-  }
+#   subject {
+#     kind      = "Group"
+#     name      = "system:masters"
+#     api_group = "rbac.authorization.k8s.io"
+#   }
 
-  depends_on = [null_resource.configure_kubectl]
-}
+#   depends_on = [null_resource.configure_kubectl]
+# }
 
 # Install Istio Operator using istioctl
 resource "null_resource" "install_istio_operator" {
@@ -237,8 +237,10 @@ resource "null_resource" "set_kiali_credentials" {
   provisioner "local-exec" {
     command = <<EOH
 kubectl create ns istio-system
-KIALI_USERNAME=$(echo -n "${var.kiali_username}" | base64)
-KIALI_PASSPHRASE=$(echo -n "${var.kiali_passphrase}" | base64)
+KIALI_USERNAME=$(printf "${var.kiali_username}" | base64)
+echo "Kiali Username (base64): "$KIALI_USERNAME
+KIALI_PASSPHRASE=$(printf "${var.kiali_passphrase}" | base64)
+echo "Kiali Passphrase (base64): "$KIALI_PASSPHRASE
 cat <<EOF | kubectl apply -f -
 apiVersion: v1
 kind: Secret
@@ -249,8 +251,8 @@ metadata:
     app: kiali
 type: Opaque
 data:
-  username: "${base64encode(var.kiali_username)}"
-  passphrase: "${base64encode(var.kiali_passphrase)}"
+  username: $KIALI_USERNAME
+  passphrase: $KIALI_PASSPHRASE
 EOF
 EOH
   }
