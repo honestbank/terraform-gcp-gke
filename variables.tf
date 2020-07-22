@@ -42,7 +42,6 @@ variable "node_pool_name" {
 
 variable "cluster_service_account_name" {
   description = "Service account to be used for the GKE cluster and node pools."
-  default     = "test-terraform-service-acc-636"
 }
 
 variable "zones" {
