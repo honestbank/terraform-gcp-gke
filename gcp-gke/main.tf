@@ -242,10 +242,10 @@ resource "null_resource" "set_kiali_credentials" {
   provisioner "local-exec" {
     command = <<EOH
 kubectl create ns istio-system
-KIALI_USERNAME="${var.kiali_username}"
-echo "Kiali Username: "$KIALI_USERNAME
-KIALI_PASSPHRASE="${var.kiali_passphrase}"
-echo "Kiali Passphrase: "$KIALI_PASSPHRASE
+KIALI_USERNAME=$(printf "${var.kiali_username}" | base64)
+echo "Kiali Username (base64): "$KIALI_USERNAME
+KIALI_PASSPHRASE=$(printf "${var.kiali_passphrase}" | base64)
+echo "Kiali Passphrase (base64): "$KIALI_PASSPHRASE
 cat <<EOF | kubectl apply -f -
 apiVersion: v1
 kind: Secret
