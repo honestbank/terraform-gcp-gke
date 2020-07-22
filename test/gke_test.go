@@ -31,7 +31,7 @@ func TestTerraformGcpExample(t *testing.T) {
 
 		// OK
 		test_structure.RunTestStage(t, "create_test_copy", func() {
-			testFolder := test_structure.CopyTerraformFolderToTemp(t, "..", ".")
+			testFolder := test_structure.CopyTerraformFolderToTemp(t, "../gcp-gke", ".")
 			logger.Logf(t, "path to test folder %s\n", testFolder)
 			test_structure.SaveString(t, workingDir, "gkeClusterTerraformModulePath", testFolder)
 		})
