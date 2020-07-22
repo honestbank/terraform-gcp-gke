@@ -59,6 +59,10 @@ provider "helm" {
   version = "~> 1.2.3"
 }
 
+provider "template" {
+  version = "~> 2.1"
+}
+
 module "primary-cluster" {
   # google-beta
   # source                     = "./modules/terraform-google-kubernetes-engine/modules/beta-public-cluster-update-variant"
