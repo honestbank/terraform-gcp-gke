@@ -40,10 +40,6 @@ variable "node_pool_name" {
   default     = "test-gcp-jkt-cluster-00-nodepool-00"
 }
 
-variable "cluster_service_account_name" {
-  description = "Service account to be used for the GKE cluster and node pools."
-}
-
 variable "zones" {
   description = "Zones for the VMs in the cluster. Default is set to Jakarta (all zones)."
   default     = ["asia-southeast2-a", "asia-southeast2-b", "asia-southeast2-c"]
