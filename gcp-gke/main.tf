@@ -74,8 +74,8 @@ module "primary-cluster" {
   http_load_balancing        = false
   horizontal_pod_autoscaling = false
   network_policy             = true //Required for GKE-installed Istio
-  service_account            = var.cluster_service_account_name
-  # create_service_account     = true
+  # service_account            = var.cluster_service_account_name
+  create_service_account = true
 
   # google-beta provider options
   # release_channel = var.release_channel
@@ -92,7 +92,7 @@ module "primary-cluster" {
       image_type         = "COS"
       auto_repair        = true
       auto_upgrade       = true
-      service_account    = var.cluster_service_account_name
+      service_account    = module.primary-cluster.service_account
       preemptible        = false
       initial_node_count = var.initial_node_count
     },
