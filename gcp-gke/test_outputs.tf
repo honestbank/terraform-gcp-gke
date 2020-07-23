@@ -36,3 +36,8 @@ output "service_account" {
   description = "The default service account used for running nodes."
   value       = module.primary-cluster.service_account
 }
+
+output "cluster_name" {
+  description = "The GKE cluster name that was built"
+  value       = module.primary-cluster.name
+}
