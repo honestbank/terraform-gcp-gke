@@ -1,12 +1,3 @@
-locals {
-  cluster_name           = "${var.environment}-${var.cluster_purpose}-${var.cluster_number}"
-  network_name           = "${local.cluster_name}-network"
-  primary_subnet_name    = "${local.cluster_name}-subnet-01"
-  pods_ip_range_name     = "${local.cluster_name}-pods-ip-range"
-  services_ip_range_name = "${local.cluster_name}-services-ip-range"
-  primary_node_pool_name = "${local.cluster_name}-node-pool-01"
-}
-
 variable "project" {
   description = "The GCP project to use for this run"
   default     = "test-terraform-project-01"

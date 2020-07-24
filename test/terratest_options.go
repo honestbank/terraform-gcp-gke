@@ -1,9 +1,6 @@
 package test
 
 import (
-	"fmt"
-	"strings"
-
 	"github.com/gruntwork-io/terratest/modules/terraform"
 )
 
@@ -14,14 +11,14 @@ func createTestGKEBasicHelmTerraformOptions(
 	templatePath string,
 	kubeConfigPath string,
 ) *terraform.Options {
-	gkeServiceAccountName := strings.ToLower(fmt.Sprintf("gke-cluster-sa-%s", uniqueID))
+	// gkeServiceAccountName := strings.ToLower(fmt.Sprintf("gke-cluster-sa-%s", uniqueID))
 
 	terraformVars := map[string]interface{}{
-		"region":                       region,
-		"location":                     region,
-		"project":                      project,
-		"cluster_service_account_name": gkeServiceAccountName + "@" + project + ".iam.gserviceaccount.com",
-		"kubectl_config_path":          kubeConfigPath,
+		"region":   region,
+		"location": region,
+		"project":  project,
+		// "cluster_service_account_name": gkeServiceAccountName + "@" + project + ".iam.gserviceaccount.com",
+		"kubectl_config_path": kubeConfigPath,
 	}
 
 	terratestOptions := terraform.Options{
@@ -33,18 +30,16 @@ func createTestGKEBasicHelmTerraformOptions(
 }
 
 func createTestGKEClusterTerraformOptions(
-	uniqueID,
 	project string,
 	region string,
+	credentials string,
 	templatePath string,
 ) *terraform.Options {
-	gkeServiceAccountName := strings.ToLower(fmt.Sprintf("gke-cluster-sa-%s", uniqueID))
 
 	terraformVars := map[string]interface{}{
 		"region": region,
-		// "location":                     region,
-		"project":                      project,
-		"cluster_service_account_name": gkeServiceAccountName + "@" + project + ".iam.gserviceaccount.com",
+		"project": project,
+		"google_credentials": credentials,
 	}
 
 	terratestOptions := terraform.Options{

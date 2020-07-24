@@ -52,6 +52,12 @@ provider "random" {
 
 provider "kubernetes" {
   version = "~> 1.11.0"
+
+  # Depends on the primary-cluster-auth module, currently unused in favor of gcloud CLI via shell-exec
+  //  load_config_file       = false
+  //  cluster_ca_certificate = module.primary-cluster-auth.cluster_ca_certificate
+  //  host                   = module.primary-cluster-auth.host
+  //  token                  = module.primary-cluster-auth.token
 }
 
 provider "helm" {
@@ -86,53 +92,25 @@ module "primary-cluster" {
 
   node_pools = [
     {
-      name               = local.primary_node_pool_name
-      machine_type       = var.machine_type
-      min_count          = var.minimum_node_count
-      max_count          = var.maximum_node_count
-      local_ssd_count    = 1
-      disk_size_gb       = 200
-      disk_type          = "pd-standard"
-      image_type         = "COS"
-      auto_repair        = true
-      auto_upgrade       = true
-      service_account    = module.primary-cluster.service_account
-      preemptible        = false
-      initial_node_count = var.initial_node_count
+      name            = "pool-01"
+      machine_type    = var.machine_type
+      min_count       = var.minimum_node_count
+      max_count       = var.maximum_node_count
+      node_count      = 1
+      local_ssd_count = 1
+      disk_size_gb    = 200
+      disk_type       = "pd-standard"
+      image_type      = "COS"
+      auto_repair     = true
+      auto_upgrade    = true
+      //      service_account    = module.primary-cluster.service_account
+      preemptible = false
+
+      //      initial_node_count = var.initial_node_count
+      //      node_locations = module.primary-cluster.zones
+
     },
   ]
-
-  node_pools_oauth_scopes = {
-    all = []
-
-    "${var.node_pool_name}" = [
-      "https://www.googleapis.com/auth/cloud-platform",
-    ]
-  }
-
-  node_pools_labels = {
-    all = {}
-
-    "${var.node_pool_name}" = {
-      default-node-pool = true
-    }
-  }
-
-  node_pools_metadata = {
-    all = {}
-
-    "${var.node_pool_name}" = {
-      node-pool-metadata-custom-value = "my-node-pool"
-    }
-  }
-
-  node_pools_tags = {
-    all = []
-
-    "${var.node_pool_name}" = [
-      "default-node-pool",
-    ]
-  }
 }
 
 module "primary-cluster-networking" {
@@ -165,6 +143,8 @@ module "primary-cluster-networking" {
   }
 }
 
+### Use this to get kubeconfig data to connect to the cluster
+### Currently using the shell-exec provisioner and gcloud CLI instead
 module "primary-cluster-auth" {
   source = "./modules/terraform-google-kubernetes-engine/modules/auth"
 
@@ -172,6 +152,12 @@ module "primary-cluster-auth" {
   cluster_name = local.cluster_name
   location     = module.primary-cluster.location
 }
+
+### `kubeconfig` output
+//resource "local_file" "kubeconfig" {
+//  content  = module.primary-cluster-auth.kubeconfig_raw
+//  filename = "${path.module}/kubeconfig"
+//}
 
 # ---------------------------------------------------------------------------------------------------------------------
 # CONFIGURE KUBECTL AND RBAC ROLE PERMISSIONS
@@ -189,39 +175,13 @@ resource "null_resource" "configure_kubectl" {
     command = "gcloud container clusters get-credentials ${module.primary-cluster.name} --region ${var.region} --project ${var.project}"
 
     # Use environment variables to allow custom kubectl config paths
-    # environment = {
-    #   KUBECONFIG = var.kubectl_config_path != "" ? var.kubectl_config_path : ""
-    # }
+    //    environment = {
+    //      KUBECONFIG = local_file.kubeconfig.filename != "" ? local_file.kubeconfig.filename : ""
+    //    }
   }
 
   depends_on = [module.primary-cluster]
 }
-
-# resource "kubernetes_cluster_role_binding" "user" {
-#   metadata {
-#     name = "admin-user"
-#   }
-
-#   role_ref {
-#     kind      = "ClusterRole"
-#     name      = "cluster-admin"
-#     api_group = "rbac.authorization.k8s.io"
-#   }
-
-#   subject {
-#     kind      = "User"
-#     name      = data.google_client_openid_userinfo.terraform_user.email
-#     api_group = "rbac.authorization.k8s.io"
-#   }
-
-#   subject {
-#     kind      = "Group"
-#     name      = "system:masters"
-#     api_group = "rbac.authorization.k8s.io"
-#   }
-
-#   depends_on = [null_resource.configure_kubectl]
-# }
 
 # Install Istio Operator using istioctl
 resource "null_resource" "install_istio_operator" {
