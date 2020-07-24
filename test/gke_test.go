@@ -155,8 +155,8 @@ func TestTerraformGcpGkeTemplate(t *testing.T) {
 			kubectlOptions := test_structure.LoadKubectlOptions(t, workingDir)
 			kubectlOptions.Namespace = "istio-system"
 
-			_, kialiPodError := k8s.GetPodE(t, kubectlOptions, "kiali")
-			assert.Nil(t, kialiPodError, "Could not find a Pod named 'kiali'")
+			_, kialiServiceError := k8s.GetServiceE(t, kubectlOptions, "kiali")
+			assert.Nil(t, kialiServiceError, "Could not find a Service named 'kiali'")
 		})
 	})
 }
