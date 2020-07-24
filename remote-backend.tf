@@ -9,10 +9,6 @@ terraform {
   }
 }
 
-//variable "google_credentials" {
-//  description = "GCP credentials with write access to the required project"
-//}
-
 module gke {
   source = "./gcp-gke"
 
