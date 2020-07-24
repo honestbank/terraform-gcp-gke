@@ -81,7 +81,7 @@ func TestTerraformGcpGkeTemplate(t *testing.T) {
 			terraform.InitAndApply(t, gkeClusterTerratestOptions)
 		})
 
-		t.Log("About to start configure_kubectl")
+		logger.Log(t, "About to start configure_kubectl")
 		test_structure.RunTestStage(t, "configure_kubectl", func() {
 			gkeClusterTerratestOptions := test_structure.LoadTerraformOptions(t, workingDir)
 
@@ -98,14 +98,9 @@ func TestTerraformGcpGkeTemplate(t *testing.T) {
 
 			clusterName, clusterNameErr := terraform.OutputE(t, gkeClusterTerratestOptions, "cluster_name")
 			if clusterNameErr != nil {
-				logger.Log(t, "Error getting cluster_name: %v", clusterNameErr)
+				logger.Log(t, "Error getting cluster_name from 'terraform output cluster_name': %v", clusterNameErr)
 			} else {
 				logger.Log(t, "got clusterName = %s", clusterName)
-			}
-
-			// TESTING ONLY
-			if clusterName == "" {
-				clusterName = "test-tf-gke-template-0"
 			}
 
 			cmd := shell.Command{
