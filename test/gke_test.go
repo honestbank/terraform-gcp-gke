@@ -2,6 +2,7 @@ package test
 
 import (
 	"github.com/gruntwork-io/terratest/modules/shell"
+	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"log"
 	"os"
 	"path/filepath"
@@ -84,22 +85,22 @@ func TestTerraformGcpGkeTemplate(t *testing.T) {
 		test_structure.RunTestStage(t, "configure_kubectl", func() {
 			gkeClusterTerratestOptions := test_structure.LoadTerraformOptions(t, workingDir)
 
-			t.Logf("gkeClusterTerratestOptions looks like: %v", gkeClusterTerratestOptions)
+			logger.Logf(t,"gkeClusterTerratestOptions looks like: %v", gkeClusterTerratestOptions)
 
 			kubectlOptions := test_structure.LoadKubectlOptions(t, workingDir)
-			t.Log("got kubectlOptions")
+			logger.Log(t, "got kubectlOptions")
 
 			project := test_structure.LoadString(t, workingDir, "project")
-			t.Logf("got project = %s", project)
+			logger.Log(t, "got project = " +  project)
 
 			region := test_structure.LoadString(t, workingDir, "region")
-			t.Logf("got region = %s", region)
+			logger.Log(t, "got region = " +  region)
 
 			clusterName, clusterNameErr := terraform.OutputE(t, gkeClusterTerratestOptions, "cluster_name")
 			if clusterNameErr != nil {
-				t.Logf("Error getting cluster_name: %v", clusterNameErr)
+				logger.Log(t, "Error getting cluster_name: %v", clusterNameErr)
 			} else {
-				t.Logf("got clusterName = %s", clusterName)
+				logger.Log(t, "got clusterName = %s", clusterName)
 			}
 
 			// TESTING ONLY
@@ -124,13 +125,13 @@ func TestTerraformGcpGkeTemplate(t *testing.T) {
 			shell.RunCommand(t, cmd)
 		})
 
-		t.Log("About to start wait_for_workers")
+		logger.Log(t,"About to start wait_for_workers")
 		test_structure.RunTestStage(t, "wait_for_workers", func() {
 			kubectlOptions := test_structure.LoadKubectlOptions(t, workingDir)
 			verifyGkeNodesAreReady(t, kubectlOptions)
 		})
 
-		t.Log("About to start terraform_verify_plan_noop")
+		logger.Log(t, "About to start terraform_verify_plan_noop")
 		test_structure.RunTestStage(t, "terraform_verify_plan_noop", func() {
 			gkeClusterTerratestOptions := test_structure.LoadTerraformOptions(t, workingDir)
 			planResult := terraform.InitAndPlan(t, gkeClusterTerratestOptions)
@@ -139,7 +140,7 @@ func TestTerraformGcpGkeTemplate(t *testing.T) {
 			assert.Equal(t, 0, resourceCount.Add)
 		})
 
-		t.Log("About to start verify_istio`")
+		logger.Log(t, "About to start verify_istio`")
 		test_structure.RunTestStage(t, "verify_istio", func() {
 			kubectlOptions := test_structure.LoadKubectlOptions(t, workingDir)
 
@@ -148,15 +149,11 @@ func TestTerraformGcpGkeTemplate(t *testing.T) {
 
 			_, istioSystemNamespaceError := k8s.GetNamespaceE(t, kubectlOptions, "istio-system")
 			assert.Nil(t, istioSystemNamespaceError, "Could not find istio-system namespace")
-		})
 
-		log.Printf("About to start verify_kiali`")
-		test_structure.RunTestStage(t, "verify_kiali", func() {
-			kubectlOptions := test_structure.LoadKubectlOptions(t, workingDir)
 			kubectlOptions.Namespace = "istio-system"
-
-			_, kialiServiceError := k8s.GetServiceE(t, kubectlOptions, "kiali")
-			assert.Nil(t, kialiServiceError, "Could not find a Service named 'kiali'")
+			istioPods, getIstioPodsError := k8s.ListPodsE(t, kubectlOptions, v1.ListOptions{})
+			assert.Nil(t, getIstioPodsError, "error getting Istio pods")
+			assert.Greater(t, len(istioPods), 0, "no Pods present in istio-system namespace")
 		})
 	})
 }
