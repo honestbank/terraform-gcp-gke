@@ -57,7 +57,7 @@ func TestTerraformGcpGkeTemplate(t *testing.T) {
 			// 	gkeClusterTerratestOptions.Vars["override_default_node_pool_service_account"] = "1"
 			// }
 
-			t.Logf("gkeClusterTerratestOptions: %v\n", gkeClusterTerratestOptions)
+			logger.Logf(t,"gkeClusterTerratestOptions: %v\n", gkeClusterTerratestOptions)
 			test_structure.SaveString(t, workingDir, "uniqueID", uniqueID)
 			test_structure.SaveString(t, workingDir, "project", project)
 			test_structure.SaveString(t, workingDir, "region", region)
