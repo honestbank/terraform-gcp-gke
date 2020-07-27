@@ -12,3 +12,10 @@ following APIs/services are enabled:
 * GKE
 * Cloud Resource Manager
 * Compute Service
+
+### Service Account
+
+The Service Account used for Terraform operations needs the Owner role in the
+project. It might be possible to use the Editor role but currently using the
+Editor role returns a 403 error when IAM logWriter Role permissions are being
+assigned. Further troubleshooting is needed.
