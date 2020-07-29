@@ -53,11 +53,18 @@ provider "random" {
 provider "kubernetes" {
   version = "~> 1.11.0"
 
-  # Depends on the primary-cluster-auth module, currently unused in favor of gcloud CLI via shell-exec
-  //  load_config_file       = false
-  //  cluster_ca_certificate = module.primary-cluster-auth.cluster_ca_certificate
-  //  host                   = module.primary-cluster-auth.host
-  //  token                  = module.primary-cluster-auth.token
+  # Depends on the primary_cluster_auth module, currently unused in favor of gcloud CLI via shell-exec
+  load_config_file = false
+
+  cluster_ca_certificate = module.primary_cluster_auth.cluster_ca_certificate
+  host                   = module.primary_cluster_auth.host
+  token                  = module.primary_cluster_auth.token
+
+  # host  = "https://${data.google_container_cluster.current_cluster.endpoint}"
+  # token = data.google_client_config.provider.access_token
+  # cluster_ca_certificate = base64decode(
+  #   data.google_container_cluster.current_cluster.master_auth[0].cluster_ca_certificate,
+  # )
 }
 
 provider "helm" {
@@ -145,23 +152,20 @@ module "primary-cluster-networking" {
 
 ### Use this to get kubeconfig data to connect to the cluster
 ### Currently using the shell-exec provisioner and gcloud CLI instead
-module "primary-cluster-auth" {
+# module "primary-cluster-auth" {
+module "primary_cluster_auth" {
   source = "./modules/terraform-google-kubernetes-engine/modules/auth"
 
   project_id   = var.project
-  cluster_name = local.cluster_name
+  cluster_name = module.primary-cluster.name
   location     = module.primary-cluster.location
 }
 
 ### `kubeconfig` output
 //resource "local_file" "kubeconfig" {
-//  content  = module.primary-cluster-auth.kubeconfig_raw
+//  content  = module.primary_cluster_auth.kubeconfig_raw
 //  filename = "${path.module}/kubeconfig"
 //}
-
-# ---------------------------------------------------------------------------------------------------------------------
-# CONFIGURE KUBECTL AND RBAC ROLE PERMISSIONS
-# ---------------------------------------------------------------------------------------------------------------------
 
 # We use this data provider to expose an access token for communicating with the GKE cluster.
 data "google_client_config" "client" {}
@@ -169,11 +173,19 @@ data "google_client_config" "client" {}
 # Use this datasource to access the Terraform account's email for Kubernetes permissions.
 data "google_client_openid_userinfo" "terraform_user" {}
 
+data "google_container_cluster" "current_cluster" {
+  name     = module.primary-cluster.name
+  location = module.primary-cluster.location
+}
+
 # configure kubectl with the credentials of the GKE cluster
 resource "null_resource" "configure_kubectl" {
   provisioner "local-exec" {
-    command = "gcloud container clusters get-credentials ${module.primary-cluster.name} --region ${var.region} --project ${var.project}"
-
+    command = <<EOH
+  curl https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-302.0.0-linux-x86_64.tar.gz | tar xz
+  ./google-cloud-sdk/bin/gcloud auth activate-service-account --key-file "${var.google_credentials}" --quiet
+  ./google-cloud-sdk/bin/gcloud container clusters get-credentials "${module.primary-cluster.name}" --region "${var.region}" --project "${var.project}" --quiet
+  EOH
     # Use environment variables to allow custom kubectl config paths
     //    environment = {
     //      KUBECONFIG = local_file.kubeconfig.filename != "" ? local_file.kubeconfig.filename : ""
@@ -246,5 +258,175 @@ EOF
 EOH
   }
 
-  depends_on = [null_resource.install_istio_operator]
+  depends_on = [null_resource.set_kiali_credentials]
 }
+
+# Install Elastic operator
+resource "null_resource" "install_Elastic_operator" {
+  provisioner "local-exec" {
+    command = <<EOH
+kubectl apply -f https://download.elastic.co/downloads/eck/1.2.0/all-in-one.yaml
+EOH
+  }
+
+  depends_on = [null_resource.configure_kubectl]
+}
+
+# Install Elasticsearch and Kibana
+resource "null_resource" "install_Elastic_resources" {
+  provisioner "local-exec" {
+    command     = <<EOH
+kubectl create -f 'modules/elastic/elastic-basic-cluster.yaml'
+kubectl create -f 'modules/elastic/elastic-filebeat.yaml'
+kubectl create -f 'modules/elastic/elastic-kibana.yaml'
+EOH
+    working_dir = path.module
+  }
+
+  depends_on = [null_resource.install_Elastic_operator]
+}
+
+data "kubernetes_secret" "elastic_password" {
+  metadata {
+    name = "logging-es-elastic-user"
+  }
+
+  depends_on = [null_resource.configure_kubectl, null_resource.install_Elastic_resources]
+}
+
+resource "helm_release" "filebeat" {
+  name       = "filebeat"
+  repository = "https://helm.elastic.co"
+  chart      = "filebeat"
+  version    = "7.8.0"
+  namespace  = "kube-system"
+
+  values = [
+    "${file("modules/elastic/filebeat-values.yaml")}"
+  ]
+
+  set {
+    name  = "extraEnvs[0].name"
+    value = "ELASTICSEARCH_HOST"
+  }
+
+  set {
+    name  = "extraEnvs[0].value"
+    value = "logging-es-http.default.svc.cluster.local"
+  }
+
+  set {
+    name  = "extraEnvs[1].name"
+    value = "ELASTICSEARCH_USERNAME"
+  }
+
+  set {
+    name  = "extraEnvs[1].value"
+    value = "elastic"
+  }
+
+  set {
+    name  = "extraEnvs[2].name"
+    value = "ELASTICSEARCH_PASSWORD"
+  }
+
+  set {
+    name  = "extraEnvs[2].value"
+    value = data.kubernetes_secret.elastic_password.data["elastic"]
+  }
+
+  depends_on = [data.kubernetes_secret.elastic_password, null_resource.configure_kubectl]
+}
+
+# resource "null_resource" "install_Filebeat" {
+#   provisioner "local-exec" {
+#     command = <<EOH
+# ELASTIC_PASSWORD=$(kubectl get secret logging-es-elastic-user -o go-template='{{.data.elastic | base64decode}}')
+# cat <<EOF | kubectl apply -f -
+# apiVersion: apps/v1
+# kind: DaemonSet
+# metadata:
+#   name: filebeat
+#   namespace: kube-system
+#   labels:
+#     k8s-app: filebeat
+# spec:
+#   selector:
+#     matchLabels:
+#       k8s-app: filebeat
+#   template:
+#     metadata:
+#       labels:
+#         k8s-app: filebeat
+#     spec:
+#       serviceAccountName: filebeat
+#       terminationGracePeriodSeconds: 30
+#       hostNetwork: true
+#       dnsPolicy: ClusterFirstWithHostNet
+#       containers:
+#       - name: filebeat
+#         image: elastic/filebeat:7.8.0
+#         args: ["-c", "/etc/filebeat.yml", "-e"]
+#         env:
+#         - name: ELASTICSEARCH_HOST
+#           value: logging-es-http.default.svc.cluster.local
+#         - name: ELASTICSEARCH_PORT
+#           value: "9200"
+#         - name: ELASTICSEARCH_USERNAME
+#           value: elastic
+#         - name: ELASTICSEARCH_PASSWORD
+#           value: $ELASTIC_PASSWORD
+#         - name: ELASTIC_CLOUD_ID
+#           value:
+#         - name: ELASTIC_CLOUD_AUTH
+#           value:
+#         - name: NODE_NAME
+#           valueFrom:
+#             fieldRef:
+#               fieldPath: spec.nodeName
+#         securityContext:
+#           runAsUser: 0
+#           # If using Red Hat OpenShift uncomment this:
+#           #privileged: true
+#         resources:
+#           limits:
+#             memory: 200Mi
+#           requests:
+#             cpu: 100m
+#             memory: 100Mi
+#         volumeMounts:
+#         - name: config
+#           mountPath: /etc/filebeat.yml
+#           readOnly: true
+#           subPath: filebeat.yml
+#         - name: data
+#           mountPath: /usr/share/filebeat/data
+#         - name: varlibdockercontainers
+#           mountPath: /var/lib/docker/containers
+#           readOnly: true
+#         - name: varlog
+#           mountPath: /var/log
+#           readOnly: true
+#         volumes:
+#         - name: config
+#           configMap:
+#             defaultMode: 0640
+#             name: filebeat-config
+#         - name: varlibdockercontainers
+#           hostPath:
+#             path: /var/lib/docker/containers
+#         - name: varlog
+#           hostPath:
+#             path: /var/log
+#         # data folder stores a registry of read status for all files, so we don't send everything again on a Filebeat pod restart
+#         - name: data
+#           hostPath:
+#             # When filebeat runs as non-root user, this directory needs to be writable by group (g+w).
+#             path: /var/lib/filebeat-data
+#             type: DirectoryOrCreate
+#       EOF
+#   EOH
+#   }
+
+#   depends_on = [null_resource.install_Elastic_resources]
+# }
