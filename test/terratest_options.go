@@ -1,6 +1,9 @@
 package test
 
 import (
+	"strings"
+
+	"github.com/gruntwork-io/terratest/modules/random"
 	"github.com/gruntwork-io/terratest/modules/terraform"
 )
 
@@ -37,9 +40,10 @@ func createTestGKEClusterTerraformOptions(
 ) *terraform.Options {
 
 	terraformVars := map[string]interface{}{
-		"region": region,
-		"project": project,
+		"region":             region,
+		"project":            project,
 		"google_credentials": credentials,
+		"environment":        strings.ToLower(random.UniqueId()),
 	}
 
 	terratestOptions := terraform.Options{
