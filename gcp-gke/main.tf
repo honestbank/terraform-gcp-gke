@@ -353,6 +353,13 @@ resource "helm_release" "filebeat" {
   depends_on = [data.kubernetes_secret.elastic_password]
 }
 
+### Jaeger
+resource "kubernetes_namespace" "observability" {
+  metadata {
+    name = "observability"
+  }
+}
+
 resource "helm_release" "jaeger" {
   name       = "jaeger"
   repository = "https://jaegertracing.github.io/helm-charts"
