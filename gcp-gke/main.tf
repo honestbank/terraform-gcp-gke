@@ -93,7 +93,7 @@ module "primary-cluster" {
   network_policy             = true //Required for GKE-installed Istio
   create_service_account     = true
 
-  # GCR
+  # Google Container Registry access
   registry_project_id   = var.project
   grant_registry_access = true
 
@@ -124,6 +124,7 @@ module "primary-cluster" {
       "https://www.googleapis.com/auth/monitoring",
       "https://www.googleapis.com/auth/devstorage.read_only",
       "https://www.googleapis.com/auth/servicecontrol",
+      "https://www.googleapis.com/auth/logging.write",
     ]
   }
 }
