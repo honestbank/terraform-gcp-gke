@@ -9,7 +9,7 @@ on:
 env:
   tf_version: "latest"
   tf_working_dir: "."
-  GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
+  TF_VAR_google_credentials: ${{ secrets.GOOGLE_CREDENTIALS }}
 jobs:
   terraform:
     name: "Terraform - Format, Init, Validate, Plan, Fail on Change"
