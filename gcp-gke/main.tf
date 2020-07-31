@@ -91,8 +91,11 @@ module "primary-cluster" {
   http_load_balancing        = false
   horizontal_pod_autoscaling = false
   network_policy             = true //Required for GKE-installed Istio
-  # service_account            = var.cluster_service_account_name
-  create_service_account = true
+  create_service_account     = true
+
+  # GCR
+  registry_project_id   = var.project
+  grant_registry_access = true
 
   # google-beta provider options
   # release_channel = var.release_channel
@@ -110,14 +113,19 @@ module "primary-cluster" {
       image_type      = "COS"
       auto_repair     = true
       auto_upgrade    = true
-      //      service_account    = module.primary-cluster.service_account
-      preemptible = false
-
-      //      initial_node_count = var.initial_node_count
-      //      node_locations = module.primary-cluster.zones
-
+      preemptible     = false
     },
   ]
+
+  node_pools_oauth_scopes = {
+    all = [
+      "https://www.googleapis.com/auth/trace.append",
+      "https://www.googleapis.com/auth/service.management.readonly",
+      "https://www.googleapis.com/auth/monitoring",
+      "https://www.googleapis.com/auth/devstorage.read_only",
+      "https://www.googleapis.com/auth/servicecontrol",
+    ]
+  }
 }
 
 module "primary-cluster-networking" {
@@ -291,7 +299,7 @@ data "kubernetes_secret" "elastic_password" {
     name = "logging-es-elastic-user"
   }
 
-  depends_on = [null_resource.configure_kubectl, null_resource.install_Elastic_resources]
+  depends_on = [null_resource.install_Elastic_resources]
 }
 
 resource "helm_release" "filebeat" {
@@ -308,32 +316,45 @@ resource "helm_release" "filebeat" {
   set {
     name  = "extraEnvs[0].name"
     value = "ELASTICSEARCH_HOST"
+    type  = "string"
   }
 
   set {
     name  = "extraEnvs[0].value"
     value = "logging-es-http.default.svc.cluster.local"
+    type  = "string"
   }
 
   set {
     name  = "extraEnvs[1].name"
     value = "ELASTICSEARCH_USERNAME"
+    type  = "string"
   }
 
   set {
     name  = "extraEnvs[1].value"
     value = "elastic"
+    type  = "string"
   }
 
   set {
     name  = "extraEnvs[2].name"
     value = "ELASTICSEARCH_PASSWORD"
+    type  = "string"
   }
 
   set {
     name  = "extraEnvs[2].value"
     value = data.kubernetes_secret.elastic_password.data["elastic"]
+    type  = "string"
   }
 
-  depends_on = [data.kubernetes_secret.elastic_password, null_resource.configure_kubectl]
+  depends_on = [data.kubernetes_secret.elastic_password]
+}
+
+resource "helm_release" "jaeger" {
+  name       = "jaeger"
+  repository = "https://jaegertracing.github.io/helm-charts"
+  chart      = "jaeger-operator"
+  namespace  = "observability"
 }
