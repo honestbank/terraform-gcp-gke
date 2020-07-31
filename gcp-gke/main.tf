@@ -310,7 +310,7 @@ resource "helm_release" "filebeat" {
   namespace  = "kube-system"
 
   values = [
-    file("modules/elastic/filebeat-values.yaml")
+    file("${path.module}/modules/elastic/filebeat-values.yaml")
   ]
 
   set {
