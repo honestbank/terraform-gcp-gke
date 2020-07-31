@@ -243,7 +243,7 @@ EOF
 EOH
   }
 
-  depends_on = [null_resource.install_istio_operator]
+  depends_on = [null_resource.configure_kubectl, null_resource.install_istio_operator]
 }
 
 # Install IstioOperator resource manifest to trigger mesh installation
@@ -267,7 +267,7 @@ EOF
 EOH
   }
 
-  depends_on = [null_resource.set_kiali_credentials]
+  depends_on = [null_resource.configure_kubectl, null_resource.set_kiali_credentials]
 }
 
 # Install Elastic operator
@@ -286,13 +286,12 @@ resource "null_resource" "install_Elastic_resources" {
   provisioner "local-exec" {
     command     = <<EOH
 kubectl create -f 'modules/elastic/elastic-basic-cluster.yaml'
-kubectl create -f 'modules/elastic/elastic-filebeat.yaml'
 kubectl create -f 'modules/elastic/elastic-kibana.yaml'
 EOH
     working_dir = path.module
   }
 
-  depends_on = [null_resource.install_Elastic_operator]
+  depends_on = [null_resource.configure_kubectl, null_resource.install_Elastic_operator]
 }
 
 data "kubernetes_secret" "elastic_password" {
@@ -300,7 +299,7 @@ data "kubernetes_secret" "elastic_password" {
     name = "logging-es-elastic-user"
   }
 
-  depends_on = [null_resource.install_Elastic_resources]
+  depends_on = [null_resource.configure_kubectl, null_resource.install_Elastic_resources]
 }
 
 resource "helm_release" "filebeat" {
@@ -311,7 +310,7 @@ resource "helm_release" "filebeat" {
   namespace  = "kube-system"
 
   values = [
-    "${file("modules/elastic/filebeat-values.yaml")}"
+    file("modules/elastic/filebeat-values.yaml")
   ]
 
   set {
@@ -350,7 +349,8 @@ resource "helm_release" "filebeat" {
     type  = "string"
   }
 
-  depends_on = [data.kubernetes_secret.elastic_password]
+  depends_on = [null_resource.configure_kubectl, data.kubernetes_secret.elastic_password,
+    null_resource.install_Elastic_resources]
 }
 
 ### Jaeger
@@ -358,6 +358,8 @@ resource "kubernetes_namespace" "observability" {
   metadata {
     name = "observability"
   }
+
+  depends_on = [null_resource.configure_kubectl]
 }
 
 resource "helm_release" "jaeger" {
@@ -365,4 +367,6 @@ resource "helm_release" "jaeger" {
   repository = "https://jaegertracing.github.io/helm-charts"
   chart      = "jaeger-operator"
   namespace  = "observability"
+
+  depends_on = [null_resource.configure_kubectl, kubernetes_namespace.observability]
 }
