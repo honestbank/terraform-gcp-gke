@@ -192,13 +192,16 @@ resource "null_resource" "configure_kubectl" {
   provisioner "local-exec" {
     command = <<EOH
   curl https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-302.0.0-linux-x86_64.tar.gz | tar xz
-  ./google-cloud-sdk/bin/gcloud auth activate-service-account --key-file "${var.google_credentials}" --quiet
+  cat <<< '${var.google_credentials}' > google_credentials_keyfile.json
+  ./google-cloud-sdk/bin/gcloud auth activate-service-account --key-file google_credentials_keyfile.json --quiet
   ./google-cloud-sdk/bin/gcloud container clusters get-credentials "${module.primary-cluster.name}" --region "${var.region}" --project "${var.project}" --quiet
   EOH
     # Use environment variables to allow custom kubectl config paths
     //    environment = {
     //      KUBECONFIG = local_file.kubeconfig.filename != "" ? local_file.kubeconfig.filename : ""
     //    }
+
+    interpreter = ["/bin/bash", "-c"]
   }
 
   depends_on = [module.primary-cluster]
