@@ -1,0 +1,14 @@
+apiVersion: kibana.k8s.elastic.co/v1
+kind: Kibana
+metadata:
+  name: logging
+spec:
+  version: 7.6.2
+  count: 1
+  elasticsearchRef:
+    name: logging
+    namespace: default
+  # http:
+  #   tls:
+  #     certificate:
+  #       secretName: kibana-cert # Let's see if this works

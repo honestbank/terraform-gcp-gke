@@ -1,0 +1,23 @@
+filebeatConfig:
+  filebeat.yml: |
+    filebeat.inputs:
+    - type: container
+      paths:
+        - /var/log/containers/*.log
+      processors:
+      - add_kubernetes_metadata:
+          host: ${NODE_NAME}
+          matchers:
+          - logs_path:
+              logs_path: "/var/log/containers/"
+
+    output.elasticsearch:
+      host: '${NODE_NAME}'
+      hosts: ['${ELASTICSEARCH_HOST:elasticsearch}:${ELASTICSEARCH_PORT:9200}']
+      username: ${ELASTICSEARCH_USERNAME}
+      password: ${ELASTICSEARCH_PASSWORD}
+      protocol: https # Can also specify HTTPS in the URL in 'hosts'
+      ssl:
+        verification_mode: none # TESTING ONLY! REMOVE!
+      setup.kibana:
+        host: "logging-kb-http.default.svc.cluster.local"

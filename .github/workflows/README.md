@@ -5,3 +5,4 @@ Requirements for workflows should be listed here (Github Secrets, etc)
 * Google Cloud credentials (JSON keyfile contents) - `GOOGLE_CREDENTIALS`
 * Google Cloud project ID - `GOOGLE_PROJECT`
 * Google Cloud service account email - `GCP_SA_EMAIL`
+* Terraform API token - `TF_API_TOKEN`

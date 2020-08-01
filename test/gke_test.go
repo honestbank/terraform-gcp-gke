@@ -1,6 +1,9 @@
 package test
 
 import (
+	"github.com/gruntwork-io/terratest/modules/shell"
+	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"log"
 	"os"
 	"path/filepath"
 	"testing"
@@ -9,17 +12,15 @@ import (
 	"github.com/gruntwork-io/terratest/modules/k8s"
 	"github.com/gruntwork-io/terratest/modules/logger"
 	"github.com/gruntwork-io/terratest/modules/random"
-	"github.com/gruntwork-io/terratest/modules/shell"
 	"github.com/gruntwork-io/terratest/modules/terraform"
 	test_structure "github.com/gruntwork-io/terratest/modules/test-structure"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
-func TestTerraformGcpExample(t *testing.T) {
+func TestTerraformGcpGkeTemplate(t *testing.T) {
 
 	testCaseName := "gke_test"
-
 	// Create all resources in the following zone
 	gcpIndonesiaRegion := "asia-southeast2"
 
@@ -29,14 +30,12 @@ func TestTerraformGcpExample(t *testing.T) {
 		// Create a directory path that won't conflict
 		workingDir := filepath.Join(".", "test-runs", testCaseName)
 
-		// OK
 		test_structure.RunTestStage(t, "create_test_copy", func() {
-			testFolder := test_structure.CopyTerraformFolderToTemp(t, "..", ".")
+			testFolder := test_structure.CopyTerraformFolderToTemp(t, "../gcp-gke", ".")
 			logger.Logf(t, "path to test folder %s\n", testFolder)
 			test_structure.SaveString(t, workingDir, "gkeClusterTerraformModulePath", testFolder)
 		})
 
-		// WIP
 		test_structure.RunTestStage(t, "create_terratest_options", func() {
 			gkeClusterTerraformModulePath := test_structure.LoadString(t, workingDir, "gkeClusterTerraformModulePath")
 			tmpKubeConfigPath := k8s.CopyHomeKubeConfigToTemp(t)
@@ -47,18 +46,19 @@ func TestTerraformGcpExample(t *testing.T) {
 			// GOOGLE_PROJECT GOOGLE_CLOUD_PROJECT GOOGLE_CLOUD_PROJECT_ID
 			// GCLOUD_PROJECT CLOUDSDK_CORE_PROJECT
 			project := gcp.GetGoogleProjectIDFromEnvVar(t)
+			credentials := gcp.GetGoogleCredentialsFromEnvVar(t)
 			region := gcpIndonesiaRegion
 			gkeClusterTerratestOptions := createTestGKEClusterTerraformOptions(
-				uniqueID,
 				project,
 				region,
+				credentials,
 				gkeClusterTerraformModulePath)
 
 			// if testCase.overrideDefaultSA {
 			// 	gkeClusterTerratestOptions.Vars["override_default_node_pool_service_account"] = "1"
 			// }
 
-			logger.Logf(t, "gkeClusterTerratestOptions: %v\n", gkeClusterTerratestOptions)
+			logger.Logf(t,"gkeClusterTerratestOptions: %v\n", gkeClusterTerratestOptions)
 			test_structure.SaveString(t, workingDir, "uniqueID", uniqueID)
 			test_structure.SaveString(t, workingDir, "project", project)
 			test_structure.SaveString(t, workingDir, "region", region)
@@ -75,17 +75,33 @@ func TestTerraformGcpExample(t *testing.T) {
 			require.NoError(t, err)
 		})
 
+		log.Printf("About to start terraform_apply")
 		test_structure.RunTestStage(t, "terraform_apply", func() {
 			gkeClusterTerratestOptions := test_structure.LoadTerraformOptions(t, workingDir)
 			terraform.InitAndApply(t, gkeClusterTerratestOptions)
 		})
 
+		logger.Log(t, "About to start configure_kubectl")
 		test_structure.RunTestStage(t, "configure_kubectl", func() {
 			gkeClusterTerratestOptions := test_structure.LoadTerraformOptions(t, workingDir)
+
+			logger.Logf(t,"gkeClusterTerratestOptions looks like: %v", gkeClusterTerratestOptions)
+
 			kubectlOptions := test_structure.LoadKubectlOptions(t, workingDir)
+			logger.Log(t, "got kubectlOptions")
+
 			project := test_structure.LoadString(t, workingDir, "project")
+			logger.Log(t, "got project = " +  project)
+
 			region := test_structure.LoadString(t, workingDir, "region")
-			clusterName := gkeClusterTerratestOptions.Vars["cluster_name"].(string)
+			logger.Log(t, "got region = " +  region)
+
+			clusterName, clusterNameErr := terraform.OutputE(t, gkeClusterTerratestOptions, "cluster_name")
+			if clusterNameErr != nil {
+				logger.Log(t, "Error getting cluster_name from 'terraform output cluster_name': %v", clusterNameErr)
+			} else {
+				logger.Log(t, "got clusterName = %s", clusterName)
+			}
 
 			cmd := shell.Command{
 				Command: "gcloud",
@@ -104,11 +120,13 @@ func TestTerraformGcpExample(t *testing.T) {
 			shell.RunCommand(t, cmd)
 		})
 
+		logger.Log(t,"About to start wait_for_workers")
 		test_structure.RunTestStage(t, "wait_for_workers", func() {
 			kubectlOptions := test_structure.LoadKubectlOptions(t, workingDir)
 			verifyGkeNodesAreReady(t, kubectlOptions)
 		})
 
+		logger.Log(t, "About to start terraform_verify_plan_noop")
 		test_structure.RunTestStage(t, "terraform_verify_plan_noop", func() {
 			gkeClusterTerratestOptions := test_structure.LoadTerraformOptions(t, workingDir)
 			planResult := terraform.InitAndPlan(t, gkeClusterTerratestOptions)
@@ -117,6 +135,7 @@ func TestTerraformGcpExample(t *testing.T) {
 			assert.Equal(t, 0, resourceCount.Add)
 		})
 
+		logger.Log(t, "About to start verify_istio`")
 		test_structure.RunTestStage(t, "verify_istio", func() {
 			kubectlOptions := test_structure.LoadKubectlOptions(t, workingDir)
 
@@ -125,13 +144,11 @@ func TestTerraformGcpExample(t *testing.T) {
 
 			_, istioSystemNamespaceError := k8s.GetNamespaceE(t, kubectlOptions, "istio-system")
 			assert.Nil(t, istioSystemNamespaceError, "Could not find istio-system namespace")
-		})
 
-		test_structure.RunTestStage(t, "verify_kiali", func() {
-			kubectlOptions := test_structure.LoadKubectlOptions(t, workingDir)
-
-			_, kialiPodError := k8s.GetPodE(t, kubectlOptions, "kiali")
-			assert.Nil(t, kialiPodError, "Could not find a Pod named 'kiali'")
+			kubectlOptions.Namespace = "istio-system"
+			istioPods, getIstioPodsError := k8s.ListPodsE(t, kubectlOptions, v1.ListOptions{})
+			assert.Nil(t, getIstioPodsError, "error getting Istio pods")
+			assert.Greater(t, len(istioPods), 0, "no Pods present in istio-system namespace")
 		})
 	})
 }
