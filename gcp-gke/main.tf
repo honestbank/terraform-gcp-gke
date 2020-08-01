@@ -286,6 +286,7 @@ resource "null_resource" "install_Elastic_resources" {
   provisioner "local-exec" {
     command     = <<EOH
 kubectl create -f 'modules/elastic/elastic-basic-cluster.yaml'
+kubectl create -f 'modules/elastic/elastic-filebeat.yaml'
 kubectl create -f 'modules/elastic/elastic-kibana.yaml'
 EOH
     working_dir = path.module
@@ -294,66 +295,7 @@ EOH
   depends_on = [null_resource.configure_kubectl, null_resource.install_Elastic_operator]
 }
 
-data "kubernetes_secret" "elastic_password" {
-  metadata {
-    name = "logging-es-elastic-user"
-  }
-
-  depends_on = [null_resource.configure_kubectl, null_resource.install_Elastic_resources]
-}
-
-resource "helm_release" "filebeat" {
-  name       = "filebeat"
-  repository = "https://helm.elastic.co"
-  chart      = "filebeat"
-  version    = "7.8.0"
-  namespace  = "kube-system"
-
-  values = [
-    file("${path.module}/modules/elastic/filebeat-values.yaml")
-  ]
-
-  set {
-    name  = "extraEnvs[0].name"
-    value = "ELASTICSEARCH_HOST"
-    type  = "string"
-  }
-
-  set {
-    name  = "extraEnvs[0].value"
-    value = "logging-es-http.default.svc.cluster.local"
-    type  = "string"
-  }
-
-  set {
-    name  = "extraEnvs[1].name"
-    value = "ELASTICSEARCH_USERNAME"
-    type  = "string"
-  }
-
-  set {
-    name  = "extraEnvs[1].value"
-    value = "elastic"
-    type  = "string"
-  }
-
-  set {
-    name  = "extraEnvs[2].name"
-    value = "ELASTICSEARCH_PASSWORD"
-    type  = "string"
-  }
-
-  set {
-    name  = "extraEnvs[2].value"
-    value = data.kubernetes_secret.elastic_password.data["elastic"]
-    type  = "string"
-  }
-
-  depends_on = [null_resource.configure_kubectl, data.kubernetes_secret.elastic_password,
-    null_resource.install_Elastic_resources]
-}
-
-### Jaeger
+# Create namespace for Jaeger
 resource "kubernetes_namespace" "observability" {
   metadata {
     name = "observability"
@@ -362,6 +304,7 @@ resource "kubernetes_namespace" "observability" {
   depends_on = [null_resource.configure_kubectl]
 }
 
+# Install Jaeger Operator
 resource "helm_release" "jaeger" {
   name       = "jaeger"
   repository = "https://jaegertracing.github.io/helm-charts"

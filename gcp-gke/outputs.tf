@@ -41,8 +41,3 @@ output "cluster_name" {
   description = "The GKE cluster name that was built"
   value       = module.primary-cluster.name
 }
-
-output "elastic_secret_password" {
-  description = "Password from Elastic secret"
-  value       = data.kubernetes_secret.elastic_password.data["elastic"]
-}
