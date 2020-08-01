@@ -200,6 +200,8 @@ resource "null_resource" "configure_kubectl" {
     //    environment = {
     //      KUBECONFIG = local_file.kubeconfig.filename != "" ? local_file.kubeconfig.filename : ""
     //    }
+
+    interpreter = ["/bin/bash", "-c"]
   }
 
   depends_on = [module.primary-cluster]
