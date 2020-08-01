@@ -187,6 +187,19 @@ data "google_container_cluster" "current_cluster" {
   location = module.primary-cluster.location
 }
 
+# download kubectl
+resource "null_resource" "download_kubectl" {
+  # change trigger to run every time
+  triggers = {
+    build_number = "${timestamp()}"
+  }
+
+  provisioner "local-exec" {
+    command = "curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl && chmod +x kubectl"
+  }
+}
+
+
 # configure kubectl with the credentials of the GKE cluster
 resource "null_resource" "configure_kubectl" {
   provisioner "local-exec" {
@@ -214,7 +227,7 @@ resource "null_resource" "install_istio_operator" {
 curl -sL https://istio.io/downloadIstioctl | sh -
 export PATH=$PATH:$HOME/.istioctl/bin
 istioctl operator init
-kubectl label namespace default istio-injection=enabled
+./kubectl label namespace default istio-injection=enabled
 EOH
   }
 
@@ -225,12 +238,12 @@ EOH
 resource "null_resource" "set_kiali_credentials" {
   provisioner "local-exec" {
     command = <<EOH
-kubectl create ns istio-system
+./kubectl create ns istio-system
 KIALI_USERNAME=$(printf "${var.kiali_username}" | base64)
 echo "Kiali Username (base64): "$KIALI_USERNAME
 KIALI_PASSPHRASE=$(printf "${var.kiali_passphrase}" | base64)
 echo "Kiali Passphrase (base64): "$KIALI_PASSPHRASE
-cat <<EOF | kubectl apply -f -
+cat <<EOF | ./kubectl apply -f -
 apiVersion: v1
 kind: Secret
 metadata:
@@ -253,7 +266,7 @@ EOH
 resource "null_resource" "install_IstioOperator_manifest" {
   provisioner "local-exec" {
     command = <<EOH
-cat <<EOF | kubectl apply -f -
+cat <<EOF | ./kubectl apply -f -
 apiVersion: install.istio.io/v1alpha1
 kind: IstioOperator
 metadata:
@@ -277,7 +290,7 @@ EOH
 resource "null_resource" "install_Elastic_operator" {
   provisioner "local-exec" {
     command = <<EOH
-kubectl apply -f https://download.elastic.co/downloads/eck/1.2.0/all-in-one.yaml
+./kubectl apply -f https://download.elastic.co/downloads/eck/1.2.0/all-in-one.yaml
 EOH
   }
 
@@ -288,9 +301,9 @@ EOH
 resource "null_resource" "install_Elastic_resources" {
   provisioner "local-exec" {
     command     = <<EOH
-kubectl create -f 'modules/elastic/elastic-basic-cluster.yaml'
-kubectl create -f 'modules/elastic/elastic-filebeat.yaml'
-kubectl create -f 'modules/elastic/elastic-kibana.yaml'
+./kubectl create -f 'modules/elastic/elastic-basic-cluster.yaml'
+./kubectl create -f 'modules/elastic/elastic-filebeat.yaml'
+./kubectl create -f 'modules/elastic/elastic-kibana.yaml'
 EOH
     working_dir = path.module
   }
