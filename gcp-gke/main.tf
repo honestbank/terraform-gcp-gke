@@ -210,7 +210,7 @@ resource "null_resource" "setup_gcloud_cli" {
 resource "null_resource" "download_kubectl" {
   provisioner "local-exec" {
     # command = "curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl && chmod +x kubectl"
-    command = "if ! command -v kubectl; then gcloud components install kubectl --quiet; fi;"
+    command = "if ! command -v kubectl; then ./google-cloud-sdk/bin/gcloud components install kubectl --quiet; fi;"
   }
 
   depends_on = [null_resource.setup_gcloud_cli]
