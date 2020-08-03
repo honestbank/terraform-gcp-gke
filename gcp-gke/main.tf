@@ -194,6 +194,7 @@ resource "null_resource" "setup_gcloud_cli" {
   curl https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-302.0.0-linux-x86_64.tar.gz | tar xz
   cat <<< '${var.google_credentials}' > google_credentials_keyfile.json
   ./google-cloud-sdk/bin/gcloud auth activate-service-account --key-file google_credentials_keyfile.json --quiet
+  if ! command -v kubectl; then ./google-cloud-sdk/bin/gcloud components install kubectl --quiet; fi;
   EOH
     # Use environment variables to allow custom kubectl config paths
     //    environment = {
@@ -207,14 +208,14 @@ resource "null_resource" "setup_gcloud_cli" {
 }
 
 # download kubectl
-resource "null_resource" "download_kubectl" {
-  provisioner "local-exec" {
-    # command = "curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl && chmod +x kubectl"
-    command = "if ! command -v kubectl; then ./google-cloud-sdk/bin/gcloud components install kubectl --quiet; fi;"
-  }
-
-  depends_on = [null_resource.setup_gcloud_cli]
-}
+//resource "null_resource" "download_kubectl" {
+//  provisioner "local-exec" {
+//    # command = "curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl && chmod +x kubectl"
+//    command = "if ! command -v kubectl; then ./google-cloud-sdk/bin/gcloud components install kubectl --quiet; fi;"
+//  }
+//
+//  depends_on = [null_resource.setup_gcloud_cli]
+//}
 
 # get kubeconfig
 resource "null_resource" "configure_kubectl" {
@@ -224,7 +225,7 @@ resource "null_resource" "configure_kubectl" {
 EOH
   }
 
-  depends_on = [null_resource.download_kubectl]
+  depends_on = [null_resource.setup_gcloud_cli]
 }
 
 # Install Istio Operator using istioctl
