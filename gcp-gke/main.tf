@@ -208,6 +208,9 @@ resource "null_resource" "setup_gcloud_cli" {
 
 # download kubectl
 resource "null_resource" "download_kubectl" {
+  triggers = {
+    always_run = timestamp()
+  }
   provisioner "local-exec" {
     command = "curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl && chmod +x kubectl"
   }
@@ -217,6 +220,9 @@ resource "null_resource" "download_kubectl" {
 
 # get kubeconfig
 resource "null_resource" "configure_kubectl" {
+  triggers = {
+    always_run = timestamp()
+  }
   provisioner "local-exec" {
     command = <<EOH
       ./google-cloud-sdk/bin/gcloud container clusters get-credentials "${module.primary-cluster.name}" --region "${var.region}" --project "${var.project}" --quiet
