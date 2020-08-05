@@ -188,13 +188,12 @@ data "google_container_cluster" "current_cluster" {
 }
 
 # set up the gcloud command line tools
-resource "null_resource" "configure_kubectl" {
+resource "null_resource" "setup_gcloud_cli" {
   provisioner "local-exec" {
     command = <<EOH
   curl https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-302.0.0-linux-x86_64.tar.gz | tar xz
   cat <<< '${var.google_credentials}' > google_credentials_keyfile.json
   ./google-cloud-sdk/bin/gcloud auth activate-service-account --key-file google_credentials_keyfile.json --quiet
-  if ! command -v kubectl; then ./google-cloud-sdk/bin/gcloud components install kubectl --quiet; fi;
   ./google-cloud-sdk/bin/gcloud container clusters get-credentials "${module.primary-cluster.name}" --region "${var.region}" --project "${var.project}" --quiet
   EOH
     # Use environment variables to allow custom kubectl config paths
@@ -209,25 +208,24 @@ resource "null_resource" "configure_kubectl" {
 }
 
 # download kubectl
-//resource "null_resource" "download_kubectl" {
-//  provisioner "local-exec" {
-//    # command = "curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl && chmod +x kubectl"
-//    command = "if ! command -v kubectl; then ./google-cloud-sdk/bin/gcloud components install kubectl --quiet; fi;"
-//  }
-//
-//  depends_on = [null_resource.setup_gcloud_cli]
-//}
+resource "null_resource" "download_kubectl" {
+  provisioner "local-exec" {
+    command = "curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl && chmod +x kubectl"
+  }
+
+  depends_on = [null_resource.setup_gcloud_cli]
+}
 
 # get kubeconfig
-//resource "null_resource" "configure_kubectl" {
-//  provisioner "local-exec" {
-//    command = <<EOH
-//      ./google-cloud-sdk/bin/gcloud container clusters get-credentials "${module.primary-cluster.name}" --region "${var.region}" --project "${var.project}" --quiet
-//EOH
-//  }
-//
-//  depends_on = [null_resource.setup_gcloud_cli]
-//}
+resource "null_resource" "configure_kubectl" {
+  provisioner "local-exec" {
+    command = <<EOH
+      ./google-cloud-sdk/bin/gcloud container clusters get-credentials "${module.primary-cluster.name}" --region "${var.region}" --project "${var.project}" --quiet
+EOH
+  }
+
+  depends_on = [null_resource.setup_gcloud_cli]
+}
 
 # Install Istio Operator using istioctl
 resource "null_resource" "install_istio_operator" {
