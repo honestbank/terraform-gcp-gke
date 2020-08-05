@@ -359,7 +359,7 @@ resource "kubernetes_namespace" "observability" {
 
 # Install Jaeger Operator
 resource "helm_release" "jaeger" {
-  name       = "jaeger"
+  name       = "telemetry"
   repository = "https://jaegertracing.github.io/helm-charts"
   chart      = "jaeger-operator"
   namespace  = "observability"
