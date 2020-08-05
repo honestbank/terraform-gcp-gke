@@ -273,7 +273,7 @@ resource "helm_release" "argocd-bootstrap" {
     value = <<EOH
       - url: git@github.com:Honestbank/test-argocd-bootstrap.git
         sshPrivateKeySecret:
-          name: test-argocd-bootstra-deploy-key
+          name: test-argocd-bootstrap-deploy-key
           key: sshPrivateKey
       - type: helm
         url: https://kubernetes-charts.storage.googleapis.com
@@ -284,50 +284,15 @@ resource "helm_release" "argocd-bootstrap" {
 EOH
   }
 
-  set {
-    name  = "configs.repositoryCredentials.test-argocd-bootstra-deploy-key"
-    type  = "string"
-    value = <<EOH
-      -----BEGIN OPENSSH PRIVATE KEY-----
-      b3BlbnNzaC1rZXktdjEAAAAABG5vbmUAAAAEbm9uZQAAAAAAAAABAAABlwAAAAdzc2gtcn
-    NhAAAAAwEAAQAAAYEAwe8OGuBN57fJwc65VdSZS1+lIPs0hkU/5UAvXF1OMluZ5hZ2uqqM
-  kKxc1pdWNxSLcoO22Pz70p4eVz5y/6mdRyxstJmDbrys+QSrRx/K6Ls0A11TM8DPGr+xBm
-  7LSV9+MONPnMze8mu3hkvJTPQ7C1sZxMBK7Ctj64Yn9BiyLtY9VqgjH9PKP01rI6Qv9zI5
-  ShH4JZg3/Jf2Q6eX7xoYIIb7g42aQDDRPvoAUHWfDsCMiUo3LCg4hf9/JlZAfb0bJoifYG
-  r6RGhS7buOKBuwYLZmfI59Gyhov//ieDWz6FFmeiAt6JR7or1mjZe1rckQKxEhsffDkSll
-  oCvd/iZNjClTyrMRFHBoDjES6woTpo9MTEzgQEqC586RBbkBHLthNyAyJ/RZOAYRYlkpUm
-  EBwbv1NH3JWJdCTCXsAAmSiX0equPey2pxcQaHcKeimWThc8NmCWWHoILch8BPIoqOsqaJ
-  ommR17i6Uk3JujtkvodkhEsUV9EMDTa63lK16rWLAAAFkK5szVeubM1XAAAAB3NzaC1yc2
-  EAAAGBAMHvDhrgTee3ycHOuVXUmUtfpSD7NIZFP+VAL1xdTjJbmeYWdrqqjJCsXNaXVjcU
-  i3KDttj8+9KeHlc+cv+pnUcsbLSZg268rPkEq0cfyui7NANdUzPAzxq/sQZuy0lffjDjT5
-  zM3vJrt4ZLyUz0OwtbGcTASuwrY+uGJ/QYsi7WPVaoIx/Tyj9NayOkL/cyOUoR+CWYN/yX
-  9kOnl+8aGCCG+4ONmkAw0T76AFB1nw7AjIlKNywoOIX/fyZWQH29GyaIn2Bq+kRoUu27ji
-  gbsGC2ZnyOfRsoaL//4ng1s+hRZnogLeiUe6K9Zo2Xta3JECsRIbH3w5EpZaAr3f4mTYwp
-  U8qzERRwaA4xEusKE6aPTExM4EBKgufOkQW5ARy7YTcgMif0WTgGEWJZKVJhAcG79TR9yV
-  iXQkwl7AAJkol9Hqrj3stqcXEGh3Cnoplk4XPDZgllh6CC3IfATyKKjrKmiaJpkde4ulJN
-  ybo7ZL6HZIRLFFfRDA02ut5Steq1iwAAAAMBAAEAAAGANbeqt4UT7zA4QWeqbHzT7U3T5n
-  vOg7agyTZrJ/FsXISE73efcXsWLmif2ozWw7D8Iz8aoaYJdsB3dQEGR4zK1NEYVzoCbuTy
-  IJPLgYrr4GUiNiBekIJCm40nUrnTs0IxKQd9oNgalRmDHz7Uxm0MAcw9KgN9fUdTiQSDAp
-  jomhKbsOonuIQojDo8iAXNh3Iw7jRmALvWHjBVdU3xxrf6oN/iwQCzDj63ZvNGrQK3iRWK
-  l+inuaJ2bZ9kr9DKUknTxNklN+Y7OYfzbKdY8qFq0gEL5IPqGzZh7FevZ/CFWpqbZht+yR
-  hcjCr6Mt9obxdIK9rO+bcwfpil0yfuhjpHrDiWclar85egypqEcs3QNrCmMJ2P7pv2M+XX
-  3JucAN3WcPI3zCfmUBW/o2UuL6xqv6Aqxm/7Bl1h9g8ao0aGs5NL5o9mmxogyxUewBSxN4
-  1B9/eJPtovPoKTYH/9JyVVsyYdD0vPId1qUmi0+PRRGixmhBNl31cG3CUtpV58cR2BAAAA
-  wQCryj/NYaEl73MIeneLEQicKfgSbwjSOyRZv7aUZ8yud8n8uUitXCZ2EdAE2GxG+kaKfG
-  t+uywVw9ufi+4+QZ6zoVlH1JZ8uK0FBZ3rPoYaEc8RgJCDqm2ZPTbjy2QYILLi8SVNciVy
-  h9mv48inO110FRsjVhjsfPd9S2aDB/lossdM5N6AF8mYqzIaxMznSx5cQhs/RjzDdzX9qO
-  BaCt1+Bxz2/IPzpUnetTw3XirY6CAIr0T3nVgeP/qOYb1I2Q8AAADBAOl/lHP797/VfYbX
-  YfbJd4HTBiHdd/2IWoBvz8gFQaLsQWcNC3nCTYJTjU0xiZ2ehhtMqGelN6JLqYwUbJfIaV
-  KfGaaEIRyjzTcK/UjXLXJA0jcl4WmH1pYvjyuIzIdl5ePSmre9K5bUSUZ5bvjczDuYPRhb
-  s8ECAD5WwihwB9l1pOo0OJ9zb1Z4CN2uU6h0FBTnlJxUQSxcMVydyx1d/qDayoveE9v4/s
-  HTYnQudIcV7589MGlwRBKVKQQXEQ9hwQAAAMEA1J9qRNlamsEMMfRMF62OhbwowT8bRMtu
-  vY8IcO1X3qVaUJ5wZX9OQicq5GaiF8HalYdQdOUm1hm0v364EIOv7Rn9vfQnmRgBNMUaFd
-  zVE7QvS0t02FAtxCyDfSYAM1Mmh/AYuTMRXmekeF+y1c5acX6wE77lXw4YsxobjRhAb/K5
-  bUQ3DV3Udy6dacKzKcQ0CFHLnEMRurUpDyLxlFkvTnPmYrMOqf1p6gqxfCg9XRbhsAtzjZ
-  +MRGoCaOP46ZJLAAAAFmphaUBib3JnLWN1YmUtMDEubG9jYWwBAgME
-  -----END OPENSSH PRIVATE KEY-----
-  EOH
-  }
+//  set {
+//    name  = "configs.repositoryCredentials.test-argocd-bootstrap-deploy-key"
+//    type  = "string"
+//    value = <<EOH
+//      -----BEGIN OPENSSH PRIVATE KEY-----
+//   DEPLOY KEY BLOCK HERE
+//  -----END OPENSSH PRIVATE KEY-----
+//  EOH
+//  }
 
 }
 
