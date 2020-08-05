@@ -194,7 +194,6 @@ resource "null_resource" "setup_gcloud_cli" {
   curl https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-302.0.0-linux-x86_64.tar.gz | tar xz
   cat <<< '${var.google_credentials}' > google_credentials_keyfile.json
   ./google-cloud-sdk/bin/gcloud auth activate-service-account --key-file google_credentials_keyfile.json --quiet
-  ./google-cloud-sdk/bin/gcloud container clusters get-credentials "${module.primary-cluster.name}" --region "${var.region}" --project "${var.project}" --quiet
   EOH
     # Use environment variables to allow custom kubectl config paths
     //    environment = {
@@ -224,7 +223,7 @@ resource "null_resource" "configure_kubectl" {
 EOH
   }
 
-  depends_on = [null_resource.setup_gcloud_cli]
+  depends_on = [null_resource.download_kubectl]
 }
 
 # Install Istio Operator using istioctl
