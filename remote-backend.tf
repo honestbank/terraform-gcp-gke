@@ -4,7 +4,7 @@ terraform {
     organization = "honestbank"
 
     workspaces {
-      name = "terraform-gcp-gke-template"
+      prefix = "terraform-gcp-gke-"
     }
   }
 }
