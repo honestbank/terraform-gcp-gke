@@ -197,6 +197,9 @@ data "google_container_cluster" "current_cluster" {
 
 # set up the gcloud command line tools
 resource "null_resource" "setup_gcloud_cli" {
+  triggers = {
+    always_run = timestamp()
+  }
   provisioner "local-exec" {
     command = <<EOH
   curl https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-302.0.0-linux-x86_64.tar.gz | tar xz
