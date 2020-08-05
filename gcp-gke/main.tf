@@ -98,8 +98,9 @@ module "primary-cluster" {
   ip_range_services          = module.primary-cluster-networking.subnets_secondary_ranges[0][1]["range_name"]
   http_load_balancing        = false
   horizontal_pod_autoscaling = false
-  network_policy             = true //Required for GKE-installed Istio
-  create_service_account     = true
+  network_policy             = true
+  //Required for GKE-installed Istio
+  create_service_account = true
 
   # Google Container Registry access
   registry_project_id   = var.project
@@ -211,10 +212,13 @@ resource "null_resource" "setup_gcloud_cli" {
     //      KUBECONFIG = local_file.kubeconfig.filename != "" ? local_file.kubeconfig.filename : ""
     //    }
 
-    interpreter = ["/bin/bash", "-c"]
+    interpreter = [
+      "/bin/bash",
+    "-c"]
   }
 
-  depends_on = [module.primary-cluster]
+  depends_on = [
+  module.primary-cluster]
 }
 
 # download kubectl
@@ -226,7 +230,8 @@ resource "null_resource" "download_kubectl" {
     command = "curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl && chmod +x kubectl"
   }
 
-  depends_on = [null_resource.setup_gcloud_cli]
+  depends_on = [
+  null_resource.setup_gcloud_cli]
 }
 
 # get kubeconfig
@@ -240,7 +245,8 @@ resource "null_resource" "configure_kubectl" {
 EOH
   }
 
-  depends_on = [null_resource.download_kubectl]
+  depends_on = [
+  null_resource.download_kubectl]
 }
 
 # Install Istio Operator using istioctl
@@ -254,7 +260,8 @@ istioctl operator init
 EOH
   }
 
-  depends_on = [null_resource.configure_kubectl]
+  depends_on = [
+  null_resource.configure_kubectl]
 }
 
 # Set up Kiali credentials
@@ -282,7 +289,9 @@ EOF
 EOH
   }
 
-  depends_on = [null_resource.configure_kubectl, null_resource.install_istio_operator]
+  depends_on = [
+    null_resource.configure_kubectl,
+  null_resource.install_istio_operator]
 }
 
 # Install IstioOperator resource manifest to trigger mesh installation
@@ -306,7 +315,9 @@ EOF
 EOH
   }
 
-  depends_on = [null_resource.configure_kubectl, null_resource.set_kiali_credentials]
+  depends_on = [
+    null_resource.configure_kubectl,
+  null_resource.set_kiali_credentials]
 }
 
 # Install Elastic operator
@@ -317,21 +328,23 @@ resource "null_resource" "install_Elastic_operator" {
 EOH
   }
 
-  depends_on = [null_resource.configure_kubectl]
+  depends_on = [
+  null_resource.configure_kubectl]
 }
 
 # Install Elasticsearch and Kibana
 resource "null_resource" "install_Elastic_resources" {
   provisioner "local-exec" {
-    command     = <<EOH
+    command = <<EOH
 ./kubectl create -f 'modules/elastic/elastic-basic-cluster.yaml'
 ./kubectl create -f 'modules/elastic/elastic-filebeat.yaml'
 ./kubectl create -f 'modules/elastic/elastic-kibana.yaml'
 EOH
-    working_dir = path.module
   }
 
-  depends_on = [null_resource.configure_kubectl, null_resource.install_Elastic_operator]
+  depends_on = [
+    null_resource.configure_kubectl,
+  null_resource.install_Elastic_operator]
 }
 
 # Create namespace for Jaeger
@@ -340,7 +353,8 @@ resource "kubernetes_namespace" "observability" {
     name = "observability"
   }
 
-  depends_on = [null_resource.configure_kubectl]
+  depends_on = [
+  null_resource.configure_kubectl]
 }
 
 # Install Jaeger Operator
@@ -350,5 +364,7 @@ resource "helm_release" "jaeger" {
   chart      = "jaeger-operator"
   namespace  = "observability"
 
-  depends_on = [null_resource.configure_kubectl, kubernetes_namespace.observability]
+  depends_on = [
+    null_resource.configure_kubectl,
+  kubernetes_namespace.observability]
 }
