@@ -72,6 +72,7 @@ provider "helm" {
   version = "~> 1.2.3"
 
   kubernetes {
+    load_config_file = false
     host = module.primary_cluster_auth.host
 
     token                  = module.primary_cluster_auth.token
@@ -253,7 +254,7 @@ resource "helm_release" "argocd-bootstrap" {
   repository = "https://argoproj.github.io/argo-helm"
   chart      = "argo-cd"
   namespace  = "argocd"
-  
+
   set {
     name  = "installCRDs"
     value = "false"
