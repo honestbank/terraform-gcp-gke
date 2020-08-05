@@ -364,6 +364,16 @@ resource "helm_release" "jaeger" {
   chart      = "jaeger-operator"
   namespace  = "observability"
 
+  set {
+    name = "jaeger.create"
+    value = "true"
+  }
+
+  set {
+    name = "rbac.clusterRole"
+    value = "true"
+  }
+
   depends_on = [
     null_resource.configure_kubectl,
   kubernetes_namespace.observability]
