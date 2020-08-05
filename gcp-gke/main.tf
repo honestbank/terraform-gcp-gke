@@ -313,7 +313,7 @@ EOH
 resource "null_resource" "install_Elastic_operator" {
   provisioner "local-exec" {
     command = <<EOH
-./ apply -f https://download.elastic.co/downloads/eck/1.2.0/all-in-one.yaml
+./kubectl apply -f https://download.elastic.co/downloads/eck/1.2.0/all-in-one.yaml
 EOH
   }
 
