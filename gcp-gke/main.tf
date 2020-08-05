@@ -253,9 +253,7 @@ resource "helm_release" "argocd-bootstrap" {
   repository = "https://argoproj.github.io/argo-helm"
   chart      = "argo-cd"
   namespace  = "argocd"
-
-  depends_on = [kubernetes_namespace.argocd]
-
+  
   set {
     name  = "installCRDs"
     value = "false"
@@ -293,6 +291,8 @@ EOH
 //  -----END OPENSSH PRIVATE KEY-----
 //  EOH
 //  }
+
+  depends_on = [module.primary_cluster_auth, kubernetes_namespace.argocd]
 
 }
 
