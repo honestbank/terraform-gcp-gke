@@ -336,9 +336,9 @@ EOH
 resource "null_resource" "install_Elastic_resources" {
   provisioner "local-exec" {
     command = <<EOH
-./kubectl create -f 'modules/elastic/elastic-basic-cluster.yaml'
-./kubectl create -f 'modules/elastic/elastic-filebeat.yaml'
-./kubectl create -f 'modules/elastic/elastic-kibana.yaml'
+./kubectl create -f 'gcp-gke/modules/elastic/elastic-basic-cluster.yaml'
+./kubectl create -f 'gcp-gke/modules/elastic/elastic-filebeat.yaml'
+./kubectl create -f 'gcp-gke/modules/elastic/elastic-kibana.yaml'
 EOH
   }
 
