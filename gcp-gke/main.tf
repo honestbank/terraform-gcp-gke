@@ -250,6 +250,7 @@ EOH
 resource "null_resource" "install_istio_operator" {
   provisioner "local-exec" {
     command = <<EOH
+if ! command -v kubectl; then alias kubectl=./kubectl; fi;
 curl -sL https://istio.io/downloadIstioctl | sh -
 export PATH=$PATH:$HOME/.istioctl/bin
 istioctl operator init
@@ -265,6 +266,7 @@ EOH
 resource "null_resource" "set_kiali_credentials" {
   provisioner "local-exec" {
     command = <<EOH
+if ! command -v kubectl; then alias kubectl=./kubectl; fi;
 kubectl create ns istio-system
 KIALI_USERNAME=$(printf "${var.kiali_username}" | base64)
 echo "Kiali Username (base64): "$KIALI_USERNAME
@@ -295,6 +297,7 @@ EOH
 resource "null_resource" "install_IstioOperator_manifest" {
   provisioner "local-exec" {
     command = <<EOH
+if ! command -v kubectl; then alias kubectl=./kubectl; fi;
 cat <<EOF | kubectl apply -f -
 apiVersion: install.istio.io/v1alpha1
 kind: IstioOperator
@@ -321,6 +324,7 @@ EOH
 resource "null_resource" "install_Elastic_operator" {
   provisioner "local-exec" {
     command = <<EOH
+if ! command -v kubectl; then alias kubectl=./kubectl; fi;
 kubectl apply -f https://download.elastic.co/downloads/eck/1.2.0/all-in-one.yaml
 EOH
   }
@@ -333,6 +337,7 @@ EOH
 resource "null_resource" "install_Elastic_resources" {
   provisioner "local-exec" {
     command = <<EOH
+if ! command -v kubectl; then alias kubectl=./kubectl; fi;
 kubectl create -f "${path.module}/modules/elastic/elastic-basic-cluster.yaml"
 kubectl create -f "${path.module}/modules/elastic/elastic-filebeat.yaml"
 kubectl create -f "${path.module}/modules/elastic/elastic-kibana.yaml"
