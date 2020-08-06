@@ -1,5 +1,5 @@
 locals {
-  cluster_name           = "${var.environment}-${var.cluster_purpose}-${var.cluster_number}"
+  cluster_name           = "${var.stage}-${var.cluster_purpose}-${var.cluster_number}"
   network_name           = "${local.cluster_name}-network"
   primary_subnet_name    = "${local.cluster_name}-subnet-01"
   pods_ip_range_name     = "${local.cluster_name}-pods-ip-range"
@@ -23,8 +23,8 @@ variable "region" {
   default     = "asia-southeast2"
 }
 
-variable "environment" {
-  description = "Environment: [test, dev, prod...] used as prefix for all resources."
+variable "stage" {
+  description = "Stage: [test, dev, prod...] used as prefix for all resources."
   default     = "test"
 }
 

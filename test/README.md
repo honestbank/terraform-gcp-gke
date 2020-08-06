@@ -7,7 +7,7 @@ To run tests:
 
 ```bash
 export GOOGLE_PROJECT='test-terraform-project-01'
-export GOOGLE_CREDENTIALS=$(<GCP_SERVICE_ACCOUNT_KEYFILE.JSON)
+export GOOGLE_CREDENTIALS=$(cat <GCP_SERVICE_ACCOUNT_KEYFILE.JSON>)
 go test -v -timeout 30m
 ```
 
