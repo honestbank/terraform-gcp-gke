@@ -5,7 +5,7 @@
 project = "test-terraform-project-01"
 
 ### Environment - can be ["test", "dev", "qa", "preprod", "prod"]
-environment = "test"
+stage = "test"
 
 ### Friendly name for the cluster
 cluster_purpose = "template"
