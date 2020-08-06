@@ -4,10 +4,6 @@ terraform {
     organization = "honestbank"
 
     workspaces {
-//      name = "terraform-gcp-gke-template"
-
-      # Uncomment this for development.
-      # In all other cases, this template should run without workspace support.
       prefix = "terraform-gcp-gke-"
     }
   }
