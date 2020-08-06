@@ -132,7 +132,11 @@ func TestTerraformGcpGkeTemplate(t *testing.T) {
 			planResult := terraform.InitAndPlan(t, gkeClusterTerratestOptions)
 			resourceCount := terraform.GetResourceCount(t, planResult)
 			assert.Equal(t, 0, resourceCount.Change)
-			assert.Equal(t, 0, resourceCount.Add)
+			assert.Equal(t, 3, resourceCount.Add)
+			assert.Equal(t, 3, resourceCount.Destroy)
+			assert.Contains(t, planResult, "setup_gcloud_cli")
+			assert.Contains(t, planResult, "configure_kubectl")
+			assert.Contains(t, planResult, "download_kubectl")
 		})
 
 		logger.Log(t, "About to start verify_istio`")

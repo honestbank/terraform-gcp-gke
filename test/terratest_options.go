@@ -43,7 +43,7 @@ func createTestGKEClusterTerraformOptions(
 		"region":             region,
 		"project":            project,
 		"google_credentials": credentials,
-		"environment":        strings.ToLower(random.UniqueId()),
+		"stage":        strings.ToLower(random.UniqueId()),
 	}
 
 	terratestOptions := terraform.Options{

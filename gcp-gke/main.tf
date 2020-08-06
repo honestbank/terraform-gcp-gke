@@ -53,18 +53,11 @@ provider "random" {
 provider "kubernetes" {
   version = "~> 1.11.0"
 
-  # Depends on the primary_cluster_auth module, currently unused in favor of gcloud CLI via shell-exec
   load_config_file = false
 
   cluster_ca_certificate = module.primary_cluster_auth.cluster_ca_certificate
   host                   = module.primary_cluster_auth.host
   token                  = module.primary_cluster_auth.token
-
-  # host  = "https://${data.google_container_cluster.current_cluster.endpoint}"
-  # token = data.google_client_config.provider.access_token
-  # cluster_ca_certificate = base64decode(
-  #   data.google_container_cluster.current_cluster.master_auth[0].cluster_ca_certificate,
-  # )
 }
 
 provider "helm" {
@@ -85,9 +78,10 @@ provider "template" {
 }
 
 module "primary-cluster" {
-  # google-beta
+  # google-beta provider has an update-variant option
   # source                     = "./modules/terraform-google-kubernetes-engine/modules/beta-public-cluster-update-variant"
-  source                     = "./modules/terraform-google-kubernetes-engine/"
+  source = "./modules/terraform-google-kubernetes-engine/"
+
   project_id                 = var.project
   name                       = local.cluster_name
   region                     = var.region
@@ -99,6 +93,7 @@ module "primary-cluster" {
   http_load_balancing        = false
   horizontal_pod_autoscaling = false
   network_policy             = true
+
   //Required for GKE-installed Istio
   create_service_account = true
 
@@ -106,7 +101,7 @@ module "primary-cluster" {
   registry_project_id   = var.project
   grant_registry_access = true
 
-  # google-beta provider options
+  # google-beta provider allows setting a Release Channel
   # release_channel = var.release_channel
 
   node_pools = [
@@ -179,7 +174,7 @@ module "primary_cluster_auth" {
   location     = module.primary-cluster.location
 }
 
-### `kubeconfig` output
+### write a `kubeconfig`file output
 //resource "local_file" "kubeconfig" {
 //  content  = module.primary_cluster_auth.kubeconfig_raw
 //  filename = "${path.module}/kubeconfig"
@@ -363,10 +358,10 @@ resource "kubernetes_namespace" "observability" {
 
 # Install Jaeger Operator
 resource "helm_release" "jaeger" {
-  name       = "telemetry"
-  repository = "https://jaegertracing.github.io/helm-charts"
-  chart      = "jaeger-operator"
-  namespace  = "observability"
+  name             = "telemetry"
+  repository       = "https://jaegertracing.github.io/helm-charts"
+  chart            = "jaeger-operator"
+  namespace        = "observability"
   create_namespace = true
 
   set {
