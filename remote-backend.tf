@@ -14,7 +14,7 @@ module gke {
 
   project            = var.project
   google_credentials = var.google_credentials
-  environment        = var.environment
+  stage              = var.stage
   cluster_purpose    = var.cluster_purpose
   cluster_number     = var.cluster_number
 }

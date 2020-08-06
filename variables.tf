@@ -12,8 +12,8 @@ variable "region" {
   default     = "asia-southeast2"
 }
 
-variable "environment" {
-  description = "Environment: [test, dev, prod...] used as prefix for all resources."
+variable "stage" {
+  description = "Stage: [test, dev, prod...] used as prefix for all resources."
   default     = "test"
 }
 
