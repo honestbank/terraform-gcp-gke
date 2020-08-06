@@ -29,7 +29,7 @@ jobs:
           project_id: ${{ secrets.GOOGLE_PROJECT }}
           service_account_email: ${{ secrets.GCP_SA_EMAIL }}
           service_account_key: ${{ secrets.GOOGLE_CREDENTIALS }}
-          export_default_credentials: true
+          export_default_credentials: false
       - name: Set Google Cloud project
         run: gcloud config set project ${{ secrets.GOOGLE_PROJECT }}
       - name: Set up Go (1.14)
