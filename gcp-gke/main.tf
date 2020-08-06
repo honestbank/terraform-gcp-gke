@@ -224,9 +224,9 @@ resource "null_resource" "download_kubectl" {
   provisioner "local-exec" {
     command = <<EOH
 cd $HOME
-curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl && chmod +x kubectl
-export PATH=$PATH:$HOME
-cd -
+curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl && chmod +x kubectl;
+export PATH=$PATH:$HOME;
+cd -;
 EOH
   }
 
