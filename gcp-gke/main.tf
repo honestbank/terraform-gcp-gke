@@ -351,35 +351,35 @@ EOH
   null_resource.install_Elastic_operator]
 }
 
-//# Create namespace for Jaeger
-//resource "kubernetes_namespace" "observability" {
-//  metadata {
-//    name = "observability"
-//  }
-//
-//  depends_on = [
-//  null_resource.configure_kubectl]
-//}
-//
-//# Install Jaeger Operator
-//resource "helm_release" "jaeger" {
-//  name       = "telemetry"
-//  repository = "https://jaegertracing.github.io/helm-charts"
-//  chart      = "jaeger-operator"
-//  namespace  = "observability"
-//  create_namespace = true
-//
-//  set {
-//    name  = "jaeger.create"
-//    value = "true"
-//  }
-//
-//  set {
-//    name  = "rbac.clusterRole"
-//    value = "true"
-//  }
-//
-//  depends_on = [
-//    null_resource.configure_kubectl,
-//  kubernetes_namespace.observability]
-//}
+# Create namespace for Jaeger
+resource "kubernetes_namespace" "observability" {
+  metadata {
+    name = "observability"
+  }
+
+  depends_on = [
+  null_resource.configure_kubectl]
+}
+
+# Install Jaeger Operator
+resource "helm_release" "jaeger" {
+  name       = "telemetry"
+  repository = "https://jaegertracing.github.io/helm-charts"
+  chart      = "jaeger-operator"
+  namespace  = "observability"
+  create_namespace = true
+
+  set {
+    name  = "jaeger.create"
+    value = "true"
+  }
+
+  set {
+    name  = "rbac.clusterRole"
+    value = "true"
+  }
+
+  depends_on = [
+    null_resource.configure_kubectl,
+  kubernetes_namespace.observability]
+}
