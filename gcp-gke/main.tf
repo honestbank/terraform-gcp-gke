@@ -365,12 +365,12 @@ resource "helm_release" "jaeger" {
   namespace  = "observability"
 
   set {
-    name = "jaeger.create"
+    name  = "jaeger.create"
     value = "true"
   }
 
   set {
-    name = "rbac.clusterRole"
+    name  = "rbac.clusterRole"
     value = "true"
   }
 
