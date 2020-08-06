@@ -10,6 +10,7 @@ env:
   tf_version: "latest"
   tf_working_dir: "."
   TF_VAR_google_credentials: ${{ secrets.GOOGLE_CREDENTIALS }}
+  TF_WORKSPACE: "template"
 jobs:
   terraform:
     name: "Terraform - Format, Init, Validate, Plan, Fail on Change"
