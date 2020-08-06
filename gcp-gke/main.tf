@@ -186,10 +186,10 @@ module "primary_cluster_auth" {
 //}
 
 # We use this data provider to expose an access token for communicating with the GKE cluster.
-data "google_client_config" "client" {}
+//data "google_client_config" "client" {}
 
 # Use this datasource to access the Terraform account's email for Kubernetes permissions.
-data "google_client_openid_userinfo" "terraform_user" {}
+//data "google_client_openid_userinfo" "terraform_user" {}
 
 data "google_container_cluster" "current_cluster" {
   name     = module.primary-cluster.name
