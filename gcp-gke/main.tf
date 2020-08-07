@@ -349,16 +349,6 @@ EOH
   null_resource.install_Elastic_operator]
 }
 
-# Create namespace for Jaeger
-resource "kubernetes_namespace" "observability" {
-  metadata {
-    name = "observability"
-  }
-
-  depends_on = [
-  null_resource.configure_kubectl]
-}
-
 # Install Jaeger Operator
 resource "helm_release" "jaeger" {
   name             = "telemetry"
@@ -376,8 +366,4 @@ resource "helm_release" "jaeger" {
     name  = "rbac.clusterRole"
     value = "true"
   }
-
-  depends_on = [
-    null_resource.configure_kubectl,
-  kubernetes_namespace.observability]
 }
