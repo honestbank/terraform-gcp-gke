@@ -62,7 +62,7 @@ provider "kubernetes" {
 
 provider "helm" {
   # Use provider with Helm 3.x support
-  version = "~> 1.2.3"
+  version = "~> 1.2.4"
 
   kubernetes {
     load_config_file = false
