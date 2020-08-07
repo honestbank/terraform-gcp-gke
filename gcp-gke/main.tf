@@ -56,7 +56,7 @@ provider "kubernetes" {
   load_config_file = false
 
   host                   = module.primary-cluster.endpoint
-  cluster_ca_certificate = module.primary-cluster.ca_certificate
+  cluster_ca_certificate = base64decode(module.primary-cluster.ca_certificate)
   token                  = data.google_client_config.client.access_token
 }
 
@@ -68,7 +68,7 @@ provider "helm" {
     load_config_file = false
     
     host                   = module.primary-cluster.endpoint
-    cluster_ca_certificate = module.primary-cluster.ca_certificate
+    cluster_ca_certificate = base64decode(module.primary-cluster.ca_certificate)
     token                  = data.google_client_config.client.access_token
   }
 }
