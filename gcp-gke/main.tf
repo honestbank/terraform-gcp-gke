@@ -65,6 +65,8 @@ provider "helm" {
   version = "~> 1.2.4"
 
   kubernetes {
+    load_config_file = false
+    
     host                   = module.primary-cluster.endpoint
     cluster_ca_certificate = module.primary-cluster.ca_certificate
     token                  = data.google_client_config.client.access_token
