@@ -64,6 +64,13 @@ provider "helm" {
   # Use provider with Helm 3.x support
   version = "~> 1.2.3"
 
+  kubernetes {
+    load_config_file = false
+
+    cluster_ca_certificate = module.primary_cluster_auth.cluster_ca_certificate
+    host                   = module.primary_cluster_auth.host
+    token                  = module.primary_cluster_auth.token
+  }
 }
 
 provider "template" {
