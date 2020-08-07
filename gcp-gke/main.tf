@@ -55,9 +55,9 @@ provider "kubernetes" {
 
   load_config_file = false
 
-  cluster_ca_certificate = module.primary_cluster_auth.cluster_ca_certificate
-  host                   = module.primary_cluster_auth.host
-  token                  = module.primary_cluster_auth.token
+  host                   = module.primary-cluster.endpoint
+  cluster_ca_certificate = module.primary-cluster.ca_certificate
+  token                  = data.google_client_config.client.access_token
 }
 
 provider "helm" {
@@ -65,11 +65,9 @@ provider "helm" {
   version = "~> 1.2.4"
 
   kubernetes {
-    load_config_file = false
-
-    cluster_ca_certificate = module.primary_cluster_auth.cluster_ca_certificate
-    host                   = module.primary_cluster_auth.host
-    token                  = module.primary_cluster_auth.token
+    host                   = module.primary-cluster.endpoint
+    cluster_ca_certificate = module.primary-cluster.ca_certificate
+    token                  = data.google_client_config.client.access_token
   }
 }
 
@@ -163,28 +161,8 @@ module "primary-cluster-networking" {
   }
 }
 
-### Use this to get kubeconfig data to connect to the cluster
-### Currently using the shell-exec provisioner and gcloud CLI instead
-# module "primary-cluster-auth" {
-module "primary_cluster_auth" {
-  source = "./modules/terraform-google-kubernetes-engine/modules/auth"
-
-  project_id   = var.project
-  cluster_name = module.primary-cluster.name
-  location     = module.primary-cluster.location
-}
-
-### write a `kubeconfig`file output
-//resource "local_file" "kubeconfig" {
-//  content  = module.primary_cluster_auth.kubeconfig_raw
-//  filename = "${path.module}/kubeconfig"
-//}
-
 # We use this data provider to expose an access token for communicating with the GKE cluster.
-//data "google_client_config" "client" {}
-
-# Use this datasource to access the Terraform account's email for Kubernetes permissions.
-//data "google_client_openid_userinfo" "terraform_user" {}
+data "google_client_config" "client" {}
 
 data "google_container_cluster" "current_cluster" {
   name     = module.primary-cluster.name
@@ -367,5 +345,5 @@ resource "helm_release" "jaeger" {
     value = "true"
   }
 
-  depends_on = [module.primary_cluster_auth]
+  depends_on = [module.primary-cluster]
 }

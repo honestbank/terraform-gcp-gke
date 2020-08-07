@@ -16,20 +16,16 @@
 
 output "kubernetes_endpoint" {
   sensitive = true
-  value     = module.primary_cluster_auth.host
+  value     = module.primary-cluster.endpoint
 }
 
 output "client_token" {
   sensitive = true
-  value     = module.primary_cluster_auth.token
+  value     = data.google_client_config.client.access_token
 }
 
 output "ca_certificate" {
-  value = module.primary_cluster_auth.cluster_ca_certificate
-}
-
-output "kubeconfig_raw" {
-  value = module.primary_cluster_auth.kubeconfig_raw
+  value = module.primary-cluster.ca_certificate
 }
 
 output "service_account" {
