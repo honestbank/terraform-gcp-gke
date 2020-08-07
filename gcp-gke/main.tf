@@ -366,4 +366,6 @@ resource "helm_release" "jaeger" {
     name  = "rbac.clusterRole"
     value = "true"
   }
+
+  depends_on = [module.primary_cluster_auth]
 }
