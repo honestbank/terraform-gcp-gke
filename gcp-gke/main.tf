@@ -66,7 +66,7 @@ provider "helm" {
 
   kubernetes {
     load_config_file = false
-    
+
     host                   = module.primary-cluster.endpoint
     cluster_ca_certificate = base64decode(module.primary-cluster.ca_certificate)
     token                  = data.google_client_config.client.access_token
@@ -88,8 +88,8 @@ module "primary-cluster" {
   zones                      = var.zones
   network                    = module.primary-cluster-networking.network_name
   subnetwork                 = module.primary-cluster-networking.subnets_names[0]
-  ip_range_pods              = module.primary-cluster-networking.subnets_secondary_ranges[0][0]["range_name"]
-  ip_range_services          = module.primary-cluster-networking.subnets_secondary_ranges[0][1]["range_name"]
+  ip_range_pods              = local.pods_ip_range_name
+  ip_range_services          = local.services_ip_range_name
   http_load_balancing        = false
   horizontal_pod_autoscaling = false
   network_policy             = true
@@ -191,9 +191,6 @@ resource "null_resource" "setup_gcloud_cli" {
       "/bin/bash",
     "-c"]
   }
-
-  depends_on = [
-  module.primary-cluster]
 }
 
 # download kubectl
@@ -207,8 +204,6 @@ if ! command -v kubectl; then curl -LO https://storage.googleapis.com/kubernetes
 EOH
   }
 
-  depends_on = [
-  null_resource.setup_gcloud_cli]
 }
 
 # get kubeconfig
@@ -223,7 +218,7 @@ EOH
   }
 
   depends_on = [
-  null_resource.download_kubectl]
+  module.primary-cluster, null_resource.setup_gcloud_cli]
 }
 
 # Install Istio Operator using istioctl
@@ -269,7 +264,6 @@ EOH
   }
 
   depends_on = [
-    null_resource.configure_kubectl,
   null_resource.install_istio_operator]
 }
 
@@ -296,8 +290,7 @@ EOH
   }
 
   depends_on = [
-    null_resource.configure_kubectl,
-  null_resource.set_kiali_credentials]
+  null_resource.install_istio_operator]
 }
 
 # Install Elastic operator
@@ -325,7 +318,6 @@ EOH
   }
 
   depends_on = [
-    null_resource.configure_kubectl,
   null_resource.install_Elastic_operator]
 }
 
@@ -346,6 +338,4 @@ resource "helm_release" "jaeger" {
     name  = "rbac.clusterRole"
     value = "true"
   }
-
-  depends_on = [module.primary-cluster]
 }
