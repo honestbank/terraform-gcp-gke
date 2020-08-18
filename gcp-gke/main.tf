@@ -171,6 +171,13 @@ data "google_container_cluster" "current_cluster" {
   location = module.primary-cluster.location
 }
 
+resource "null_resource" "write_google_credentials" {
+  provisioner "local-exec" {
+    command     = "cat <<< '${var.google_credentials}' > google_credentials_keyfile.json"
+    interpreter = ["/bin/bash", "-c"]
+  }
+}
+
 # set up the gcloud command line tools
 resource "null_resource" "setup_gcloud_cli" {
   triggers = {
@@ -179,18 +186,11 @@ resource "null_resource" "setup_gcloud_cli" {
   provisioner "local-exec" {
     command = <<EOH
   curl https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-302.0.0-linux-x86_64.tar.gz | tar xz
-  cat <<< '${var.google_credentials}' > google_credentials_keyfile.json
   ./google-cloud-sdk/bin/gcloud auth activate-service-account --key-file google_credentials_keyfile.json --quiet
   EOH
-    # Use environment variables to allow custom kubectl config paths
-    //    environment = {
-    //      KUBECONFIG = local_file.kubeconfig.filename != "" ? local_file.kubeconfig.filename : ""
-    //    }
-
-    interpreter = [
-      "/bin/bash",
-    "-c"]
   }
+
+  depends_on = [null_resource.write_google_credentials]
 }
 
 # download kubectl
@@ -203,7 +203,6 @@ resource "null_resource" "download_kubectl" {
 if ! command -v kubectl; then curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl && chmod +x kubectl && alias kubectl="./kubectl"; fi;
 EOH
   }
-
 }
 
 # get kubeconfig
@@ -217,8 +216,7 @@ resource "null_resource" "configure_kubectl" {
 EOH
   }
 
-  depends_on = [
-  module.primary-cluster, null_resource.setup_gcloud_cli]
+  depends_on = [module.primary-cluster, null_resource.setup_gcloud_cli]
 }
 
 # Install Istio Operator using istioctl
@@ -233,8 +231,7 @@ kubectl label namespace default istio-injection=enabled
 EOH
   }
 
-  depends_on = [
-  null_resource.configure_kubectl]
+  depends_on = [null_resource.configure_kubectl]
 }
 
 # Set up Kiali credentials
@@ -263,8 +260,7 @@ EOF
 EOH
   }
 
-  depends_on = [
-  null_resource.install_istio_operator]
+  depends_on = [null_resource.install_istio_operator]
 }
 
 # Install IstioOperator resource manifest to trigger mesh installation
@@ -289,8 +285,7 @@ EOF
 EOH
   }
 
-  depends_on = [
-  null_resource.install_istio_operator]
+  depends_on = [null_resource.install_istio_operator]
 }
 
 # Install Elastic operator
@@ -302,8 +297,7 @@ kubectl apply -f https://download.elastic.co/downloads/eck/1.2.0/all-in-one.yaml
 EOH
   }
 
-  depends_on = [
-  null_resource.configure_kubectl]
+  depends_on = [null_resource.configure_kubectl]
 }
 
 # Install Elasticsearch and Kibana
@@ -317,8 +311,7 @@ kubectl create -f "${path.module}/modules/elastic/elastic-kibana.yaml"
 EOH
   }
 
-  depends_on = [
-  null_resource.install_Elastic_operator]
+  depends_on = [null_resource.install_Elastic_operator]
 }
 
 # Install Jaeger Operator
