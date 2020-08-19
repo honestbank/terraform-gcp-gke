@@ -132,8 +132,14 @@ func TestTerraformGcpGkeTemplate(t *testing.T) {
 			planResult := terraform.InitAndPlan(t, gkeClusterTerratestOptions)
 			resourceCount := terraform.GetResourceCount(t, planResult)
 			assert.Equal(t, 0, resourceCount.Change)
-			assert.Equal(t, 3, resourceCount.Add)
-			assert.Equal(t, 3, resourceCount.Destroy)
+
+			// There are 4 always-run steps
+			// 1 - download_kubectl
+			// 2 - setup_gcloud_cli
+			// 3 - configure_kubectl
+			// 4 - install_cert-manager_crds
+			assert.Equal(t, 4, resourceCount.Add)
+			assert.Equal(t, 4, resourceCount.Destroy)
 			assert.Contains(t, planResult, "setup_gcloud_cli")
 			assert.Contains(t, planResult, "configure_kubectl")
 			assert.Contains(t, planResult, "download_kubectl")
