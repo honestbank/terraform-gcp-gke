@@ -332,3 +332,32 @@ resource "helm_release" "jaeger" {
     value = "true"
   }
 }
+
+### cert-manager (v0.16.1)
+# Install cert-manager CRDs
+resource "null_resource" "install_cert-manager_crds" {
+  triggers = {
+    always_run = timestamp()
+  }
+
+  provisioner "local-exec" {
+    command = <<EOH
+if ! command -v kubectl; then alias kubectl=./kubectl; fi;
+kubectl apply --validate=false -f https://github.com/jetstack/cert-manager/releases/download/v0.16.1/cert-manager.crds.yaml
+EOH
+  }
+
+  depends_on = [null_resource.configure_kubectl]
+}
+
+# Install cert-manager
+resource "helm_release" "cert-manager" {
+  name             = "cert-manager"
+  repository       = "https://charts.jetstack.io"
+  chart            = "cert-manager"
+  version          = "0.16.1"
+  namespace        = "cert-manager"
+  create_namespace = true
+
+  depends_on = [null_resource.install_cert-manager_crds]
+}
