@@ -12,7 +12,8 @@ terraform {
 module gke {
   source = "./gcp-gke"
 
-  project            = var.project
+  google_project     = var.google_project
+  google_region      = var.google_region
   google_credentials = var.google_credentials
   stage              = var.stage
   cluster_purpose    = var.cluster_purpose

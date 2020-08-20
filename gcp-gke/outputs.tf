@@ -21,7 +21,7 @@ output "kubernetes_endpoint" {
 
 output "client_token" {
   sensitive = true
-  value     = data.google_client_config.client.access_token
+  value     = data.google_client_config.default.access_token
 }
 
 output "ca_certificate" {

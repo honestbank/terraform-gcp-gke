@@ -2,7 +2,10 @@
 ### Examples are provided below:
 
 ### Full GCP project name
-project = "test-terraform-project-01"
+google_project = "test-terraform-project-01"
+
+### GCP region
+google_region = "asia-southeast2"
 
 ### Environment - can be ["test", "dev", "qa", "preprod", "prod"]
 stage = "test"
