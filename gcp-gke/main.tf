@@ -2,8 +2,8 @@ provider "google" {
   # Use 'export GCLOUD_CREDENTIALS="PATH_TO_KEYFILE_JSON"' instead of
   # committing a keyfile to versioning
   # credentials = file("PATH_TO_KEYFILE_JSON")
-  project     = var.project
-  region      = var.region
+  project     = var.google_project
+  region      = var.google_region
   credentials = var.google_credentials
 
   scopes = [
@@ -23,8 +23,8 @@ provider "google" {
 #   # Use 'export GCLOUD_CREDENTIALS="PATH_TO_KEYFILE_JSON"' instead of
 #   # committing a keyfile to versioning
 #   # credentials = file("PATH_TO_KEYFILE_JSON")
-#   project = var.project
-#   region  = var.region
+#   project = var.google_project
+#   region  = var.google_region
 
 #   scopes = [
 #     # Default scopes
@@ -82,9 +82,9 @@ module "primary-cluster" {
   # source                     = "./modules/terraform-google-kubernetes-engine/modules/beta-public-cluster-update-variant"
   source = "./modules/terraform-google-kubernetes-engine/"
 
-  project_id                 = var.project
+  project_id                 = var.google_project
   name                       = local.cluster_name
-  region                     = var.region
+  region                     = var.google_region
   zones                      = var.zones
   network                    = module.primary-cluster-networking.network_name
   subnetwork                 = module.primary-cluster-networking.subnets_names[0]
@@ -98,7 +98,7 @@ module "primary-cluster" {
   create_service_account = true
 
   # Google Container Registry access
-  registry_project_id   = var.project
+  registry_project_id   = var.google_project
   grant_registry_access = true
 
   # google-beta provider allows setting a Release Channel
@@ -135,7 +135,7 @@ module "primary-cluster" {
 
 module "primary-cluster-networking" {
   source       = "./modules/terraform-google-network"
-  project_id   = var.project
+  project_id   = var.google_project
   network_name = local.network_name
   routing_mode = "REGIONAL"
 
@@ -143,7 +143,7 @@ module "primary-cluster-networking" {
     {
       subnet_name   = local.primary_subnet_name
       subnet_ip     = "10.10.0.0/16"
-      subnet_region = var.region
+      subnet_region = var.google_region
     },
   ]
 
@@ -212,7 +212,7 @@ resource "null_resource" "configure_kubectl" {
   }
   provisioner "local-exec" {
     command = <<EOH
-      ./google-cloud-sdk/bin/gcloud container clusters get-credentials "${module.primary-cluster.name}" --region "${var.region}" --project "${var.project}" --quiet
+      ./google-cloud-sdk/bin/gcloud container clusters get-credentials "${module.primary-cluster.name}" --region "${var.google_region}" --project "${var.google_project}" --quiet
 EOH
   }
 
