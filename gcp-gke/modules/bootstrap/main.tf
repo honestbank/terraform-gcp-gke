@@ -14,10 +14,6 @@ provider "helm" {
   kubernetes {
     load_config_file = false
 
-    //    host                   = module.primary-cluster.endpoint
-    //    cluster_ca_certificate = base64decode(module.primary-cluster.ca_certificate)
-    //    token                  = data.google_client_config.default.access_token
-
     host  = "https://${data.google_container_cluster.current_cluster.endpoint}"
     token = data.google_client_config.default.access_token
     cluster_ca_certificate = base64decode(

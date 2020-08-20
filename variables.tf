@@ -9,7 +9,6 @@ variable "google_credentials" {
 
 variable "google_region" {
   description = "GCP region used to create all resources in this run"
-  default     = "asia-southeast2"
 }
 
 variable "stage" {
