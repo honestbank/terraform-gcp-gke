@@ -50,29 +50,6 @@ provider "random" {
   version = "~> 2.2"
 }
 
-provider "kubernetes" {
-  version = "~> 1.11.0"
-
-  load_config_file = false
-
-  host                   = module.primary-cluster.endpoint
-  cluster_ca_certificate = base64decode(module.primary-cluster.ca_certificate)
-  token                  = data.google_client_config.default.access_token
-}
-
-provider "helm" {
-  # Use provider with Helm 3.x support
-  version = "~> 1.2.4"
-
-  kubernetes {
-    load_config_file = false
-
-    host                   = module.primary-cluster.endpoint
-    cluster_ca_certificate = base64decode(module.primary-cluster.ca_certificate)
-    token                  = data.google_client_config.default.access_token
-  }
-}
-
 provider "template" {
   version = "~> 2.1"
 }
