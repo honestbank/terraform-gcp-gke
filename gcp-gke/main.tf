@@ -16,7 +16,7 @@ provider "google" {
     # Required for google_client_openid_userinfo
     "https://www.googleapis.com/auth/userinfo.email",
   ]
-  version = "~> 3.29.0"
+  version = "<= 4.0.0"
 }
 
 # provider "google-beta" {
@@ -43,15 +43,15 @@ terraform {
 }
 
 provider "null" {
-  version = "~> 2.1"
+  version = "<= 3.0"
 }
 
 provider "random" {
-  version = "~> 2.2"
+  version = "<= 3.0"
 }
 
 provider "template" {
-  version = "~> 2.1"
+  version = "<= 3.0"
 }
 
 module "primary-cluster" {
