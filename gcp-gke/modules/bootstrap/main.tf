@@ -194,9 +194,9 @@ resource "null_resource" "install_Elastic_resources" {
   provisioner "local-exec" {
     command = <<EOH
 if ! command -v kubectl; then alias kubectl=./kubectl; fi;
-kubectl create -f "${path.module}/modules/elastic/elastic-basic-cluster.yaml"
-kubectl create -f "${path.module}/modules/elastic/elastic-filebeat.yaml"
-kubectl create -f "${path.module}/modules/elastic/elastic-kibana.yaml"
+kubectl create -f "${path.module}/elastic/elastic-basic-cluster.yaml"
+kubectl create -f "${path.module}/elastic/elastic-filebeat.yaml"
+kubectl create -f "${path.module}/elastic/elastic-kibana.yaml"
 EOH
   }
 
