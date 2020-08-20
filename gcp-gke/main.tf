@@ -54,14 +54,6 @@ provider "template" {
   version = "~> 2.1"
 }
 
-# We use this data provider to expose an access token for communicating with the GKE cluster.
-data "google_client_config" "default" {}
-
-data "google_container_cluster" "current_cluster" {
-  name     = module.primary-cluster.name
-  location = module.primary-cluster.location
-}
-
 module "primary-cluster" {
   # google-beta provider has an update-variant option
   # source                     = "./modules/terraform-google-kubernetes-engine/modules/beta-public-cluster-update-variant"
@@ -148,13 +140,26 @@ module "primary-cluster-networking" {
   }
 }
 
+# We use this data provider to expose an access token for communicating with the GKE cluster.
+data "google_client_config" "default" {}
+
+data "google_container_cluster" "current_cluster" {
+  name     = module.primary-cluster.name
+  location = module.primary-cluster.location
+}
+
+
 module bootstrap {
   source = "./modules/bootstrap"
 
-  cluster_name       = module.primary-cluster.name
-  cluster_location   = module.primary-cluster.location
   google_credentials = var.google_credentials
   google_project     = var.google_project
+
+  cluster_name           = module.primary-cluster.name
+  cluster_location       = module.primary-cluster.location
+  cluster_host           = "https://${module.primary-cluster.endpoint}"
+  cluster_token          = data.google_client_config.default.access_token
+  cluster_ca_certificate = base64decode(module.primary-cluster.ca_certificate)
 
   kiali_username   = var.kiali_username
   kiali_passphrase = var.kiali_passphrase

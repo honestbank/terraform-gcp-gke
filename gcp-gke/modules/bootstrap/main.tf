@@ -2,11 +2,6 @@ terraform {
   required_version = ">=0.12.28, <0.14"
 }
 
-provider "null" {
-  version = "~> 2.1"
-}
-
-
 provider "helm" {
   # Use provider with Helm 3.x support
   version = "~> 1.2.4"
@@ -14,20 +9,10 @@ provider "helm" {
   kubernetes {
     load_config_file = false
 
-    host  = "https://${data.google_container_cluster.current_cluster.endpoint}"
-    token = data.google_client_config.default.access_token
-    cluster_ca_certificate = base64decode(
-      data.google_container_cluster.current_cluster.master_auth[0].cluster_ca_certificate,
-    )
+    host                   = var.cluster_host
+    token                  = var.cluster_token
+    cluster_ca_certificate = var.cluster_ca_certificate
   }
-}
-
-# We use this data provider to expose an access token for communicating with the GKE cluster.
-data "google_client_config" "default" {}
-
-data "google_container_cluster" "current_cluster" {
-  name     = var.cluster_name
-  location = var.cluster_location
 }
 
 resource "null_resource" "write_google_credentials" {
