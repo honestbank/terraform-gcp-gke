@@ -6,13 +6,11 @@ import (
 	"log"
 	"os"
 	"path/filepath"
-	"regexp"
 	"testing"
 
 	"github.com/gruntwork-io/terratest/modules/gcp"
 	"github.com/gruntwork-io/terratest/modules/k8s"
 	"github.com/gruntwork-io/terratest/modules/logger"
-	"github.com/gruntwork-io/terratest/modules/random"
 	"github.com/gruntwork-io/terratest/modules/terraform"
 	test_structure "github.com/gruntwork-io/terratest/modules/test-structure"
 	"github.com/stretchr/testify/assert"
@@ -41,12 +39,7 @@ func TestTerraformGcpGkeTemplate(t *testing.T) {
 			gkeClusterTerraformModulePath := test_structure.LoadString(t, workingDir, "gkeClusterTerraformModulePath")
 			tmpKubeConfigPath := k8s.CopyHomeKubeConfigToTemp(t)
 			kubectlOptions := k8s.NewKubectlOptions("", tmpKubeConfigPath, "kube-system")
-			uniqueID := random.UniqueId()
-			hasNumericalPrefix, _ := regexp.MatchString(`^[0-9][a-zA-Z0-9]*`, uniqueID)
-			for hasNumericalPrefix == true {
-				uniqueID = random.UniqueId()
-				hasNumericalPrefix, _ = regexp.MatchString(`^[0-9][a-zA-Z0-9]*`, uniqueID)
-			}
+			uniqueID := alphaPrefixUniqueId()
 
 			// make sure to `export` one of these vars
 			// GOOGLE_PROJECT GOOGLE_CLOUD_PROJECT GOOGLE_CLOUD_PROJECT_ID

@@ -1,6 +1,7 @@
 package test
 
 import (
+	"regexp"
 	"strings"
 
 	"github.com/gruntwork-io/terratest/modules/random"
@@ -18,7 +19,7 @@ func createTestGKEClusterTerraformOptions(
 		"google_region":             region,
 		"google_project":            project,
 		"google_credentials": credentials,
-		"stage":        strings.ToLower(random.UniqueId()),
+		"stage":        alphaPrefixUniqueId,
 	}
 
 	terratestOptions := terraform.Options{
@@ -27,4 +28,14 @@ func createTestGKEClusterTerraformOptions(
 	}
 
 	return &terratestOptions
+}
+
+func alphaPrefixUniqueId() string {
+	uniqueId := strings.ToLower(random.UniqueId())
+	hasNumericalPrefix, _ := regexp.MatchString(`^[0-9][a-zA-Z0-9]*`, uniqueId)
+	for hasNumericalPrefix == true {
+		uniqueId = random.UniqueId()
+		hasNumericalPrefix, _ = regexp.MatchString(`^[0-9][a-zA-Z0-9]*`, uniqueId)
+	}
+	return uniqueId
 }
