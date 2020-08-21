@@ -78,33 +78,36 @@ EOH
   depends_on = [null_resource.configure_kubectl]
 }
 
+resource "kubernetes_namespace" "istio_system_namespace" {
+  metadata {
+    name = "istio-system"
+  }
+}
+
 # Set up Kiali credentials
-resource "null_resource" "set_kiali_credentials" {
-  provisioner "local-exec" {
-    command = <<EOH
-if ! command -v kubectl; then alias kubectl=./kubectl; fi;
-kubectl create ns istio-system
-KIALI_USERNAME=$(printf "${var.kiali_username}" | base64)
-echo "Kiali Username (base64): "$KIALI_USERNAME
-KIALI_PASSPHRASE=$(printf "${var.kiali_passphrase}" | base64)
-echo "Kiali Passphrase (base64): "$KIALI_PASSPHRASE
-cat <<EOF | kubectl apply -f -
-apiVersion: v1
-kind: Secret
-metadata:
-  name: kiali
-  namespace: istio-system
-  labels:
-    app: kiali
-type: Opaque
-data:
-  username: $KIALI_USERNAME
-  passphrase: $KIALI_PASSPHRASE
-EOF
-EOH
+resource "kubernetes_secret" "kiali_credentials" {
+  metadata {
+    name      = "kiali"
+    namespace = "istio-system"
+
+    annotations = {
+      "meta.helm.sh/release-name"      = "argocd"
+      "meta.helm.sh/release-namespace" = "argocd"
+    }
+
+    labels = {
+      "app" = "kiali"
+    }
   }
 
-  depends_on = [null_resource.install_istio_operator]
+  data = {
+    "username"   = base64(var.kiali_username)
+    "passphrase" = base64(var.kiali_passphrase)
+  }
+
+  type = "Opaque"
+
+  depends_on = [kubernetes_namespace.istio_system_namespace]
 }
 
 # Install IstioOperator resource manifest to trigger mesh installation
