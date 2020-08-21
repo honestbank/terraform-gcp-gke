@@ -15,6 +15,14 @@ provider "helm" {
   }
 }
 
+provider "kubernetes" {
+  load_config_file = false
+
+  host                   = var.cluster_host
+  token                  = var.cluster_token
+  cluster_ca_certificate = var.cluster_ca_certificate
+}
+
 resource "null_resource" "write_google_credentials" {
   provisioner "local-exec" {
     command     = "cat <<< '${var.google_credentials}' > google_credentials_keyfile.json"
