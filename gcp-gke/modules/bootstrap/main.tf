@@ -132,7 +132,7 @@ EOF
 EOH
   }
 
-  depends_on = [null_resource.install_istio_operator]
+  depends_on = [null_resource.install_istio_operator, kubernetes_namespace.istio_system_namespace]
 }
 
 # Install Elastic operator
