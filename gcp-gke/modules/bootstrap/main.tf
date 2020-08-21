@@ -83,7 +83,7 @@ if ! command -v kubectl; then alias kubectl=./kubectl; fi;
 curl -sL https://istio.io/downloadIstioctl | sh -
 export PATH=$PATH:$HOME/.istioctl/bin
 istioctl operator init
-kubectl label namespace default istio-injection=enabled
+kubectl label namespace default istio-injection=enabled --overwrite
 EOH
   }
 
