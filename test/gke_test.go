@@ -6,7 +6,6 @@ import (
 	"log"
 	"os"
 	"path/filepath"
-	"regexp"
 	"testing"
 
 	"github.com/gruntwork-io/terratest/modules/gcp"
@@ -41,12 +40,7 @@ func TestTerraformGcpGkeTemplate(t *testing.T) {
 			gkeClusterTerraformModulePath := test_structure.LoadString(t, workingDir, "gkeClusterTerraformModulePath")
 			tmpKubeConfigPath := k8s.CopyHomeKubeConfigToTemp(t)
 			kubectlOptions := k8s.NewKubectlOptions("", tmpKubeConfigPath, "kube-system")
-			uniqueID := random.UniqueId()
-			hasNumericalPrefix, _ := regexp.MatchString(`^[0-9][a-zA-Z0-9]*`, uniqueID)
-			for hasNumericalPrefix == true {
-				uniqueID = random.UniqueId()
-				hasNumericalPrefix, _ = regexp.MatchString(`^[0-9][a-zA-Z0-9]*`, uniqueID)
-			}
+			uniqueID := "a"+random.UniqueId() // Workaround for when uniqueId has a numerical prefix which GCP doesn't allow
 
 			// make sure to `export` one of these vars
 			// GOOGLE_PROJECT GOOGLE_CLOUD_PROJECT GOOGLE_CLOUD_PROJECT_ID
