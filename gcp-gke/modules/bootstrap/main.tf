@@ -73,6 +73,10 @@ EOH
 
 # Install Istio Operator using istioctl
 resource "null_resource" "install_istio_operator" {
+  triggers = {
+    always_run = timestamp()
+  }
+
   provisioner "local-exec" {
     command = <<EOH
 if ! command -v kubectl; then alias kubectl=./kubectl; fi;
@@ -86,40 +90,45 @@ EOH
   depends_on = [null_resource.configure_kubectl]
 }
 
-resource "kubernetes_namespace" "istio_system_namespace" {
-  metadata {
-    name = "istio-system"
-  }
-}
-
 # Set up Kiali credentials
-resource "kubernetes_secret" "kiali_credentials" {
-  metadata {
-    name      = "kiali"
-    namespace = "istio-system"
-
-    annotations = {
-      "meta.helm.sh/release-name"      = "argocd"
-      "meta.helm.sh/release-namespace" = "argocd"
-    }
-
-    labels = {
-      "app" = "kiali"
-    }
+resource "null_resource" "set_kiali_credentials" {
+  triggers = {
+    always_run = timestamp()
   }
 
-  data = {
-    "username"   = base64encode(var.kiali_username)
-    "passphrase" = base64encode(var.kiali_passphrase)
+  provisioner "local-exec" {
+    command = <<EOH
+if ! command -v kubectl; then alias kubectl=./kubectl; fi;
+kubectl create ns istio-system
+KIALI_USERNAME=$(printf "${var.kiali_username}" | base64)
+echo "Kiali Username (base64): "$KIALI_USERNAME
+KIALI_PASSPHRASE=$(printf "${var.kiali_passphrase}" | base64)
+echo "Kiali Passphrase (base64): "$KIALI_PASSPHRASE
+cat <<EOF | kubectl apply -f -
+apiVersion: v1
+kind: Secret
+metadata:
+  name: kiali
+  namespace: istio-system
+  labels:
+    app: kiali
+type: Opaque
+data:
+  username: $KIALI_USERNAME
+  passphrase: $KIALI_PASSPHRASE
+EOF
+EOH
   }
 
-  type = "Opaque"
-
-  depends_on = [kubernetes_namespace.istio_system_namespace]
+  depends_on = [null_resource.configure_kubectl]
 }
 
 # Install IstioOperator resource manifest to trigger mesh installation
 resource "null_resource" "install_IstioOperator_manifest" {
+  triggers = {
+    always_run = timestamp()
+  }
+
   provisioner "local-exec" {
     command = <<EOH
 if ! command -v kubectl; then alias kubectl=./kubectl; fi;
@@ -140,11 +149,15 @@ EOF
 EOH
   }
 
-  depends_on = [null_resource.install_istio_operator, kubernetes_namespace.istio_system_namespace]
+  depends_on = [null_resource.install_istio_operator, null_resource.set_kiali_credentials]
 }
 
 # Install Elastic operator
 resource "null_resource" "install_Elastic_operator" {
+  triggers = {
+    always_run = timestamp()
+  }
+
   provisioner "local-exec" {
     command = <<EOH
 if ! command -v kubectl; then alias kubectl=./kubectl; fi;
@@ -157,6 +170,10 @@ EOH
 
 # Install Elasticsearch and Kibana
 resource "null_resource" "install_Elastic_resources" {
+  triggers = {
+    always_run = timestamp()
+  }
+
   provisioner "local-exec" {
     command = <<EOH
 if ! command -v kubectl; then alias kubectl=./kubectl; fi;
