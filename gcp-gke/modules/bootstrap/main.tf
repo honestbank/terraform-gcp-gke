@@ -101,8 +101,8 @@ resource "kubernetes_secret" "kiali_credentials" {
   }
 
   data = {
-    "username"   = base64(var.kiali_username)
-    "passphrase" = base64(var.kiali_passphrase)
+    "username"   = base64encode(var.kiali_username)
+    "passphrase" = base64encode(var.kiali_passphrase)
   }
 
   type = "Opaque"
