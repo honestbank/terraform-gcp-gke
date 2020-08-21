@@ -138,8 +138,13 @@ func TestTerraformGcpGkeTemplate(t *testing.T) {
 			// 2 - setup_gcloud_cli
 			// 3 - configure_kubectl
 			// 4 - install_cert-manager_crds
-			assert.Equal(t, 4, resourceCount.Add)
-			assert.Equal(t, 4, resourceCount.Destroy)
+			// 5 - kiali credentials + istio namespace
+			// 6 - istiooperator
+			// 7 - istiomesh
+			// 8 - Elastic operator
+			// 9 - Elastic manifests
+			assert.Equal(t, 9, resourceCount.Add)
+			assert.Equal(t, 9, resourceCount.Destroy)
 			assert.Contains(t, planResult, "setup_gcloud_cli")
 			assert.Contains(t, planResult, "configure_kubectl")
 			assert.Contains(t, planResult, "download_kubectl")
