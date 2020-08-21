@@ -18,7 +18,7 @@ func createTestGKEClusterTerraformOptions(
 		"google_region":             region,
 		"google_project":            project,
 		"google_credentials": credentials,
-		"stage":        strings.ToLower(random.UniqueId()),
+		"stage":        "a"+strings.ToLower(random.UniqueId()), // Workaround for when uniqueId has a numerical prefix which GCP doesn't allow
 	}
 
 	terratestOptions := terraform.Options{
