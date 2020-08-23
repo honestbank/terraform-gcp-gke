@@ -40,8 +40,6 @@ resource "null_resource" "setup_gcloud_cli" {
 
     interpreter = ["/bin/bash", "-c"]
   }
-
-  depends_on = [null_resource.write_google_credentials]
 }
 
 # download kubectl
