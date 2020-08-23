@@ -23,26 +23,23 @@ provider "kubernetes" {
   cluster_ca_certificate = var.cluster_ca_certificate
 }
 
-resource "null_resource" "write_google_credentials" {
-  provisioner "local-exec" {
-    command     = "cat <<< '${var.google_credentials}' > google_credentials_keyfile.json"
-    interpreter = ["/bin/bash", "-c"]
-  }
-}
-
-# set up the gcloud command line tools
+# setup_gcloud_cli steps
+# 1 - write GCP credentials to file
+# 2 - download gcloud CLI and extract
+# 3 - activate the service account which means tell gcloud CLI to use these credentials
 resource "null_resource" "setup_gcloud_cli" {
   triggers = {
     always_run = timestamp()
   }
   provisioner "local-exec" {
     command = <<EOH
+  cat <<< '${var.google_credentials}' > google_credentials_keyfile.json
   curl https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-302.0.0-linux-x86_64.tar.gz | tar xz
   ./google-cloud-sdk/bin/gcloud auth activate-service-account --key-file google_credentials_keyfile.json --quiet
   EOH
-  }
 
-  depends_on = [null_resource.write_google_credentials]
+    interpreter = ["/bin/bash", "-c"]
+  }
 }
 
 # download kubectl
