@@ -23,6 +23,10 @@ provider "kubernetes" {
   cluster_ca_certificate = var.cluster_ca_certificate
 }
 
+provider "null" {
+  version = " >= 1.2"
+}
+
 # setup_gcloud_cli steps
 # 1 - write GCP credentials to file
 # 2 - download gcloud CLI and extract
@@ -174,9 +178,9 @@ resource "null_resource" "install_Elastic_resources" {
   provisioner "local-exec" {
     command = <<EOH
 if ! command -v kubectl; then alias kubectl=./kubectl; fi;
-kubectl create -f "${path.module}/elastic/elastic-basic-cluster.yaml"
-kubectl create -f "${path.module}/elastic/elastic-filebeat.yaml"
-kubectl create -f "${path.module}/elastic/elastic-kibana.yaml"
+kubectl apply -f "${path.module}/elastic/elastic-basic-cluster.yaml"
+kubectl apply -f "${path.module}/elastic/elastic-filebeat.yaml"
+kubectl apply -f "${path.module}/elastic/elastic-kibana.yaml"
 EOH
   }
 
