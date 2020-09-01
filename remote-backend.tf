@@ -7,6 +7,8 @@ terraform {
       prefix = "terraform-gcp-gke-"
     }
   }
+
+  required_version = ">= 0.13.1"
 }
 
 module gke {
