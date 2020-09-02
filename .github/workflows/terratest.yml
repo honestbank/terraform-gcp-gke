@@ -9,6 +9,8 @@ on:
 env:
   GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
   GOOGLE_PROJECT: ${{ secrets.GOOGLE_PROJECT }}
+  TF_VAR_shared_vpc_host_google_project: ${{ secrets.TF_VAR_shared_vpc_host_google_project }}
+  TF_VAR_shared_vpc_host_google_credentials: ${{ secrets.TF_VAR_shared_vpc_host_google_credentials }}
 jobs:
   go:
     name: terratest

@@ -1,7 +1,4 @@
 provider "google" {
-  # Use 'export GCLOUD_CREDENTIALS="PATH_TO_KEYFILE_JSON"' instead of
-  # committing a keyfile to versioning
-  # credentials = file("PATH_TO_KEYFILE_JSON")
   project     = var.google_project
   region      = var.google_region
   credentials = var.google_credentials
@@ -19,24 +16,12 @@ provider "google" {
   version = "<= 4.0.0"
 }
 
-# provider "google-beta" {
-#   # Use 'export GCLOUD_CREDENTIALS="PATH_TO_KEYFILE_JSON"' instead of
-#   # committing a keyfile to versioning
-#   # credentials = file("PATH_TO_KEYFILE_JSON")
-#   project = var.google_project
-#   region  = var.google_region
-
-#   scopes = [
-#     # Default scopes
-#     "https://www.googleapis.com/auth/compute",
-#     "https://www.googleapis.com/auth/cloud-platform",
-#     "https://www.googleapis.com/auth/ndev.clouddns.readwrite",
-#     "https://www.googleapis.com/auth/devstorage.full_control",
-
-#     # Required for google_client_openid_userinfo
-#     "https://www.googleapis.com/auth/userinfo.email",
-#   ]
-# }
+provider "google" {
+  alias       = "vpc"
+  project     = var.shared_vpc_host_google_project
+  region      = var.google_region
+  credentials = var.shared_vpc_host_google_credentials
+}
 
 terraform {
   required_version = ">= 0.13.1"
@@ -54,32 +39,54 @@ provider "template" {
   version = "<= 3.0"
 }
 
+resource "random_id" "run_id" {
+  byte_length = 4
+}
+
+# Shared VPC Permissions
+data "google_project" "service_project" {
+// Use default google provider
+}
+
+data "google_project" "host_project" {
+  provider = google.vpc
+}
+
+locals {
+  project_number = data.google_project.service_project.number
+  project_id     = data.google_project.service_project.project_id
+}
+
+resource "google_project_iam_binding" "compute-network-user" {
+  project = data.google_project.host_project.project_id
+  role    = "roles/compute.networkUser"
+
+  members = [
+    "serviceAccount:${format("service-%s@container-engine-robot.iam.gserviceaccount.com", local.project_number)}",
+    "serviceAccount:${format("%s@cloudservices.gserviceaccount.com", local.project_number)}",
+  ]
+}
+
+# GKE Cluster Config
 module "primary-cluster" {
-  # google-beta provider has an update-variant option
-  # source                     = "./modules/terraform-google-kubernetes-engine/modules/beta-public-cluster-update-variant"
-  source = "./modules/terraform-google-kubernetes-engine/"
+  source = "./modules/terraform-google-kubernetes-engine"
 
   project_id                 = var.google_project
   name                       = local.cluster_name
   region                     = var.google_region
   zones                      = var.zones
-  network                    = module.primary-cluster-networking.network_name
-  subnetwork                 = module.primary-cluster-networking.subnets_names[0]
+  network                    = local.network_name
+  network_project_id         = var.shared_vpc_host_google_project
+  subnetwork                 = local.primary_subnet_name
   ip_range_pods              = local.pods_ip_range_name
   ip_range_services          = local.services_ip_range_name
   http_load_balancing        = false
   horizontal_pod_autoscaling = false
-  network_policy             = true
+  create_service_account     = true
+//  remove_default_node_pool   = true
 
-  //Required for GKE-installed Istio
-  create_service_account = true
-
-  # Google Container Registry access
-  registry_project_id   = var.google_project
-  grant_registry_access = true
-
-  # google-beta provider allows setting a Release Channel
-  # release_channel = var.release_channel
+  # Required for GKE-installed Istio
+  network_policy = true
 
   node_pools = [
     {
@@ -110,36 +117,6 @@ module "primary-cluster" {
   }
 }
 
-module "primary-cluster-networking" {
-  source       = "./modules/terraform-google-network"
-  project_id   = var.google_project
-  network_name = local.network_name
-  routing_mode = "REGIONAL"
-
-  subnets = [
-    {
-      subnet_name   = local.primary_subnet_name
-      subnet_ip     = "10.10.0.0/16"
-      subnet_region = var.google_region
-    },
-  ]
-
-  secondary_ranges = {
-    "${local.primary_subnet_name}" = [
-      {
-        range_name = local.pods_ip_range_name
-        # ip_cidr_range = "192.168.0.0/18"
-        ip_cidr_range = "10.11.0.0/16"
-      },
-      {
-        range_name = local.services_ip_range_name
-        # ip_cidr_range = "192.168.64.0/18"
-        ip_cidr_range = "10.12.0.0/16"
-      },
-    ]
-  }
-}
-
 # We use this data provider to expose an access token for communicating with the GKE cluster.
 data "google_client_config" "default" {}
 
@@ -148,7 +125,7 @@ data "google_container_cluster" "current_cluster" {
   location = module.primary-cluster.location
 }
 
-
+# Bootstrap to install service mesh, logging, etc
 module bootstrap {
   source = "./modules/bootstrap"
 
