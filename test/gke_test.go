@@ -102,7 +102,7 @@ func TestTerraformGcpGkeTemplate(t *testing.T) {
 			if clusterNameErr != nil {
 				logger.Logf(t, "Error getting cluster_name from 'terraform output cluster_name': %v", clusterNameErr)
 			} else {
-				logger.Logf(t, "got clusterName = %s", clusterName)
+				logger.Log(t, "got clusterName = " + clusterName)
 			}
 
 			cmd := shell.Command{
