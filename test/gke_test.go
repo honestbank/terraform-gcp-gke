@@ -42,9 +42,11 @@ func TestTerraformGcpGkeTemplate(t *testing.T) {
 			kubectlOptions := k8s.NewKubectlOptions("", tmpKubeConfigPath, "kube-system")
 			uniqueID := "a"+random.UniqueId() // Workaround for when uniqueId has a numerical prefix which GCP doesn't allow
 
-			// make sure to `export` one of these vars
-			// GOOGLE_PROJECT GOOGLE_CLOUD_PROJECT GOOGLE_CLOUD_PROJECT_ID
-			// GCLOUD_PROJECT CLOUDSDK_CORE_PROJECT
+			// make sure to `export`:
+			// GOOGLE_PROJECT=test-terraform-project-01
+			// GOOGLE_CREDENTIALS=service account for GOOGLE_PROJECT
+			// TF_VAR_shared_vpc_host_google_project="test-gcp-project-01-274314"
+			// TF_VAR_shared_vpc_host_google_credentials=service account for shared_vpc_host_google_project
 			project := gcp.GetGoogleProjectIDFromEnvVar(t)
 			credentials := gcp.GetGoogleCredentialsFromEnvVar(t)
 			region := gcpIndonesiaRegion
@@ -98,9 +100,9 @@ func TestTerraformGcpGkeTemplate(t *testing.T) {
 
 			clusterName, clusterNameErr := terraform.OutputE(t, gkeClusterTerratestOptions, "cluster_name")
 			if clusterNameErr != nil {
-				logger.Log(t, "Error getting cluster_name from 'terraform output cluster_name': %v", clusterNameErr)
+				logger.Logf(t, "Error getting cluster_name from 'terraform output cluster_name': %v", clusterNameErr)
 			} else {
-				logger.Log(t, "got clusterName = %s", clusterName)
+				logger.Log(t, "got clusterName = " + clusterName)
 			}
 
 			cmd := shell.Command{

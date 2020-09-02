@@ -5,7 +5,7 @@ this internal/external module structure is required to enable E2E testing using 
 
 This folder can be init'ed and applied using Terraform to test functionality.
 
-To run E2E tests, navigate to the [../test folder](../test/) and run `go test -v -timeout 30m`.
+To run E2E tests, navigate to the [test folder](../test) and run `go test -v -timeout 30m`.
 
 ## Variables
 

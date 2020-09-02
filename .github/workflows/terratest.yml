@@ -9,6 +9,9 @@ on:
 env:
   GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
   GOOGLE_PROJECT: ${{ secrets.GOOGLE_PROJECT }}
+  TF_VAR_shared_vpc_host_google_project: ${{ secrets.TF_VAR_shared_vpc_host_google_project }}
+  TF_VAR_shared_vpc_host_google_credentials: ${{ secrets.TF_VAR_shared_vpc_host_google_credentials }}
+  TF_VAR_google_region: "asia-southeast2"
 jobs:
   go:
     name: terratest
@@ -32,10 +35,10 @@ jobs:
           export_default_credentials: false
       - name: Set Google Cloud project
         run: gcloud config set project ${{ secrets.GOOGLE_PROJECT }}
-      - name: Set up Go (1.14)
-        uses: actions/setup-go@v1
+      - name: Set up Go (1.15)
+        uses: actions/setup-go@v2
         with:
-          go-version: 1.14
+          go-version: 1.15
         id: go
       - name: Get Go dependencies
         run: |
@@ -44,6 +47,9 @@ jobs:
               curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
               dep ensure
           fi
+      - uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_version: 0.13.1
       - name: Run 'go test -v -timeout 30m'
         run: |
           cd test

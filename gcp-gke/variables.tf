@@ -1,9 +1,9 @@
 locals {
-  cluster_name           = "${var.stage}-${var.cluster_purpose}-${var.cluster_number}"
-  network_name           = "${local.cluster_name}-network"
-  primary_subnet_name    = "${local.cluster_name}-subnet-01"
-  pods_ip_range_name     = "${local.cluster_name}-pods-ip-range"
-  services_ip_range_name = "${local.cluster_name}-services-ip-range"
+  cluster_name           = "${var.stage}-${var.cluster_purpose}-${var.cluster_number}-${random_id.run_id.hex}"
+  network_name           = "private-vpc"
+  primary_subnet_name    = "private-vpc-subnet"
+  pods_ip_range_name     = "private-vpc-pods"
+  services_ip_range_name = "private-vpc-services"
   primary_node_pool_name = "${local.cluster_name}-node-pool-01"
 
   elastic_password = ""
@@ -11,16 +11,22 @@ locals {
 
 variable "google_project" {
   description = "The GCP project to use for this run"
-  default     = "test-terraform-project-01"
 }
 
 variable "google_credentials" {
   description = "Contents of a JSON keyfile of an account with write access to the project"
 }
 
+variable "shared_vpc_host_google_project" {
+  description = "The GCP project that hosts the shared VPC to place resources into"
+}
+
+variable "shared_vpc_host_google_credentials" {
+  description = "Service Account with access to shared_vpc_host_google_project networks"
+}
+
 variable "google_region" {
   description = "GCP region used to create all resources in this run"
-  default     = "asia-southeast2"
 }
 
 variable "stage" {

@@ -1,10 +1,17 @@
 variable "google_project" {
   description = "The GCP project to use for this run"
-  default     = "test-terraform-project-01"
 }
 
 variable "google_credentials" {
   description = "Contents of a JSON keyfile of an account with write access to the project"
+}
+
+variable "shared_vpc_host_google_project" {
+  description = "The GCP project that hosts the shared VPC to place resources into"
+}
+
+variable "shared_vpc_host_google_credentials" {
+  description = "Service Account with access to shared_vpc_host_google_project networks"
 }
 
 variable "google_region" {
