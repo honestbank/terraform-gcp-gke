@@ -7,6 +7,15 @@ variable "google_credentials" {
   description = "Contents of a JSON keyfile of an account with write access to the project"
 }
 
+variable "shared_vpc_host_google_project" {
+  description = "The GCP project that hosts the shared VPC to place resources into"
+  default     = "test-api-shared-vpc"
+}
+
+variable "shared_vpc_host_google_credentials" {
+  description = "Service Account with access to shared_vpc_host_google_project networks"
+}
+
 variable "google_region" {
   description = "GCP region used to create all resources in this run"
 }
