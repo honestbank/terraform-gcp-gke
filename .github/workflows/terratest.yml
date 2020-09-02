@@ -11,6 +11,7 @@ env:
   GOOGLE_PROJECT: ${{ secrets.GOOGLE_PROJECT }}
   TF_VAR_shared_vpc_host_google_project: ${{ secrets.TF_VAR_shared_vpc_host_google_project }}
   TF_VAR_shared_vpc_host_google_credentials: ${{ secrets.TF_VAR_shared_vpc_host_google_credentials }}
+  TF_VAR_google_region: "asia-southeast2"
 jobs:
   go:
     name: terratest

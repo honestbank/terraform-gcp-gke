@@ -1,6 +1,5 @@
 variable "google_project" {
   description = "The GCP project to use for this run"
-  default     = "test-terraform-project-01"
 }
 
 variable "google_credentials" {
@@ -9,7 +8,6 @@ variable "google_credentials" {
 
 variable "shared_vpc_host_google_project" {
   description = "The GCP project that hosts the shared VPC to place resources into"
-  default     = "test-api-shared-vpc"
 }
 
 variable "shared_vpc_host_google_credentials" {
