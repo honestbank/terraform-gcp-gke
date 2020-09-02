@@ -47,6 +47,9 @@ jobs:
               curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
               dep ensure
           fi
+      - uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_version: 0.13.1
       - name: Run 'go test -v -timeout 30m'
         run: |
           cd test
