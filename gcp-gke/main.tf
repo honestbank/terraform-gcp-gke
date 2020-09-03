@@ -45,7 +45,7 @@ resource "random_id" "run_id" {
 
 # Shared VPC Permissions
 data "google_project" "service_project" {
-// Use default google provider
+  // Use default google provider
 }
 
 data "google_project" "host_project" {
@@ -58,8 +58,9 @@ locals {
 }
 
 resource "google_project_iam_binding" "compute-network-user" {
-  project = data.google_project.host_project.project_id
-  role    = "roles/compute.networkUser"
+  provider = google.vpc
+  project  = data.google_project.host_project.project_id
+  role     = "roles/compute.networkUser"
 
   members = [
     "serviceAccount:${format("service-%s@container-engine-robot.iam.gserviceaccount.com", local.project_number)}",
@@ -83,7 +84,7 @@ module "primary-cluster" {
   http_load_balancing        = false
   horizontal_pod_autoscaling = false
   create_service_account     = true
-//  remove_default_node_pool   = true
+  //  remove_default_node_pool   = true
 
   # Required for GKE-installed Istio
   network_policy = true

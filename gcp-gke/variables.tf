@@ -1,9 +1,9 @@
 locals {
   cluster_name           = "${var.stage}-${var.cluster_purpose}-${var.cluster_number}-${random_id.run_id.hex}"
-  network_name           = "private-vpc"
-  primary_subnet_name    = "private-vpc-subnet"
-  pods_ip_range_name     = "private-vpc-pods"
-  services_ip_range_name = "private-vpc-services"
+  network_name           = "${var.stage}-private-vpc"
+  primary_subnet_name    = "${var.stage}-private-vpc-subnet"
+  pods_ip_range_name     = "${var.stage}-private-vpc-pods"
+  services_ip_range_name = "${var.stage}-private-vpc-services"
   primary_node_pool_name = "${local.cluster_name}-node-pool-01"
 
   elastic_password = ""

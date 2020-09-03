@@ -42,10 +42,10 @@ cluster, otherwise this script will time out/fail.
 Some assumptions are made regarding the name of the shared VPC network, subnet, and
 IP ranges for Pods and Services:
 
-* Shared VPC network name = `private-vpc`
-* Shared VPC subnet name = `private-vpc-subnet`
-* Shared VPC subnet Pods IP range name = `private-vpc-pods`
-* Shared VPC subnet Services IP range name = `private-vpc-services`
+* Shared VPC network name = `<STAGE>-private-vpc` (eg. `test-private-vpc`)
+* Shared VPC subnet name = `<STAGE>-private-vpc-subnet` (eg. `test-private-vpc-subnet`)
+* Shared VPC subnet Pods IP range name = `<STAGE>-private-vpc-pods` (eg. `test-private-vpc-pods`)
+* Shared VPC subnet Services IP range name = `<STAGE>-private-vpc-services` (eg. `test-private-vpc-services`)
 
 ### Service Account
 
