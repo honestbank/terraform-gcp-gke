@@ -11,7 +11,6 @@ import (
 	"github.com/gruntwork-io/terratest/modules/gcp"
 	"github.com/gruntwork-io/terratest/modules/k8s"
 	"github.com/gruntwork-io/terratest/modules/logger"
-	"github.com/gruntwork-io/terratest/modules/random"
 	"github.com/gruntwork-io/terratest/modules/terraform"
 	test_structure "github.com/gruntwork-io/terratest/modules/test-structure"
 	"github.com/stretchr/testify/assert"
@@ -40,7 +39,6 @@ func TestTerraformGcpGkeTemplate(t *testing.T) {
 			gkeClusterTerraformModulePath := test_structure.LoadString(t, workingDir, "gkeClusterTerraformModulePath")
 			tmpKubeConfigPath := k8s.CopyHomeKubeConfigToTemp(t)
 			kubectlOptions := k8s.NewKubectlOptions("", tmpKubeConfigPath, "kube-system")
-			uniqueID := "terratest-automated-test-run-"+random.UniqueId()
 
 			// On a blank docker image:
 			// - install go (and gcc)
@@ -65,7 +63,6 @@ func TestTerraformGcpGkeTemplate(t *testing.T) {
 			// }
 
 			logger.Logf(t,"gkeClusterTerratestOptions: %v\n", gkeClusterTerratestOptions)
-			test_structure.SaveString(t, workingDir, "uniqueID", uniqueID)
 			test_structure.SaveString(t, workingDir, "project", project)
 			test_structure.SaveString(t, workingDir, "region", region)
 			test_structure.SaveTerraformOptions(t, workingDir, gkeClusterTerratestOptions)

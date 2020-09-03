@@ -1,9 +1,6 @@
 package test
 
 import (
-	"strings"
-
-	"github.com/gruntwork-io/terratest/modules/random"
 	"github.com/gruntwork-io/terratest/modules/terraform"
 )
 
@@ -18,7 +15,7 @@ func createTestGKEClusterTerraformOptions(
 		"google_region":             region,
 		"google_project":            project,
 		"google_credentials": credentials,
-		"stage":        "a"+strings.ToLower(random.UniqueId()), // Workaround for when uniqueId has a numerical prefix which GCP doesn't allow
+		"stage": "test",
 	}
 
 	terratestOptions := terraform.Options{
