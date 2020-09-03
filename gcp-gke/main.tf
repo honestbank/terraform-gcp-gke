@@ -58,6 +58,7 @@ locals {
 }
 
 resource "google_project_iam_binding" "compute-network-user" {
+  provider = google.vpc
   project = data.google_project.host_project.project_id
   role    = "roles/compute.networkUser"
 
