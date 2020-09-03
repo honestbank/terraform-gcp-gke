@@ -40,8 +40,12 @@ func TestTerraformGcpGkeTemplate(t *testing.T) {
 			gkeClusterTerraformModulePath := test_structure.LoadString(t, workingDir, "gkeClusterTerraformModulePath")
 			tmpKubeConfigPath := k8s.CopyHomeKubeConfigToTemp(t)
 			kubectlOptions := k8s.NewKubectlOptions("", tmpKubeConfigPath, "kube-system")
-			uniqueID := "a"+random.UniqueId() // Workaround for when uniqueId has a numerical prefix which GCP doesn't allow
+			uniqueID := "terratest-automated-test-run-"+random.UniqueId()
 
+			// On a blank docker image:
+			// - install go (and gcc)
+			// - install git
+			// - download terraform
 			// make sure to `export`:
 			// GOOGLE_PROJECT=test-terraform-project-01
 			// GOOGLE_CREDENTIALS=service account for GOOGLE_PROJECT
@@ -85,12 +89,9 @@ func TestTerraformGcpGkeTemplate(t *testing.T) {
 
 		logger.Log(t, "About to start configure_kubectl")
 		test_structure.RunTestStage(t, "configure_kubectl", func() {
+
 			gkeClusterTerratestOptions := test_structure.LoadTerraformOptions(t, workingDir)
-
 			logger.Logf(t,"gkeClusterTerratestOptions looks like: %v", gkeClusterTerratestOptions)
-
-			kubectlOptions := test_structure.LoadKubectlOptions(t, workingDir)
-			logger.Log(t, "got kubectlOptions")
 
 			project := test_structure.LoadString(t, workingDir, "project")
 			logger.Log(t, "got project = " +  project)
@@ -114,9 +115,6 @@ func TestTerraformGcpGkeTemplate(t *testing.T) {
 					"--region", region,
 					"--project", project,
 					"--quiet",
-				},
-				Env: map[string]string{
-					"KUBECONFIG": kubectlOptions.ConfigPath,
 				},
 			}
 			shell.RunCommand(t, cmd)
