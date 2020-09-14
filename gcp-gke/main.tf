@@ -71,6 +71,9 @@ resource "google_project_iam_binding" "compute-network-user" {
 
 # GKE Cluster Config
 module "primary-cluster" {
+  providers = {
+    google = google
+  }
   source = "./modules/terraform-google-kubernetes-engine/modules/beta-private-cluster-update-variant"
 
   project_id                 = var.google_project
