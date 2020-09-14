@@ -146,6 +146,13 @@ spec:
       enabled: true
     kiali:
       enabled: true
+    prometheus:
+      enabled: true
+    prometheusOperator:
+      enabled: true
+  values:
+    prometheusOperator:
+      createPrometheusResource: false
 EOF
 EOH
   }
@@ -203,6 +210,20 @@ resource "helm_release" "jaeger" {
   set {
     name  = "rbac.clusterRole"
     value = "true"
+  }
+}
+
+# Install Prometheus Operator
+resource "helm_release" "prometheus_operator" {
+  name = "prometheus-operator"
+  repository = "https://prometheus-community.github.io/helm-charts"
+  chart = "kube-prometheus-stack"
+  namespace = "prometheus"
+  create_namespace = true
+
+  set {
+    name = "serviceMonitorSelectorNilUsesHelmValues"
+    value = "false"
   }
 }
 

@@ -70,7 +70,7 @@ resource "google_project_iam_binding" "compute-network-user" {
 
 # GKE Cluster Config
 module "primary-cluster" {
-  source = "./modules/terraform-google-kubernetes-engine"
+  source = "./modules/terraform-google-kubernetes-engine/modules/beta-private-cluster-update-variant"
 
   project_id                 = var.google_project
   name                       = local.cluster_name
@@ -84,10 +84,23 @@ module "primary-cluster" {
   http_load_balancing        = false
   horizontal_pod_autoscaling = false
   create_service_account     = true
-  //  remove_default_node_pool   = true
+  remove_default_node_pool   = true
+  release_channel = var.release_channel
+
+  // Private nodes better control public exposure, and reduce
+  // the ability of nodes to reach to the Internet without
+  // additional configurations.
+  enable_private_nodes = true
+  enable_shielded_nodes = true
+  enable_intranode_visibility = true
+  add_cluster_firewall_rules = true
 
   # Required for GKE-installed Istio
   network_policy = true
+
+  // Basic Auth disabled
+  basic_auth_username = ""
+  basic_auth_password = ""
 
   node_pools = [
     {
@@ -124,6 +137,25 @@ data "google_client_config" "default" {}
 data "google_container_cluster" "current_cluster" {
   name     = module.primary-cluster.name
   location = module.primary-cluster.location
+}
+
+resource "google_compute_address" "cloud_nat_ip" {
+  provider = google.vpc
+  name = "gke-nat"
+}
+
+module "cloud_nat" {
+  providers = {
+    google = google.vpc
+  }
+  source        = "terraform-google-modules/cloud-nat/google"
+  version       = "~> 1.3.0"
+  project_id    = var.shared_vpc_host_google_project
+  region        = var.google_region
+  router        = "gke-router"
+  network       = local.network_name
+  create_router = true
+  nat_ips = [google_compute_address.cloud_nat_ip.self_link]
 }
 
 # Bootstrap to install service mesh, logging, etc

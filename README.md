@@ -6,7 +6,7 @@ This script/module creates a basic public GKE cluster located in a shared VPC.
 
 ## Inputs
 
-* `google_region` - region in which to create resources (defaults to `asia-southeast2`).
+* `google_region` - region in which to create resources.
 * `zones` - zones to place compute resources in (defaults to `["asia-southeast2-a", "asia-southeast2-b", "asia-southeast2-c"]`).
 * `google_project` - project in which to place compute resources (defaults to `test-api-cloud-infrastructure`).
 * `google_credentials` - service account with ability to create resources in `google_project`.
@@ -19,6 +19,16 @@ This script/module creates a basic public GKE cluster located in a shared VPC.
 
 **TODO:** Add remaining variables
 
+To run locally,export the following variables:
+
+```bash
+export TF_VAR_google_region="asia-southeast2"
+export TF_VAR_google_project=
+export TF_VAR_google_credentials=
+export TF_VAR_shared_vpc_host_google_project=
+export TF_VAR_shared_vpc_host_google_credentials= 
+```
+
 ## GCP Project Setup
 
 When preparing a GCP project for a Terraform GKE deployment, ensure the
@@ -27,6 +37,7 @@ following APIs/services are enabled:
 * GKE
 * Cloud Resource Manager
 * Compute Service
+* Service Networking
 
 ### Networking
 

@@ -29,11 +29,16 @@ output "ca_certificate" {
 }
 
 output "service_account" {
-  description = "The default service account used for running nodes."
+  description = "The default service account used for running nodes"
   value       = module.primary-cluster.service_account
 }
 
 output "cluster_name" {
   description = "The GKE cluster name that was built"
   value       = module.primary-cluster.name
+}
+
+output "cluster_nat_ips" {
+  description = "The external NAT IP address used by the GKE cluster for internet access"
+  value = google_compute_address.cloud_nat_ip.address
 }
