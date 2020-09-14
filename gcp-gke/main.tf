@@ -46,6 +46,7 @@ resource "random_id" "run_id" {
 # Shared VPC Permissions
 data "google_project" "service_project" {
   // Use default google provider
+  provider = google
 }
 
 data "google_project" "host_project" {
