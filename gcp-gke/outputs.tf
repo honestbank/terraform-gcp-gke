@@ -40,5 +40,5 @@ output "cluster_name" {
 
 output "cluster_nat_ips" {
   description = "The external NAT IP address used by the GKE cluster for internet access"
-  value = google_compute_address.cloud_nat_ip.address
+  value       = google_compute_address.cloud_nat_ip.address
 }
