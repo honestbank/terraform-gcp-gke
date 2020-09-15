@@ -36,7 +36,7 @@ following APIs/services are enabled:
 
 * GKE
 * Cloud Resource Manager
-* Compute Service
+* Compute Engine
 * Service Networking
 
 ### Networking
@@ -67,9 +67,13 @@ the Owner role in the project. It might be possible to use the Editor role but
 currently using the Editor role returns a 403 error when IAM logWriter Role 
 permissions are being assigned. Further troubleshooting is needed.
 
-The Service Account specified in `shared_vpc_host_google_credentials` requires:
+The `shared_vpc_host_google_credentials` Service Account requires the permissions listed below.
+It is recommended to create a custom role named `Terraform Shared VPC Role` with ID 
+`terraform_shared_vpc_host_role` for convenient management:
 
-* The ability to list networks/subnetworks in `shared_vpc_host_google_project`
+* `resourcemanager.projects.get`
+* `resourcemanager.projects.getIamPolicy`
+* `resourcemanager.projects.setIamPolicy`
 
 ## Cluster Infrastructure
 
