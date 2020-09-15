@@ -1,4 +1,5 @@
 provider "google" {
+  alias       = "compute"
   project     = var.google_project
   region      = var.google_region
   credentials = var.google_credentials
@@ -13,7 +14,13 @@ provider "google" {
     # Required for google_client_openid_userinfo
     "https://www.googleapis.com/auth/userinfo.email",
   ]
-  version = "<= 4.0.0"
+}
+
+provider "google-beta" {
+  alias       = "compute-beta"
+  project     = var.google_project
+  region      = var.google_region
+  credentials = var.google_credentials
 }
 
 provider "google" {
@@ -25,18 +32,43 @@ provider "google" {
 
 terraform {
   required_version = ">= 0.13.1"
+
+  required_providers {
+    external = {
+      version = "~> 1.2.0"
+    }
+
+    google = {
+      version = ">= 3.0.0, <= 4.0.0"
+    }
+
+    google-beta = {
+      version = ">= 3.0.0"
+      source  = "hashicorp/google-beta"
+    }
+
+    null = {
+      version = ">=2.1.2, <= 3.0"
+      source  = "hashicorp/null"
+    }
+
+    random = {
+      version = "<= 3.0"
+    }
+
+    template = {
+      version = "<= 3.0"
+    }
+  }
 }
 
 provider "null" {
-  version = "<= 3.0"
 }
 
 provider "random" {
-  version = "<= 3.0"
 }
 
 provider "template" {
-  version = "<= 3.0"
 }
 
 resource "random_id" "run_id" {
@@ -45,7 +77,7 @@ resource "random_id" "run_id" {
 
 # Shared VPC Permissions
 data "google_project" "service_project" {
-  // Use default google provider
+  provider = google.compute
 }
 
 data "google_project" "host_project" {
@@ -70,7 +102,11 @@ resource "google_project_iam_binding" "compute-network-user" {
 
 # GKE Cluster Config
 module "primary-cluster" {
-  source = "./modules/terraform-google-kubernetes-engine"
+  providers = {
+    google      = google.compute
+    google-beta = google-beta.compute-beta
+  }
+  source = "./modules/terraform-google-kubernetes-engine/modules/beta-private-cluster-update-variant"
 
   project_id                 = var.google_project
   name                       = local.cluster_name
@@ -84,10 +120,23 @@ module "primary-cluster" {
   http_load_balancing        = false
   horizontal_pod_autoscaling = false
   create_service_account     = true
-  //  remove_default_node_pool   = true
+  remove_default_node_pool   = true
+  release_channel            = var.release_channel
+
+  // Private nodes better control public exposure, and reduce
+  // the ability of nodes to reach to the Internet without
+  // additional configurations.
+  enable_private_nodes        = true
+  enable_shielded_nodes       = true
+  enable_intranode_visibility = true
+  add_cluster_firewall_rules  = true
 
   # Required for GKE-installed Istio
   network_policy = true
+
+  // Basic Auth disabled
+  basic_auth_username = ""
+  basic_auth_password = ""
 
   node_pools = [
     {
@@ -119,15 +168,69 @@ module "primary-cluster" {
 }
 
 # We use this data provider to expose an access token for communicating with the GKE cluster.
-data "google_client_config" "default" {}
+data "google_client_config" "default" {
+  provider = google-beta.compute-beta
+}
 
 data "google_container_cluster" "current_cluster" {
+  provider = google-beta.compute-beta
+
   name     = module.primary-cluster.name
   location = module.primary-cluster.location
 }
 
+# Networking - create a NAT gateway for the cluster
+resource "google_compute_address" "cloud_nat_ip" {
+  provider = google.vpc
+  name     = "gke-nat"
+}
+
+module "cloud_nat" {
+  providers = {
+    google = google.vpc
+  }
+  source        = "terraform-google-modules/cloud-nat/google"
+  version       = "~> 1.3.0"
+  project_id    = var.shared_vpc_host_google_project
+  region        = var.google_region
+  router        = "gke-router"
+  network       = local.network_name
+  create_router = true
+  nat_ips       = [google_compute_address.cloud_nat_ip.self_link]
+}
+
+# Providers for Bootstrap
+provider "helm" {
+  # Use provider with Helm 3.x support
+  version = "~> 1.3.0"
+
+  kubernetes {
+    load_config_file = false
+
+    host                   = "https://${module.primary-cluster.endpoint}"
+    token                  = data.google_client_config.default.access_token
+    cluster_ca_certificate = base64decode(module.primary-cluster.ca_certificate)
+  }
+}
+
+provider kubernetes {
+  load_config_file = false
+
+  host                   = "https://${module.primary-cluster.endpoint}"
+  token                  = data.google_client_config.default.access_token
+  cluster_ca_certificate = base64decode(module.primary-cluster.ca_certificate)
+
+  version = "~> 1.13"
+}
+
 # Bootstrap to install service mesh, logging, etc
 module bootstrap {
+  providers = {
+    helm       = helm
+    kubernetes = kubernetes
+    null       = null
+  }
+
   source = "./modules/bootstrap"
 
   google_credentials = var.google_credentials
@@ -141,4 +244,6 @@ module bootstrap {
 
   kiali_username   = var.kiali_username
   kiali_passphrase = var.kiali_passphrase
+
+  depends_on = [module.cloud_nat]
 }

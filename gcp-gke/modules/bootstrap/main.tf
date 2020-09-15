@@ -1,32 +1,3 @@
-terraform {
-  required_version = ">=0.12.28, <0.14"
-}
-
-provider "helm" {
-  # Use provider with Helm 3.x support
-  version = "~> 1.2.4"
-
-  kubernetes {
-    load_config_file = false
-
-    host                   = var.cluster_host
-    token                  = var.cluster_token
-    cluster_ca_certificate = var.cluster_ca_certificate
-  }
-}
-
-provider "kubernetes" {
-  load_config_file = false
-
-  host                   = var.cluster_host
-  token                  = var.cluster_token
-  cluster_ca_certificate = var.cluster_ca_certificate
-}
-
-provider "null" {
-  version = " >= 1.2"
-}
-
 # setup_gcloud_cli steps
 # 1 - write GCP credentials to file
 # 2 - download gcloud CLI and extract
@@ -146,6 +117,13 @@ spec:
       enabled: true
     kiali:
       enabled: true
+    prometheus:
+      enabled: true
+    prometheusOperator:
+      enabled: true
+  values:
+    prometheusOperator:
+      createPrometheusResource: false
 EOF
 EOH
   }
@@ -203,6 +181,20 @@ resource "helm_release" "jaeger" {
   set {
     name  = "rbac.clusterRole"
     value = "true"
+  }
+}
+
+# Install Prometheus Operator
+resource "helm_release" "prometheus_operator" {
+  name = "prometheus-operator"
+  repository = "https://prometheus-community.github.io/helm-charts"
+  chart = "kube-prometheus-stack"
+  namespace = "prometheus"
+  create_namespace = true
+
+  set {
+    name = "serviceMonitorSelectorNilUsesHelmValues"
+    value = "false"
   }
 }
 
