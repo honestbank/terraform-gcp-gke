@@ -1,0 +1,4 @@
+prometheus:
+  enabled: true # default to create prometheus instance
+  prometheusSpec:
+    serviceMonitorSelectorNilUsesHelmValues: false

@@ -70,8 +70,8 @@ resource "null_resource" "set_kiali_credentials" {
 
   provisioner "local-exec" {
     command = <<EOH
-if ! command -v kubectl; then alias kubectl=./kubectl; fi;
 kubectl create ns istio-system
+if ! command -v kubectl; then alias kubectl=./kubectl; fi;
 KIALI_USERNAME=$(printf "${var.kiali_username}" | base64)
 echo "Kiali Username (base64): "$KIALI_USERNAME
 KIALI_PASSPHRASE=$(printf "${var.kiali_passphrase}" | base64)
@@ -118,7 +118,7 @@ spec:
     kiali:
       enabled: true
     prometheus:
-      enabled: true
+      enabled: false
     prometheusOperator:
       enabled: true
   values:
@@ -192,10 +192,9 @@ resource "helm_release" "prometheus_operator" {
   namespace = "prometheus"
   create_namespace = true
 
-  set {
-    name = "serviceMonitorSelectorNilUsesHelmValues"
-    value = "false"
-  }
+  values = [
+    file("${path.module}/prometheus/prometheus-operator-helm-values.yaml")
+  ]
 }
 
 ### cert-manager (v0.16.1)
