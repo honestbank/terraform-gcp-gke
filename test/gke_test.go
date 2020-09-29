@@ -104,7 +104,7 @@ func TestTerraformGcpGkeTemplate(t *testing.T) {
 			}
 
 			cmd := shell.Command{
-				Command: "gcloud",
+				Command: "./google-cloud-sdk/bin/gcloud",
 				Args: []string{
 					"container",
 					"clusters",
