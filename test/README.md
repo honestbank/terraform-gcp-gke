@@ -41,6 +41,12 @@ export GOROOT="/usr/bin"
 cp go/bin/go /usr/bin
 ```
 
+Python:
+
+```bash
+apt update && apt install -y python3.8
+```
+
 Terraform:
 
 ```bash
