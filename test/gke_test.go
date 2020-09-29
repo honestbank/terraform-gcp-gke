@@ -103,6 +103,9 @@ func TestTerraformGcpGkeTemplate(t *testing.T) {
 				logger.Log(t, "got clusterName = " + clusterName)
 			}
 
+			logger.Log(t, "working directory is: " + workingDir)
+			gkeClusterTerraformModulePath := test_structure.LoadString(t, workingDir, "gkeClusterTerraformModulePath")
+
 			cmd := shell.Command{
 				Command: "./google-cloud-sdk/bin/gcloud",
 				Args: []string{
@@ -113,6 +116,7 @@ func TestTerraformGcpGkeTemplate(t *testing.T) {
 					"--project", project,
 					"--quiet",
 				},
+				WorkingDir: gkeClusterTerraformModulePath,
 			}
 			shell.RunCommand(t, cmd)
 		})
