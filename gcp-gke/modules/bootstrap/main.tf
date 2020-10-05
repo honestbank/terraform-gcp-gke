@@ -24,7 +24,7 @@ resource "null_resource" "download_kubectl" {
   }
   provisioner "local-exec" {
     command = <<EOH
-if ! command -v kubectl; then curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl && chmod +x kubectl && alias kubectl="./kubectl"; fi;
+if ! command -v kubectl; then curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl && chmod +x kubectl && mv kubectl /usr/local/bin/kubectl; fi;
 EOH
   }
 }
@@ -70,8 +70,8 @@ resource "null_resource" "set_kiali_credentials" {
 
   provisioner "local-exec" {
     command = <<EOH
-if ! command -v kubectl; then alias kubectl=./kubectl; fi;
 kubectl create ns istio-system
+if ! command -v kubectl; then alias kubectl=./kubectl; fi;
 KIALI_USERNAME=$(printf "${var.kiali_username}" | base64)
 echo "Kiali Username (base64): "$KIALI_USERNAME
 KIALI_PASSPHRASE=$(printf "${var.kiali_passphrase}" | base64)
@@ -118,7 +118,7 @@ spec:
     kiali:
       enabled: true
     prometheus:
-      enabled: true
+      enabled: false
     prometheusOperator:
       enabled: true
   values:
@@ -181,20 +181,6 @@ resource "helm_release" "jaeger" {
   set {
     name  = "rbac.clusterRole"
     value = "true"
-  }
-}
-
-# Install Prometheus Operator
-resource "helm_release" "prometheus_operator" {
-  name = "prometheus-operator"
-  repository = "https://prometheus-community.github.io/helm-charts"
-  chart = "kube-prometheus-stack"
-  namespace = "prometheus"
-  create_namespace = true
-
-  set {
-    name = "serviceMonitorSelectorNilUsesHelmValues"
-    value = "false"
   }
 }
 
