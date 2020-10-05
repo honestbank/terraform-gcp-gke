@@ -184,19 +184,6 @@ resource "helm_release" "jaeger" {
   }
 }
 
-# Install Prometheus Operator
-resource "helm_release" "prometheus_operator" {
-  name = "prometheus-operator"
-  repository = "https://prometheus-community.github.io/helm-charts"
-  chart = "kube-prometheus-stack"
-  namespace = "prometheus"
-  create_namespace = true
-
-  values = [
-    file("${path.module}/prometheus/prometheus-operator-helm-values.yaml")
-  ]
-}
-
 ### cert-manager (v0.16.1)
 # Install cert-manager CRDs
 resource "null_resource" "install_cert-manager_crds" {
