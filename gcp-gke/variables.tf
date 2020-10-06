@@ -56,7 +56,7 @@ variable "release_channel" {
 
 variable "minimum_node_count" {
   default     = 1
-  description = "Minimum nodes for the node pool per-zone.
+  description = "Minimum nodes for the node pool per-zone."
 }
 
 variable "maximum_node_count" {
