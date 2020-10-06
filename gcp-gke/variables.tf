@@ -56,12 +56,12 @@ variable "release_channel" {
 
 variable "minimum_node_count" {
   default     = 1
-  description = "Minimum nodes for the node pool. This is the total nodes so for regional deployments it is the total nodes across all zones."
+  description = "Minimum nodes for the node pool per-zone.
 }
 
 variable "maximum_node_count" {
-  default     = 2
-  description = "Maximum nodes for the node pool. This is the total nodes so for regional deployments it is the total nodes across all zones."
+  default     = 1
+  description = "Maximum nodes for the node pool per-zone."
 }
 
 variable "initial_node_count" {
