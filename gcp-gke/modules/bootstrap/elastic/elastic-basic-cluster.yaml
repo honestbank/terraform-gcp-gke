@@ -12,6 +12,21 @@ spec:
         node.data: true
         node.ingest: true
         node.store.allow_mmap: false
+      podTemplate:
+        spec:
+          containers:
+            - name: elasticsearch
+              env:
+                - name: ES_JAVA_OPTS
+                  value: -Xms2g -Xmx2g
+              resources:
+                requests:
+                  memory: 4Gi
+                  cpu: 8
+                limits:
+                  memory: 4Gi
+  secureSettings:
+    secretName: elasticsearch-gcs-credentials
   # http:
   #   tls:
   #     certificate:
