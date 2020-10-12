@@ -144,8 +144,8 @@ module "primary-cluster" {
       machine_type    = var.machine_type
       min_count       = var.minimum_node_count
       max_count       = var.maximum_node_count
-      node_count      = 1
-      local_ssd_count = 1
+      node_count      = var.initial_node_count
+      local_ssd_count = 0
       disk_size_gb    = 200
       disk_type       = "pd-standard"
       image_type      = "COS"
