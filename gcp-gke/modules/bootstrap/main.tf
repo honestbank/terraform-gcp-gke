@@ -51,7 +51,6 @@ resource "null_resource" "install_istio_operator" {
 
   provisioner "local-exec" {
     command = <<EOH
-if ! command -v kubectl; then alias kubectl=./kubectl; fi;
 curl -sL https://istio.io/downloadIstioctl | sh -
 export PATH=$PATH:$HOME/.istioctl/bin
 istioctl operator init
@@ -59,7 +58,7 @@ kubectl label namespace default istio-injection=enabled --overwrite
 EOH
   }
 
-  depends_on = [null_resource.configure_kubectl]
+  depends_on = [null_resource.download_kubectl, null_resource.configure_kubectl]
 }
 
 # Set up Kiali credentials
@@ -71,7 +70,6 @@ resource "null_resource" "set_kiali_credentials" {
   provisioner "local-exec" {
     command = <<EOH
 kubectl create ns istio-system
-if ! command -v kubectl; then alias kubectl=./kubectl; fi;
 KIALI_USERNAME=$(printf "${var.kiali_username}" | base64)
 echo "Kiali Username (base64): "$KIALI_USERNAME
 KIALI_PASSPHRASE=$(printf "${var.kiali_passphrase}" | base64)
@@ -92,7 +90,7 @@ EOF
 EOH
   }
 
-  depends_on = [null_resource.configure_kubectl]
+  depends_on = [null_resource.download_kubectl, null_resource.configure_kubectl]
 }
 
 # Install IstioOperator resource manifest to trigger mesh installation
@@ -103,7 +101,6 @@ resource "null_resource" "install_IstioOperator_manifest" {
 
   provisioner "local-exec" {
     command = <<EOH
-if ! command -v kubectl; then alias kubectl=./kubectl; fi;
 cat <<EOF | kubectl apply -f -
 apiVersion: install.istio.io/v1alpha1
 kind: IstioOperator
@@ -128,6 +125,8 @@ EOF
 EOH
   }
 
+  // These two dependencies implicitly add dependencies to null_resource.download_kubectl
+  // and null_resource.configure_kubectl
   depends_on = [null_resource.install_istio_operator, null_resource.set_kiali_credentials]
 }
 
@@ -139,12 +138,11 @@ resource "null_resource" "install_Elastic_operator" {
 
   provisioner "local-exec" {
     command = <<EOH
-if ! command -v kubectl; then alias kubectl=./kubectl; fi;
 kubectl apply -f https://download.elastic.co/downloads/eck/1.2.0/all-in-one.yaml
 EOH
   }
 
-  depends_on = [null_resource.configure_kubectl]
+  depends_on = [null_resource.download_kubectl, null_resource.configure_kubectl]
 }
 
 # Install Elasticsearch and Kibana
@@ -155,7 +153,6 @@ resource "null_resource" "install_Elastic_resources" {
 
   provisioner "local-exec" {
     command = <<EOH
-if ! command -v kubectl; then alias kubectl=./kubectl; fi;
 kubectl apply -f "${path.module}/elastic/elastic-basic-cluster.yaml"
 kubectl apply -f "${path.module}/elastic/elastic-filebeat.yaml"
 kubectl apply -f "${path.module}/elastic/elastic-kibana.yaml"
