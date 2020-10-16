@@ -114,7 +114,7 @@ spec:
   profile: default
   addonComponents:
     grafana:
-      enabled: true
+      enabled: false
     kiali:
       enabled: true
     prometheus:
@@ -124,6 +124,10 @@ spec:
   values:
     prometheusOperator:
       createPrometheusResource: false
+    kiali:
+      prometheusAddr: http://prometheus-operated.monitoring.svc.cluster.local:9090
+      dashboard:
+        grafanaInClusterURL: http://prometheus-operator-grafana.monitoring.svc.cluster.local
 EOF
 EOH
   }
