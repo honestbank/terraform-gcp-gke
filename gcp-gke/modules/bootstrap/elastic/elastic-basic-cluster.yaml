@@ -25,9 +25,9 @@ spec:
                   cpu: 8
                 limits:
                   memory: 4Gi
-  secureSettings:
-    secretName: elasticsearch-gcs-credentials
-  # http:
+  # secureSettings: # Credentials for GCS plugin for persistent storage
+  #   secretName: elasticsearch-gcs-credentials
+  # # http: # Custom TLS cert for web UI  needs work
   #   tls:
   #     certificate:
-  #       secretName: kibana-cert # Still needs work
+  #       secretName: kibana-cert
