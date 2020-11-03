@@ -13,8 +13,8 @@ if ! command -v go; then
 fi
 
 if ! command -v terraform; then
-  curl -O https://releases.hashicorp.com/terraform/0.13.3/terraform_0.13.3_linux_amd64.zip
-  unzip terraform_0.13.3_linux_amd64.zip
+  curl -O https://releases.hashicorp.com/terraform/0.13.4/terraform_0.13.4_linux_amd64.zip
+  unzip terraform_0.13.4_linux_amd64.zip
   mv terraform /usr/bin
   terraform version || return
 fi
@@ -32,4 +32,3 @@ fi
 if ! ls ~/.kube/config; then
   touch ~/.kube/config
 fi
-

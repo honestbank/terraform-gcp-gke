@@ -4,7 +4,7 @@ metadata:
   name: logging
 spec:
   type: filebeat
-  version: 7.8.1
+  version: 7.9.3
   elasticsearchRef:
     name: logging
   config:
