@@ -176,7 +176,7 @@ resource "helm_release" "jaeger" {
   name             = "telemetry"
   repository       = "https://jaegertracing.github.io/helm-charts"
   chart            = "jaeger-operator"
-  version          = "0.39.0" # Chart version 0.39.0 maps to appVersion 1.20.0
+  version          = "2.17.0" # Chart version 2.17.0 maps to appVersion 1.19.0
   namespace        = "observability"
   create_namespace = true
 
