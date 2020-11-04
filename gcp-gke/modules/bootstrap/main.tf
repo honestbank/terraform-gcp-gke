@@ -206,13 +206,3 @@ resource "helm_release" "cert-manager" {
     value = "true"
   }
 }
-
-# Install Gatekeeper
-resource "helm_release" "gatekeeper" {
-  name             = "gatekeeper"
-  repository       = "https://open-policy-agent.github.io/gatekeeper/charts"
-  chart            = "gatekeeper"
-  version          = "3.1.2"
-  namespace        = "gatekeeper"
-  create_namespace = true
-}
