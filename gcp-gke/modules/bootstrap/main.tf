@@ -173,7 +173,7 @@ EOH
 
 # Install Jaeger Operator
 resource "helm_release" "jaeger" {
-  name             = "telemetry"
+  name             = "jaeger-operator"
   repository       = "https://jaegertracing.github.io/helm-charts"
   chart            = "jaeger-operator"
   version          = "2.17.0" # Chart version 2.17.0 maps to appVersion 1.19.0
