@@ -176,9 +176,11 @@ resource "helm_release" "jaeger" {
   name             = "telemetry"
   repository       = "https://jaegertracing.github.io/helm-charts"
   chart            = "jaeger-operator"
+  version          = "0.39.0" # Chart version 0.39.0 maps to appVersion 1.20.0
   namespace        = "observability"
   create_namespace = true
 
+  # Create a default Jaeger instance
   set {
     name  = "jaeger.create"
     value = "true"
