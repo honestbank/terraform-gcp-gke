@@ -1,4 +1,4 @@
-name: Terratest
+name: terratest
 on:
   pull_request:
     branches:
@@ -21,10 +21,8 @@ jobs:
         uses: actions/checkout@v2
         with:
           submodules: true
-      - name: Set up kubeconfig
-        run: |
-          mkdir /home/runner/.kube
-          touch /home/runner/.kube/config
+      - name: prepare test environment
+        run: source ./test/prepare-test-environment.sh
       - name: Login to Google Cloud
         uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
         with:
@@ -47,9 +45,6 @@ jobs:
               curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
               dep ensure
           fi
-      - uses: hashicorp/setup-terraform@v1
-        with:
-          terraform_version: 0.13.5
       - name: Run 'go test -v -timeout 30m'
         run: |
           cd test
