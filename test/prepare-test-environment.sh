@@ -1,23 +1,37 @@
+# Set environment variables
 export GOOGLE_PROJECT='test-terraform-project-01'
-export GOOGLE_CREDENTIALS=$(cat ../gcp-gke/compute.json)
 export TF_VAR_shared_vpc_host_google_project="test-gcp-project-01-274314"
-export TF_VAR_shared_vpc_host_google_credentials=$(cat ../gcp-gke/vpc.json)
 
-apt update 
+if ls ../gcp-gke/compute.json; then
+  export GOOGLE_CREDENTIALS=$(cat ../gcp-gke/compute.json)
+fi
+
+if ls ../gcp-gke/vpc.json; then
+  export TF_VAR_shared_vpc_host_google_credentials=$(cat ../gcp-gke/vpc.json)
+fi
+
+# Download and install pre-reqs
+apt-get update
+
+if ! command -v sudo; then
+  apt-get install -y sudo
+fi
+
+sudo apt-get update 
 
 if ! command -v kubectl; then
   # apt install -y apt-transport-https gnupg2 curl
   # curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
   # apt install -y kubectl
-  apt-get update && apt-get install -y apt-transport-https gnupg2 curl
-  curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
+  sudo apt-get install -y apt-transport-https gnupg2 curl
+  curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
   echo "deb https://apt.kubernetes.io/ kubernetes-xenial main" | tee -a /etc/apt/sources.list.d/kubernetes.list
-  apt-get update
-  apt-get install -y kubectl
+  sudo apt-get update
+  sudo apt-get install -y kubectl
 fi
 
 if ! command -v git; then
-  apt install -y git
+  apt-get install -y git
 fi
 
 if ! command -v go; then
@@ -30,7 +44,7 @@ if ! command -v go; then
 fi
 
 if ! command -v unzip; then
- apt install -y unzip
+ apt-get install -y unzip
 fi
 
 
@@ -42,17 +56,19 @@ if ! command -v terraform; then
 fi
 
 if ! command -v gcc; then
-  apt install -y gcc
+  apt-get install -y gcc
 fi
 
 if ! command -v python; then
-  apt install -y python
+  apt-get install -y python
 fi
 
 if ! ls ~/.kube; then
   mkdir ~/.kube
+  echo "created .kube"
 fi
 
 if ! ls ~/.kube/config; then
   touch ~/.kube/config
+  echo "created config in .kube"
 fi
