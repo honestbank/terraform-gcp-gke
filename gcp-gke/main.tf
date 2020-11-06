@@ -245,5 +245,5 @@ module bootstrap {
   kiali_username   = var.kiali_username
   kiali_passphrase = var.kiali_passphrase
 
-  depends_on = [module.cloud_nat]
+  depends_on = [module.cloud_nat, module.primary-cluster]
 }
