@@ -29,6 +29,12 @@ if ! command -v python; then
   apt install -y python
 fi
 
+if ! command -v kubectl; then
+  apt install -y apt-transport-https gnupg2 curl
+  curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
+  apt install -y kubectl
+fi
+
 if ! ls ~/.kube/config; then
   touch ~/.kube/config
 fi
