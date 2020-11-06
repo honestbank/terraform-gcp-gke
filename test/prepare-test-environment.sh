@@ -1,4 +1,7 @@
+# #########################
 # Set environment variables
+# #########################
+
 export GOOGLE_PROJECT='test-terraform-project-01'
 export TF_VAR_shared_vpc_host_google_project="test-gcp-project-01-274314"
 
@@ -10,7 +13,9 @@ if ls ../gcp-gke/vpc.json; then
   export TF_VAR_shared_vpc_host_google_credentials=$(cat ../gcp-gke/vpc.json)
 fi
 
+# #############################
 # Download and install pre-reqs
+# #############################
 
 # Github Runner - supports passwordless sudo
 if command -v sudo; then
@@ -22,8 +27,6 @@ if ! command -v sudo; then
   apt-get update
   apt-get install -y sudo
 fi
-
-sudo apt-get update 
 
 if ! command -v kubectl; then
   # apt install -y apt-transport-https gnupg2 curl
@@ -52,7 +55,6 @@ fi
 if ! command -v unzip; then
  apt-get install -y unzip
 fi
-
 
 if ! command -v terraform; then
   curl -O https://releases.hashicorp.com/terraform/0.13.5/terraform_0.13.5_linux_amd64.zip
