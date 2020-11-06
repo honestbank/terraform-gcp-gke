@@ -11,9 +11,15 @@ if ls ../gcp-gke/vpc.json; then
 fi
 
 # Download and install pre-reqs
-apt-get update
 
+# Github Runner - supports passwordless sudo
+if command -v sudo; then
+  sudo apt-get update
+fi
+
+# nektos/act - doesn't have sudo
 if ! command -v sudo; then
+  apt-get update
   apt-get install -y sudo
 fi
 
