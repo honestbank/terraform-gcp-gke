@@ -37,8 +37,6 @@ func TestTerraformGcpGkeTemplate(t *testing.T) {
 
 		test_structure.RunTestStage(t, "create_terratest_options", func() {
 			gkeClusterTerraformModulePath := test_structure.LoadString(t, workingDir, "gkeClusterTerraformModulePath")
-			tmpKubeConfigPath := k8s.CopyHomeKubeConfigToTemp(t)
-			kubectlOptions := k8s.NewKubectlOptions("", tmpKubeConfigPath, "kube-system")
 
 			// On a blank docker image:
 			// - install go (and gcc)
@@ -62,11 +60,10 @@ func TestTerraformGcpGkeTemplate(t *testing.T) {
 			// 	gkeClusterTerratestOptions.Vars["override_default_node_pool_service_account"] = "1"
 			// }
 
-			logger.Logf(t,"gkeClusterTerratestOptions: %v\n", gkeClusterTerratestOptions)
+			logger.Logf(t, "gkeClusterTerratestOptions: %v\n", gkeClusterTerratestOptions)
 			test_structure.SaveString(t, workingDir, "project", project)
 			test_structure.SaveString(t, workingDir, "region", region)
 			test_structure.SaveTerraformOptions(t, workingDir, gkeClusterTerratestOptions)
-			test_structure.SaveKubectlOptions(t, workingDir, kubectlOptions)
 		})
 
 		defer test_structure.RunTestStage(t, "cleanup", func() {
@@ -88,22 +85,22 @@ func TestTerraformGcpGkeTemplate(t *testing.T) {
 		test_structure.RunTestStage(t, "configure_kubectl", func() {
 
 			gkeClusterTerratestOptions := test_structure.LoadTerraformOptions(t, workingDir)
-			logger.Logf(t,"gkeClusterTerratestOptions looks like: %v", gkeClusterTerratestOptions)
+			logger.Logf(t, "gkeClusterTerratestOptions looks like: %v", gkeClusterTerratestOptions)
 
 			project := test_structure.LoadString(t, workingDir, "project")
-			logger.Log(t, "got project = " +  project)
+			logger.Log(t, "got project = "+project)
 
 			region := test_structure.LoadString(t, workingDir, "region")
-			logger.Log(t, "got region = " +  region)
+			logger.Log(t, "got region = "+region)
 
 			clusterName, clusterNameErr := terraform.OutputE(t, gkeClusterTerratestOptions, "cluster_name")
 			if clusterNameErr != nil {
 				logger.Logf(t, "Error getting cluster_name from 'terraform output cluster_name': %v", clusterNameErr)
 			} else {
-				logger.Log(t, "got clusterName = " + clusterName)
+				logger.Log(t, "got clusterName = "+clusterName)
 			}
 
-			logger.Log(t, "working directory is: " + workingDir)
+			logger.Log(t, "working directory is: "+workingDir)
 			gkeClusterTerraformModulePath := test_structure.LoadString(t, workingDir, "gkeClusterTerraformModulePath")
 
 			cmd := shell.Command{
@@ -119,9 +116,13 @@ func TestTerraformGcpGkeTemplate(t *testing.T) {
 				WorkingDir: gkeClusterTerraformModulePath,
 			}
 			shell.RunCommand(t, cmd)
+
+			tmpKubeConfigPath := k8s.CopyHomeKubeConfigToTemp(t)
+			kubectlOptions := k8s.NewKubectlOptions("", tmpKubeConfigPath, "kube-system")
+			test_structure.SaveKubectlOptions(t, workingDir, kubectlOptions)
 		})
 
-		logger.Log(t,"About to start wait_for_workers")
+		logger.Log(t, "About to start wait_for_workers")
 		test_structure.RunTestStage(t, "wait_for_workers", func() {
 			kubectlOptions := test_structure.LoadKubectlOptions(t, workingDir)
 			verifyGkeNodesAreReady(t, kubectlOptions)
@@ -134,18 +135,17 @@ func TestTerraformGcpGkeTemplate(t *testing.T) {
 			resourceCount := terraform.GetResourceCount(t, planResult)
 			assert.Equal(t, 0, resourceCount.Change)
 
-			// There are 4 always-run steps
+			// There are 8 always-run steps
 			// 1 - download_kubectl
 			// 2 - setup_gcloud_cli
 			// 3 - configure_kubectl
-			// 4 - install_cert-manager_crds
-			// 5 - kiali credentials + istio namespace
-			// 6 - istiooperator
-			// 7 - istiomesh
-			// 8 - Elastic operator
-			// 9 - Elastic manifests
-			assert.Equal(t, 9, resourceCount.Add)
-			assert.Equal(t, 9, resourceCount.Destroy)
+			// 4 - kiali credentials + istio namespace
+			// 5 - istiooperator
+			// 6 - istiomesh
+			// 7 - Elastic operator
+			// 8 - Elastic manifests
+			assert.Equal(t, 8, resourceCount.Add)
+			assert.Equal(t, 8, resourceCount.Destroy)
 			assert.Contains(t, planResult, "setup_gcloud_cli")
 			assert.Contains(t, planResult, "configure_kubectl")
 			assert.Contains(t, planResult, "download_kubectl")
