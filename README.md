@@ -1,6 +1,7 @@
 # Terraform Modules for GCP GKE
 
-![Terratest](https://github.com/Honestbank/terraform-gcp-gke/workflows/Terratest/badge.svg) ![Terraform GitHub Actions](https://github.com/Honestbank/terraform-gcp-gke/workflows/Terraform%20GitHub%20Actions/badge.svg)
+![terratest](https://github.com/Honestbank/terraform-gcp-gke/workflows/terratest/badge.svg?branch=main)
+![Terraform GitHub Actions](https://github.com/Honestbank/terraform-gcp-gke/workflows/Terraform%20GitHub%20Actions/badge.svg)
 
 This script/module creates a basic public GKE cluster located in a shared VPC.
 
