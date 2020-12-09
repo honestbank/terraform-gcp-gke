@@ -47,17 +47,26 @@ terraform {
       source  = "hashicorp/google-beta"
     }
 
+    helm = {
+      # Use provider with Helm 3.x support
+      version = "~> 1.3.0"
+    }
+
+    kubernetes = {
+      version = "~> 1.13"
+    }
+
     null = {
       version = ">=2.1.2, <= 3.0"
       source  = "hashicorp/null"
     }
 
     random = {
-      version = "<= 3.0"
+      version = "~> 3.0"
     }
 
     template = {
-      version = "<= 3.0"
+      version = "~> 2.2"
     }
   }
 }
@@ -205,9 +214,6 @@ module "cloud_nat" {
 
 # Providers for Bootstrap
 provider "helm" {
-  # Use provider with Helm 3.x support
-  version = "~> 1.3.0"
-
   kubernetes {
     load_config_file = false
 
@@ -217,18 +223,17 @@ provider "helm" {
   }
 }
 
-provider kubernetes {
+provider "kubernetes" {
   load_config_file = false
 
   host                   = "https://${module.primary-cluster.endpoint}"
   token                  = data.google_client_config.default.access_token
   cluster_ca_certificate = base64decode(module.primary-cluster.ca_certificate)
 
-  version = "~> 1.13"
 }
 
 # Bootstrap to install service mesh, logging, etc
-module bootstrap {
+module "bootstrap" {
   providers = {
     helm       = helm
     kubernetes = kubernetes
