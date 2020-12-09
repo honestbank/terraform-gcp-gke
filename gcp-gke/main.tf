@@ -151,6 +151,9 @@ module "primary-cluster" {
   logging_service    = "none"
   monitoring_service = "none"
 
+  // Storage
+  gce_pd_csi_driver = true
+
   node_pools = [
     {
       name            = "pool-01"
