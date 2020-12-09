@@ -29,7 +29,7 @@ jobs:
       - name: prepare test environment
         run: source ./test/prepare-test-environment.sh
       - name: Login to Google Cloud
-        uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
+        uses: google-github-actions/setup-gcloud@master
         with:
           version: "latest" # This is the default value anyways, just being explicit
           project_id: ${{ env.GOOGLE_PROJECT }}
