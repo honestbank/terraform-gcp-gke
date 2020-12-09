@@ -86,4 +86,4 @@ if ! command -v gcloud; then
   sudo apt-get install apt-transport-https ca-certificates gnupg
   curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key --keyring /usr/share/keyrings/cloud.google.gpg add -
   apt-get update && apt-get install -y google-cloud-sdk
-cd /root/test
+fi
