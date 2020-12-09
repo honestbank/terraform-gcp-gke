@@ -11,7 +11,7 @@ terraform {
   required_version = ">= 0.13.1"
 }
 
-module gke {
+module "gke" {
   source = "./gcp-gke"
 
   google_project     = var.google_project

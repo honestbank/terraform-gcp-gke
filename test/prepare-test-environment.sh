@@ -57,8 +57,8 @@ if ! command -v unzip; then
 fi
 
 if ! command -v terraform; then
-  curl -O https://releases.hashicorp.com/terraform/0.13.5/terraform_0.13.5_linux_amd64.zip
-  unzip terraform_0.13.5_linux_amd64.zip
+  curl -O https://releases.hashicorp.com/terraform/0.14.2/terraform_0.14.2_linux_amd64.zip
+  unzip terraform_0.14.2_linux_amd64.zip
   mv terraform /usr/bin
   terraform version || return
 fi
@@ -79,4 +79,11 @@ fi
 if ! ls ~/.kube/config; then
   touch ~/.kube/config
   echo "created config in .kube"
+fi
+
+if ! command -v gcloud; then
+  echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
+  sudo apt-get install apt-transport-https ca-certificates gnupg
+  curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key --keyring /usr/share/keyrings/cloud.google.gpg add -
+  apt-get update && apt-get install -y google-cloud-sdk
 fi

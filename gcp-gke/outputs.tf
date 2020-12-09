@@ -25,7 +25,8 @@ output "client_token" {
 }
 
 output "ca_certificate" {
-  value = module.primary-cluster.ca_certificate
+  sensitive = true
+  value     = module.primary-cluster.ca_certificate
 }
 
 output "service_account" {
