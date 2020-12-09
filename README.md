@@ -87,4 +87,4 @@ collection from Pods.
 
 A Jaeger instance is deployed to the `observability` namespace with an endpoint
 accessible at `telemetry-jaeger-operator-jaeger-agent.observability.svc.cluster.local`
-with ports `5775/UDP,5778/TCP,6831/UDP,6832/UDP`
+with ports `5775/UDP,5778/TCP,6831/UDP,6832/UDP`.
