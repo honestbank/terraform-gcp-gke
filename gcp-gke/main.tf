@@ -138,6 +138,10 @@ module "primary-cluster" {
   basic_auth_username = ""
   basic_auth_password = ""
 
+  // Disable logging and monitoring
+  logging_service    = "none"
+  monitoring_service = "none"
+
   node_pools = [
     {
       name            = "pool-01"
