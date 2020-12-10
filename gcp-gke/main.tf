@@ -151,6 +151,9 @@ module "primary-cluster" {
   logging_service    = "none"
   monitoring_service = "none"
 
+  // Storage
+  gce_pd_csi_driver = true
+
   node_pools = [
     {
       name            = "pool-01"
@@ -158,10 +161,12 @@ module "primary-cluster" {
       min_count       = var.minimum_node_count
       max_count       = var.maximum_node_count
       node_count      = var.initial_node_count
+      max_surge       = var.maximum_node_count
+      max_unavailable = 1
       local_ssd_count = 0
       disk_size_gb    = 200
       disk_type       = "pd-standard"
-      image_type      = "COS"
+      image_type      = "COS_CONTAINERD"
       auto_repair     = true
       auto_upgrade    = true
       preemptible     = false
