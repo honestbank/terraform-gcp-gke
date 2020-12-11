@@ -153,24 +153,6 @@ EOH
   depends_on = [null_resource.download_kubectl, null_resource.configure_kubectl]
 }
 
-# Install Elasticsearch and Kibana
-resource "null_resource" "install_Elastic_resources" {
-  triggers = {
-    always_run = timestamp()
-  }
-
-  provisioner "local-exec" {
-    command = <<EOH
-if ! command -v kubectl; then alias kubectl=./kubectl; fi;
-kubectl apply -f "${path.module}/elastic/elastic-basic-cluster.yaml"
-kubectl apply -f "${path.module}/elastic/elastic-filebeat.yaml"
-kubectl apply -f "${path.module}/elastic/elastic-kibana.yaml"
-EOH
-  }
-
-  depends_on = [null_resource.install_Elastic_operator]
-}
-
 # Install Jaeger Operator
 resource "helm_release" "jaeger" {
   name             = "jaeger-operator"
