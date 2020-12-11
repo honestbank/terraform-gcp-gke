@@ -146,7 +146,7 @@ resource "null_resource" "install_Elastic_operator" {
   provisioner "local-exec" {
     command = <<EOH
 if ! command -v kubectl; then alias kubectl=./kubectl; fi;
-kubectl apply -f https://download.elastic.co/downloads/eck/1.2.1/all-in-one.yaml
+kubectl apply -f https://download.elastic.co/downloads/eck/1.3.1/all-in-one.yaml
 EOH
   }
 
