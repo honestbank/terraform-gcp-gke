@@ -1,12 +1,13 @@
 package test
 
 import (
-	"github.com/gruntwork-io/terratest/modules/shell"
-	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"log"
 	"os"
 	"path/filepath"
 	"testing"
+
+	"github.com/gruntwork-io/terratest/modules/shell"
+	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
 	"github.com/gruntwork-io/terratest/modules/gcp"
 	"github.com/gruntwork-io/terratest/modules/k8s"
