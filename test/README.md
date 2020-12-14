@@ -73,4 +73,5 @@ If the test fails and doesn't clean up after itself properly, you'll want to cle
 
 * External IP address in the VPC project
 * Cloud Router in the VPC project
+* Firewall policies in the VPC project
 * GKE cluster in the Compute project
