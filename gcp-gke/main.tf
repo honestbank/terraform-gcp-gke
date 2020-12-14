@@ -117,6 +117,10 @@ module "primary-cluster" {
   }
   source = "./modules/terraform-google-kubernetes-engine/modules/beta-private-cluster-update-variant"
 
+  # Disables downloading of gcloud CLI and the wait_for_cluster.sh script
+  # Also breaks stub domains
+  skip_provisioners = true
+
   project_id                 = var.google_project
   name                       = local.cluster_name
   region                     = var.google_region
