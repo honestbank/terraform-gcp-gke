@@ -1,12 +1,13 @@
 package test
 
 import (
-	"github.com/gruntwork-io/terratest/modules/shell"
-	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"log"
 	"os"
 	"path/filepath"
 	"testing"
+
+	"github.com/gruntwork-io/terratest/modules/shell"
+	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
 	"github.com/gruntwork-io/terratest/modules/gcp"
 	"github.com/gruntwork-io/terratest/modules/k8s"
@@ -143,9 +144,8 @@ func TestTerraformGcpGkeTemplate(t *testing.T) {
 			// 5 - istiooperator
 			// 6 - istiomesh
 			// 7 - Elastic operator
-			// 8 - Elastic manifests
-			assert.Equal(t, 8, resourceCount.Add)
-			assert.Equal(t, 8, resourceCount.Destroy)
+			assert.Equal(t, 7, resourceCount.Add)
+			assert.Equal(t, 7, resourceCount.Destroy)
 			assert.Contains(t, planResult, "setup_gcloud_cli")
 			assert.Contains(t, planResult, "configure_kubectl")
 			assert.Contains(t, planResult, "download_kubectl")
