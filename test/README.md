@@ -66,3 +66,11 @@ apt update && apt install -y git
 ```bash
 go test -v -timeout 30m
 ```
+
+## Manual Cleanup
+
+If the test fails and doesn't clean up after itself properly, you'll want to clean out:
+
+* External IP address in the VPC project
+* Cloud Router in the VPC project
+* GKE cluster in the Compute project
