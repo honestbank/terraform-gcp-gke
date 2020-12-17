@@ -4,6 +4,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 
 	"github.com/gruntwork-io/terratest/modules/shell"
@@ -104,6 +105,7 @@ func TestTerraformGcpGkeTemplate(t *testing.T) {
 			logger.Log(t, "working directory is: "+workingDir)
 			gkeClusterTerraformModulePath := test_structure.LoadString(t, workingDir, "gkeClusterTerraformModulePath")
 
+			clusterName = strings.ReplaceAll(clusterName, "\"","")
 			cmd := shell.Command{
 				Command: "gcloud",
 				Args: []string{
