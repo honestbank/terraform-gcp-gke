@@ -102,27 +102,6 @@ EOH
   depends_on = [null_resource.install_istio_operator]
 }
 
-# Install Jaeger Operator
-resource "helm_release" "jaeger" {
-  name             = "jaeger-operator"
-  repository       = "https://jaegertracing.github.io/helm-charts"
-  chart            = "jaeger-operator"
-  version          = "2.17.0" # Chart version 2.17.0 maps to appVersion 1.19.0
-  namespace        = "observability"
-  create_namespace = true
-
-  # Create a default Jaeger instance
-  set {
-    name  = "jaeger.create"
-    value = "true"
-  }
-
-  set {
-    name  = "rbac.clusterRole"
-    value = "true"
-  }
-}
-
 # Install cert-manager
 resource "helm_release" "cert-manager" {
   name             = "cert-manager"
