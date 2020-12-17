@@ -78,11 +78,6 @@ It is recommended to create a custom role named `Terraform Shared VPC Role` with
 
 ## Cluster Infrastructure
 
-### Logging
-
-The Elastic operator for Kubernetes is deployed along with Filebeat for automatic log
-collection from Pods.
-
 ### Tracing/Telemetry
 
 A Jaeger instance is deployed to the `observability` namespace with an endpoint

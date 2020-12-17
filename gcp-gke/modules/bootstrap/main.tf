@@ -62,39 +62,6 @@ EOH
   depends_on = [null_resource.download_kubectl, null_resource.configure_kubectl]
 }
 
-# Set up Kiali credentials
-resource "null_resource" "set_kiali_credentials" {
-  triggers = {
-    always_run = timestamp()
-  }
-
-  provisioner "local-exec" {
-    command = <<EOH
-if ! command -v kubectl; then alias kubectl=./kubectl; fi;
-kubectl create ns istio-system
-KIALI_USERNAME=$(printf "${var.kiali_username}" | base64)
-echo "Kiali Username (base64): "$KIALI_USERNAME
-KIALI_PASSPHRASE=$(printf "${var.kiali_passphrase}" | base64)
-echo "Kiali Passphrase (base64): "$KIALI_PASSPHRASE
-cat <<EOF | kubectl apply -f -
-apiVersion: v1
-kind: Secret
-metadata:
-  name: kiali
-  namespace: istio-system
-  labels:
-    app: kiali
-type: Opaque
-data:
-  username: $KIALI_USERNAME
-  passphrase: $KIALI_PASSPHRASE
-EOF
-EOH
-  }
-
-  depends_on = [null_resource.download_kubectl, null_resource.configure_kubectl]
-}
-
 # Install IstioOperator resource manifest to trigger mesh installation
 resource "null_resource" "install_IstioOperator_manifest" {
   triggers = {
@@ -132,25 +99,7 @@ EOF
 EOH
   }
 
-  // These two dependencies implicitly add dependencies to null_resource.download_kubectl
-  // and null_resource.configure_kubectl
-  depends_on = [null_resource.install_istio_operator, null_resource.set_kiali_credentials]
-}
-
-# Install Elastic operator
-resource "null_resource" "install_Elastic_operator" {
-  triggers = {
-    always_run = timestamp()
-  }
-
-  provisioner "local-exec" {
-    command = <<EOH
-if ! command -v kubectl; then alias kubectl=./kubectl; fi;
-kubectl apply -f https://download.elastic.co/downloads/eck/1.3.1/all-in-one.yaml
-EOH
-  }
-
-  depends_on = [null_resource.download_kubectl, null_resource.configure_kubectl]
+  depends_on = [null_resource.install_istio_operator]
 }
 
 # Install Jaeger Operator
