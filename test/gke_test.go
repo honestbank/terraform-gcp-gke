@@ -140,32 +140,5 @@ func TestTerraformGcpGkeTemplate(t *testing.T) {
 			assert.Equal(t, 0, resourceCount.Add)
 			assert.Equal(t, 0, resourceCount.Destroy)
 		})
-
-		logger.Log(t, "About to start verify_istio`")
-		test_structure.RunTestStage(t, "verify_istio", func() {
-			kubectlOptions := test_structure.LoadKubectlOptions(t, workingDir)
-
-			_, istioOperatorNamespaceError := k8s.GetNamespaceE(t, kubectlOptions, "istio-operator")
-			assert.Nil(t, istioOperatorNamespaceError, "Could not find istio-operator namespace")
-
-			_, istioSystemNamespaceError := k8s.GetNamespaceE(t, kubectlOptions, "istio-system")
-			assert.Nil(t, istioSystemNamespaceError, "Could not find istio-system namespace")
-
-			kubectlOptions.Namespace = "istio-system"
-			istioPods, getIstioPodsError := k8s.ListPodsE(t, kubectlOptions, v1.ListOptions{})
-			assert.Nil(t, getIstioPodsError, "error getting Istio pods")
-			assert.Greater(t, len(istioPods), 0, "no Pods present in istio-system namespace")
-		})
-
-		test_structure.RunTestStage(t, "verify cert-manager", func() {
-			kubectlOptions := test_structure.LoadKubectlOptions(t, workingDir)
-
-			_, certManagerNamespaceError := k8s.GetNamespaceE(t, kubectlOptions, "cert-manager")
-			assert.Nil(t, certManagerNamespaceError, "Could not find cert-manager namespace")
-
-			certManagerPods, certManagerPodsError := k8s.ListPodsE(t, kubectlOptions, v1.ListOptions{})
-			assert.Nil(t, certManagerPodsError, "Could not get pods from cert-manager namespace")
-			assert.Greater(t, len(certManagerPods), 0, "No pods present in cert-manager namespace")
-		})
 	})
 }
