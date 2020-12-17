@@ -4,14 +4,13 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
-
-	"github.com/gruntwork-io/terratest/modules/shell"
-	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
 	"github.com/gruntwork-io/terratest/modules/gcp"
 	"github.com/gruntwork-io/terratest/modules/k8s"
 	"github.com/gruntwork-io/terratest/modules/logger"
+	"github.com/gruntwork-io/terratest/modules/shell"
 	"github.com/gruntwork-io/terratest/modules/terraform"
 	test_structure "github.com/gruntwork-io/terratest/modules/test-structure"
 	"github.com/stretchr/testify/assert"
@@ -104,8 +103,9 @@ func TestTerraformGcpGkeTemplate(t *testing.T) {
 			logger.Log(t, "working directory is: "+workingDir)
 			gkeClusterTerraformModulePath := test_structure.LoadString(t, workingDir, "gkeClusterTerraformModulePath")
 
+			clusterName = strings.ReplaceAll(clusterName, "\"", "")
 			cmd := shell.Command{
-				Command: "./google-cloud-sdk/bin/gcloud",
+				Command: "gcloud",
 				Args: []string{
 					"container",
 					"clusters",
@@ -135,47 +135,8 @@ func TestTerraformGcpGkeTemplate(t *testing.T) {
 			planResult := terraform.InitAndPlan(t, gkeClusterTerratestOptions)
 			resourceCount := terraform.GetResourceCount(t, planResult)
 			assert.Equal(t, 0, resourceCount.Change)
-
-			// There are 8 always-run steps
-			// 1 - download_kubectl
-			// 2 - setup_gcloud_cli
-			// 3 - configure_kubectl
-			// 4 - kiali credentials + istio namespace
-			// 5 - istiooperator
-			// 6 - istiomesh
-			// 7 - Elastic operator
-			assert.Equal(t, 7, resourceCount.Add)
-			assert.Equal(t, 7, resourceCount.Destroy)
-			assert.Contains(t, planResult, "setup_gcloud_cli")
-			assert.Contains(t, planResult, "configure_kubectl")
-			assert.Contains(t, planResult, "download_kubectl")
-		})
-
-		logger.Log(t, "About to start verify_istio`")
-		test_structure.RunTestStage(t, "verify_istio", func() {
-			kubectlOptions := test_structure.LoadKubectlOptions(t, workingDir)
-
-			_, istioOperatorNamespaceError := k8s.GetNamespaceE(t, kubectlOptions, "istio-operator")
-			assert.Nil(t, istioOperatorNamespaceError, "Could not find istio-operator namespace")
-
-			_, istioSystemNamespaceError := k8s.GetNamespaceE(t, kubectlOptions, "istio-system")
-			assert.Nil(t, istioSystemNamespaceError, "Could not find istio-system namespace")
-
-			kubectlOptions.Namespace = "istio-system"
-			istioPods, getIstioPodsError := k8s.ListPodsE(t, kubectlOptions, v1.ListOptions{})
-			assert.Nil(t, getIstioPodsError, "error getting Istio pods")
-			assert.Greater(t, len(istioPods), 0, "no Pods present in istio-system namespace")
-		})
-
-		test_structure.RunTestStage(t, "verify cert-manager", func() {
-			kubectlOptions := test_structure.LoadKubectlOptions(t, workingDir)
-
-			_, certManagerNamespaceError := k8s.GetNamespaceE(t, kubectlOptions, "cert-manager")
-			assert.Nil(t, certManagerNamespaceError, "Could not find cert-manager namespace")
-
-			certManagerPods, certManagerPodsError := k8s.ListPodsE(t, kubectlOptions, v1.ListOptions{})
-			assert.Nil(t, certManagerPodsError, "Could not get pods from cert-manager namespace")
-			assert.Greater(t, len(certManagerPods), 0, "No pods present in cert-manager namespace")
+			assert.Equal(t, 0, resourceCount.Add)
+			assert.Equal(t, 0, resourceCount.Destroy)
 		})
 	})
 }
