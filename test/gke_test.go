@@ -7,12 +7,10 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/gruntwork-io/terratest/modules/shell"
-	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-
 	"github.com/gruntwork-io/terratest/modules/gcp"
 	"github.com/gruntwork-io/terratest/modules/k8s"
 	"github.com/gruntwork-io/terratest/modules/logger"
+	"github.com/gruntwork-io/terratest/modules/shell"
 	"github.com/gruntwork-io/terratest/modules/terraform"
 	test_structure "github.com/gruntwork-io/terratest/modules/test-structure"
 	"github.com/stretchr/testify/assert"
@@ -105,7 +103,7 @@ func TestTerraformGcpGkeTemplate(t *testing.T) {
 			logger.Log(t, "working directory is: "+workingDir)
 			gkeClusterTerraformModulePath := test_structure.LoadString(t, workingDir, "gkeClusterTerraformModulePath")
 
-			clusterName = strings.ReplaceAll(clusterName, "\"","")
+			clusterName = strings.ReplaceAll(clusterName, "\"", "")
 			cmd := shell.Command{
 				Command: "gcloud",
 				Args: []string{
