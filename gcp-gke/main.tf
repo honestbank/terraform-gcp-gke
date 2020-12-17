@@ -240,28 +240,3 @@ provider "kubernetes" {
   cluster_ca_certificate = base64decode(module.primary-cluster.ca_certificate)
 
 }
-
-# Bootstrap to install service mesh, logging, etc
-module "bootstrap" {
-  providers = {
-    helm       = helm
-    kubernetes = kubernetes
-    null       = null
-  }
-
-  source = "./modules/bootstrap"
-
-  google_credentials = var.google_credentials
-  google_project     = var.google_project
-
-  cluster_name           = module.primary-cluster.name
-  cluster_location       = module.primary-cluster.location
-  cluster_host           = "https://${module.primary-cluster.endpoint}"
-  cluster_token          = data.google_client_config.default.access_token
-  cluster_ca_certificate = base64decode(module.primary-cluster.ca_certificate)
-
-  kiali_username   = var.kiali_username
-  kiali_passphrase = var.kiali_passphrase
-
-  depends_on = [module.cloud_nat, module.primary-cluster]
-}
