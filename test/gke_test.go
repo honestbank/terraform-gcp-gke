@@ -105,7 +105,7 @@ func TestTerraformGcpGkeTemplate(t *testing.T) {
 			gkeClusterTerraformModulePath := test_structure.LoadString(t, workingDir, "gkeClusterTerraformModulePath")
 
 			cmd := shell.Command{
-				Command: "./google-cloud-sdk/bin/gcloud",
+				Command: "gcloud",
 				Args: []string{
 					"container",
 					"clusters",
@@ -135,20 +135,8 @@ func TestTerraformGcpGkeTemplate(t *testing.T) {
 			planResult := terraform.InitAndPlan(t, gkeClusterTerratestOptions)
 			resourceCount := terraform.GetResourceCount(t, planResult)
 			assert.Equal(t, 0, resourceCount.Change)
-
-			// There are 8 always-run steps
-			// 1 - download_kubectl
-			// 2 - setup_gcloud_cli
-			// 3 - configure_kubectl
-			// 4 - kiali credentials + istio namespace
-			// 5 - istiooperator
-			// 6 - istiomesh
-			// 7 - Elastic operator
-			assert.Equal(t, 7, resourceCount.Add)
-			assert.Equal(t, 7, resourceCount.Destroy)
-			assert.Contains(t, planResult, "setup_gcloud_cli")
-			assert.Contains(t, planResult, "configure_kubectl")
-			assert.Contains(t, planResult, "download_kubectl")
+			assert.Equal(t, 0, resourceCount.Add)
+			assert.Equal(t, 0, resourceCount.Destroy)
 		})
 
 		logger.Log(t, "About to start verify_istio`")
