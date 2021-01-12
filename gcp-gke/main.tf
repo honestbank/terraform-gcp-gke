@@ -130,7 +130,7 @@ module "primary-cluster" {
   subnetwork                 = local.primary_subnet_name
   ip_range_pods              = local.pods_ip_range_name
   ip_range_services          = local.services_ip_range_name
-  http_load_balancing        = false
+  http_load_balancing        = true
   horizontal_pod_autoscaling = false
   create_service_account     = true
   remove_default_node_pool   = true
