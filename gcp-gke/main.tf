@@ -31,7 +31,7 @@ provider "google" {
 }
 
 terraform {
-  required_version = ">= 0.13.1"
+  required_version = ">= 0.14.0"
 
   required_providers {
     external = {
@@ -39,11 +39,11 @@ terraform {
     }
 
     google = {
-      version = ">= 3.0.0, <= 4.0.0"
+      version = ">= 3.51.0, < 4.0.0"
     }
 
     google-beta = {
-      version = ">= 3.0.0"
+      version = ">= 3.51.0, < 4.0.0"
       source  = "hashicorp/google-beta"
     }
 
