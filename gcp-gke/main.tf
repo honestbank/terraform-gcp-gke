@@ -207,18 +207,18 @@ resource "google_compute_address" "cloud_nat_ip" {
   name     = "gke-nat"
 }
 
-module "cloud_nat" {
-  providers = {
-    google = google.vpc
-  }
-  source        = "terraform-google-modules/cloud-nat/google"
-  version       = "~> 1.3.0"
-  project_id    = var.shared_vpc_host_google_project
-  region        = var.google_region
-  router        = "gke-router"
-  network       = local.network_name
-  create_router = true
-  nat_ips       = [google_compute_address.cloud_nat_ip.self_link]
+module "cloud_router" {
+  source  = "terraform-google-modules/cloud-router/google"
+  version = "~> 0.4"
+
+  name    = "gke-cluster-cloud-router"
+  project = var.shared_vpc_host_google_project
+  network = local.network_name
+  region  = var.google_region
+
+  nats = [{
+    name = "gke-cluster-cloud--nat"
+  }]
 }
 
 # Providers for Bootstrap
