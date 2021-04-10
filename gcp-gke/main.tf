@@ -109,6 +109,38 @@ resource "google_project_iam_binding" "compute-network-user" {
   ]
 }
 
+# VPC
+module "shared-vpc" {
+  source = "./modules/terraform-google-network"
+
+  project_id = var.shared_vpc_host_google_project
+  network_name = "${local.cluster_name}-vpc"
+  routing_mode = "REGIONAL"
+
+  subnets = [
+    {
+      subnet_name = "${local.cluster_name}-subnet"
+      subnet_ip = "10.10.0.0/16"
+      subnet_region = "asia-southeast2"
+      subnet_private_access = "true"
+      subnet_flow_logs = "off"
+    }
+  ]
+
+  secondary_ranges = {
+    "${local.cluster_name}-subnet" = [
+      {
+        range_name = "private-vpc-pods"
+        ip_cidr_range = "10.20.0.0/16"
+      },
+      {
+        range_name = "private-vpc-services"
+        ip_cidr_range = "10.30.0.0/16"
+      }
+    ]
+  }
+}
+
 # GKE Cluster Config
 module "primary-cluster" {
   providers = {
@@ -187,6 +219,8 @@ module "primary-cluster" {
       "https://www.googleapis.com/auth/logging.write",
     ]
   }
+
+  depends_on = [module.shared-vpc]
 }
 
 # We use this data provider to expose an access token for communicating with the GKE cluster.
@@ -219,6 +253,8 @@ module "cloud_router" {
   nats = [{
     name = "gke-cluster-cloud--nat"
   }]
+
+  depends_on = [module.shared-vpc]
 }
 
 # Providers for Bootstrap
