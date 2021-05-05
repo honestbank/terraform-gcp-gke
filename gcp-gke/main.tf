@@ -71,15 +71,6 @@ terraform {
   }
 }
 
-provider "null" {
-}
-
-provider "random" {
-}
-
-provider "template" {
-}
-
 resource "random_id" "run_id" {
   byte_length = 4
 }
