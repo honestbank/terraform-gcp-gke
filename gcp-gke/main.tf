@@ -135,7 +135,6 @@ module "primary-cluster" {
   enable_intranode_visibility = true
   add_cluster_firewall_rules  = true
 
-  # Required for GKE-installed Istio
   network_policy = true
 
   // Basic Auth disabled
