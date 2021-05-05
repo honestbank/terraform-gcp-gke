@@ -45,7 +45,6 @@ variable "cluster_number" {
 
 variable "zones" {
   description = "Zones for the VMs in the cluster. Default is set to Jakarta (all zones)."
-  default     = ["asia-southeast2-a", "asia-southeast2-b", "asia-southeast2-c"]
 }
 
 variable "release_channel" {
