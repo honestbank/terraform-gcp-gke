@@ -212,7 +212,7 @@ module "cloud_nat" {
     google = google.vpc
   }
   source        = "terraform-google-modules/cloud-nat/google"
-  version       = "~> 1.3.0"
+  version       = "~> 2.0.0"
   project_id    = var.shared_vpc_host_google_project
   region        = var.google_region
   router        = "gke-router"
