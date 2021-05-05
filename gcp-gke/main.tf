@@ -114,6 +114,7 @@ module "primary-cluster" {
   project_id                 = var.google_project
   name                       = local.cluster_name
   region                     = var.google_region
+  regional                   = true
   zones                      = var.zones
   network                    = local.network_name
   network_project_id         = var.shared_vpc_host_google_project
