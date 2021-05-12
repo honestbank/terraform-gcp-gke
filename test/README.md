@@ -6,10 +6,10 @@ testing.
 To run tests, first export the needed env vars:
 
 ```bash
-export GOOGLE_PROJECT='test-terraform-project-01'
-export GOOGLE_CREDENTIALS=$(cat <GCP_SERVICE_ACCOUNT_KEYFILE.JSON>)
-export TF_VAR_shared_vpc_host_google_project="test-gcp-project-01-274314"
-export TF_VAR_shared_vpc_host_google_credentials=$(cat <GCP_VPC_SERVICE_ACCOUNT_KEYFILE.JSON>)
+export TF_VAR_google_project="test-terraform-project-compute"
+export TF_VAR_google_credentials=$(cat compute.json)
+export TF_VAR_shared_vpc_host_google_project="test-terraform-shared-vpc"
+export TF_VAR_shared_vpc_host_google_credentials=$(cat vpc.json)
 ```
 
 Then run the tests:
@@ -23,10 +23,10 @@ if possible) to completely isolate live environments from any potential issues.
 
 ## Running in a Docker image
 
-Spin up an Ubuntu docker image:
+Spin up an Ubuntu docker image from the root of the repo:
 
 ```bash
-docker run -it -u 0 -v $(pwd):/root groovy /bin/bash
+docker run -it -u 0 -v $(pwd):/terraform-test govindani/honest-terraform:0.15 /bin/bash
 ```
 
 ### Install Prerequisites
