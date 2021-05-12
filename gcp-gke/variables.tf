@@ -1,12 +1,16 @@
 locals {
-  cluster_name           = "${var.stage}-${var.cluster_purpose}-${var.cluster_number}-${random_id.run_id.hex}"
-  network_name           = "${var.stage}-private-vpc"
-  primary_subnet_name    = "${var.stage}-private-vpc-subnet"
-  pods_ip_range_name     = "${var.stage}-private-vpc-pods"
-  services_ip_range_name = "${var.stage}-private-vpc-services"
-  primary_node_pool_name = "${local.cluster_name}-node-pool-01"
+  cluster_name = "${var.stage}-${var.cluster_purpose}-${var.cluster_number}-${random_id.run_id.hex}"
 
-  elastic_password = ""
+  network_name           = "tfmanaged-shared-vpc"
+  primary_subnet_name    = "tfmanaged-shared-vpc-subnet-01"
+  pods_ip_range_name     = "tfmanaged-shared-vpc-subnet-01-01"
+  services_ip_range_name = "tfmanaged-shared-vpc-subnet-01-02"
+
+
+  //  network_name           = "${var.stage}-private-vpc"
+  //  primary_subnet_name    = "${var.stage}-private-vpc-subnet"
+  //  pods_ip_range_name     = "${var.stage}-private-vpc-pods"
+  //  services_ip_range_name = "${var.stage}-private-vpc-services"
 }
 
 variable "google_project" {
