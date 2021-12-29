@@ -1,51 +1,36 @@
 terraform {
-  required_version = ">= 0.13.1"
+  required_version = "~> 1.0"
 
   required_providers {
-    external = {
-      version = "~> 1.2.0"
-    }
-
     google = {
-      version = ">= 3.0.0, <= 4.0.0"
+      version               = ">= 3.0"
+      configuration_aliases = [google.compute, google.vpc]
     }
 
     google-beta = {
-      version = ">= 3.0.0"
-      source  = "hashicorp/google-beta"
+      version               = ">= 3.0"
+      source                = "hashicorp/google-beta"
+      configuration_aliases = [google-beta.compute-beta]
     }
 
     helm = {
       # Use provider with Helm 3.x support
-      version = "~> 1.3.0"
+      version = ">= 2.0"
     }
 
     kubernetes = {
-      version = "~> 1.13"
+      version = ">= 1.0"
     }
 
     null = {
-      version = ">=2.1.2, <= 3.0"
+      version = ">= 3.0"
       source  = "hashicorp/null"
     }
 
     random = {
-      version = "~> 3.0"
-    }
-
-    template = {
-      version = "~> 2.2"
+      version = ">= 3.0"
     }
   }
-}
-
-provider "null" {
-}
-
-provider "random" {
-}
-
-provider "template" {
 }
 
 resource "random_id" "run_id" {
@@ -80,7 +65,7 @@ resource "google_project_iam_binding" "compute-network-user" {
 # GKE Cluster Config
 module "primary-cluster" {
   providers = {
-    google      = google.compute
+    #    google      = google.compute
     google-beta = google-beta.compute-beta
   }
   source = "./modules/terraform-google-kubernetes-engine/modules/beta-private-cluster-update-variant"
@@ -179,6 +164,7 @@ module "cloud_nat" {
   providers = {
     google = google.vpc
   }
+
   source        = "terraform-google-modules/cloud-nat/google"
   version       = "~> 1.3.0"
   project_id    = var.shared_vpc_host_google_project

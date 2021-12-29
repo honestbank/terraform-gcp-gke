@@ -31,6 +31,13 @@ provider "google" {
 }
 
 module "gke" {
+
+  providers = {
+    google.compute           = google.compute
+    google.vpc               = google.vpc
+    google-beta.compute-beta = google-beta.compute-beta
+  }
+
   source = "./gcp-gke"
 
   google_project     = var.google_project
