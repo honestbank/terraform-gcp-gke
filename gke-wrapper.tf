@@ -1,5 +1,4 @@
 provider "google" {
-  alias       = "compute"
   project     = var.google_project
   region      = var.google_region
   credentials = var.google_credentials
@@ -33,7 +32,7 @@ provider "google" {
 module "gke" {
 
   providers = {
-    google.compute           = google.compute
+    google.compute           = google
     google.vpc               = google.vpc
     google-beta.compute-beta = google-beta.compute-beta
   }
