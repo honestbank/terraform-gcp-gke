@@ -32,16 +32,11 @@ variable "cluster_number" {
   default = 00
 }
 
-variable "zones" {
-  description = "Zones for the VMs in the cluster. Default is set to Jakarta (all zones)."
-  default     = ["asia-southeast2-a", "asia-southeast2-b", "asia-southeast2-c"]
+variable "initial_node_count" {
+  default     = 1
+  description = "Initial node count, per-zone for regional clusters."
 }
 
-variable "release_channel" {
-  type        = string
-  description = "(Beta) The release channel of this cluster. Accepted values are `UNSPECIFIED`, `RAPID`, `REGULAR` and `STABLE`. Defaults to `REGULAR`."
-  default     = "RAPID"
-}
 
 variable "minimum_node_count" {
   default     = 3
@@ -53,12 +48,22 @@ variable "maximum_node_count" {
   description = "Maximum nodes for the node pool. This is the total nodes so for regional deployments it is the total nodes across all zones."
 }
 
-variable "initial_node_count" {
-  default     = 1
-  description = "Initial node count, per-zone for regional clusters."
-}
-
 variable "machine_type" {
   default     = "n1-standard-2"
   description = "Machine types to use for the node pool."
+}
+
+variable "vpc_name" {
+  description = "Name of GCP VPC in which the GKE cluster will be created."
+}
+
+variable "release_channel" {
+  type        = string
+  description = "(Beta) The release channel of this cluster. Accepted values are `UNSPECIFIED`, `RAPID`, `REGULAR` and `STABLE`. Defaults to `REGULAR`."
+  default     = "RAPID"
+}
+
+variable "zones" {
+  description = "Zones for the VMs in the cluster. Default is set to Jakarta (all zones)."
+  default     = ["asia-southeast2-a", "asia-southeast2-b", "asia-southeast2-c"]
 }

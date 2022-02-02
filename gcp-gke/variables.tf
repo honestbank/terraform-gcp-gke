@@ -1,12 +1,9 @@
 locals {
-  cluster_name           = "${var.stage}-${var.cluster_purpose}-${var.cluster_number}-${random_id.run_id.hex}"
-  network_name           = "${var.stage}-private-vpc"
+  cluster_name           = "${var.stage}-${var.cluster_purpose}-${random_id.run_id.hex}"
   primary_subnet_name    = "${var.stage}-private-vpc-subnet"
   pods_ip_range_name     = "${var.stage}-private-vpc-pods"
   services_ip_range_name = "${var.stage}-private-vpc-services"
   primary_node_pool_name = "${local.cluster_name}-node-pool-01"
-
-  elastic_password = ""
 }
 
 variable "google_project" {
@@ -36,16 +33,10 @@ variable "stage" {
 
 variable "cluster_purpose" {
   description = "Name to assign to GKE cluster built in this run."
-  default     = "tf-gke-template"
-}
-
-variable "cluster_number" {
-  default = 00
 }
 
 variable "zones" {
   description = "Zones for the VMs in the cluster. Default is set to Jakarta (all zones)."
-  default     = ["asia-southeast2-a", "asia-southeast2-b", "asia-southeast2-c"]
 }
 
 variable "release_channel" {
@@ -55,31 +46,17 @@ variable "release_channel" {
 }
 
 variable "minimum_node_count" {
-  default     = 1
   description = "Minimum nodes for the node pool per-zone."
 }
 
 variable "maximum_node_count" {
-  default     = 1
   description = "Maximum nodes for the node pool per-zone."
 }
 
 variable "initial_node_count" {
-  default     = 1
   description = "Initial node count, per-zone for regional clusters."
 }
 
 variable "machine_type" {
-  default     = "n1-standard-2"
   description = "Machine types to use for the node pool."
-}
-
-variable "kiali_username" {
-  default     = "admin"
-  description = "Username for Kiali bundled with Istio."
-}
-
-variable "kiali_passphrase" {
-  default     = "admin"
-  description = "Passphrase for Kiali bundled with Istio."
 }
