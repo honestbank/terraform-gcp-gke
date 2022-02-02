@@ -1,0 +1,19 @@
+# See https://pre-commit.com for more information
+# See https://pre-commit.com/hooks.html for more hooks
+repos:
+  -   repo: https://github.com/pre-commit/pre-commit-hooks
+      rev: v3.2.0
+      hooks:
+        -   id: trailing-whitespace
+        -   id: end-of-file-fixer
+# Disabled due to conflicts with Helm templates
+#        -   id: check-yaml
+        -   id: check-added-large-files
+  - repo: git://github.com/antonbabenko/pre-commit-terraform
+    rev: v1.48.0 # Get the latest from: https://github.com/antonbabenko/pre-commit-terraform/releases
+    hooks:
+      - id: terraform_fmt
+      - id: terraform_docs
+      - id: terraform_validate # Disabled due to flakiness
+      - id: terraform_tfsec # Temporarily disabled due to PSP warnings on GKE
+      - id: checkov # Disabled due to crashing
