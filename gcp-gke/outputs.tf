@@ -16,7 +16,7 @@
 
 output "kubernetes_endpoint" {
   sensitive = true
-  value     = module.primary-cluster.endpoint
+  value     = module.gke.endpoint
 }
 
 output "client_token" {
@@ -26,17 +26,17 @@ output "client_token" {
 
 output "ca_certificate" {
   sensitive = true
-  value     = module.primary-cluster.ca_certificate
+  value     = module.gke.ca_certificate
 }
 
 output "service_account" {
   description = "The default service account used for running nodes"
-  value       = module.primary-cluster.service_account
+  value       = module.gke.service_account
 }
 
 output "cluster_name" {
   description = "The GKE cluster name that was built"
-  value       = module.primary-cluster.name
+  value       = module.gke.name
 }
 
 output "cluster_nat_ips" {

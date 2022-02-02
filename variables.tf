@@ -25,7 +25,7 @@ variable "stage" {
 
 variable "cluster_purpose" {
   description = "Name to assign to GKE cluster built in this run."
-  default     = "tf-gke-template"
+  default     = "gke-wrapper"
 }
 
 variable "cluster_number" {
@@ -44,12 +44,12 @@ variable "release_channel" {
 }
 
 variable "minimum_node_count" {
-  default     = 1
+  default     = 3
   description = "Minimum nodes for the node pool. This is the total nodes so for regional deployments it is the total nodes across all zones."
 }
 
 variable "maximum_node_count" {
-  default     = 2
+  default     = 30
   description = "Maximum nodes for the node pool. This is the total nodes so for regional deployments it is the total nodes across all zones."
 }
 
@@ -61,14 +61,4 @@ variable "initial_node_count" {
 variable "machine_type" {
   default     = "n1-standard-2"
   description = "Machine types to use for the node pool."
-}
-
-variable "kiali_username" {
-  default     = "admin"
-  description = "Username for Kiali bundled with Istio."
-}
-
-variable "kiali_passphrase" {
-  default     = "admin"
-  description = "Passphrase for Kiali bundled with Istio."
 }

@@ -3,12 +3,13 @@
 This package uses [Terratest](https://terratest.gruntwork.io) for automatic/E2E 
 testing.
 
-To run tests, first export the needed env vars:
+To run tests, first export the needed env vars - values below are examples:
 
 ```bash
-export TF_VAR_google_project="test-terraform-project-compute"
+export GOOGLE_PROJECT="test-terraform-project-01"
+export TF_VAR_google_project="test-terraform-project-01"
 export TF_VAR_google_credentials=$(cat compute.json)
-export TF_VAR_shared_vpc_host_google_project="test-terraform-shared-vpc"
+export TF_VAR_shared_vpc_host_google_project="test-terraform-project-01"
 export TF_VAR_shared_vpc_host_google_credentials=$(cat vpc.json)
 ```
 
@@ -26,40 +27,14 @@ if possible) to completely isolate live environments from any potential issues.
 Spin up an Ubuntu docker image from the root of the repo:
 
 ```bash
-docker run -it -u 0 -v $(pwd):/terraform-test govindani/honest-terraform:0.15 /bin/bash
+docker run -it -u 0 -v $(pwd):/terraform-test govindani/honest_terraform:0.15 /bin/bash
+docker run -it -u 0 -v $(pwd):/terraform-test ubuntu /bin/bash
 ```
 
 ### Install Prerequisites
 
-Go:
-
-```bash
-cd /tmp
-wget https://dl.google.com/go/go1.15.1.linux-amd64.tar.gz
-tar -xvf go1.15.1.linux-amd64.tar.gz
-export GOROOT="/usr/bin"
-cp go/bin/go /usr/bin
-```
-
-Python:
-
-```bash
-apt update && apt install -y python3.8
-```
-
-Terraform:
-
-```bash
-curl -O https://releases.hashicorp.com/terraform/0.13.3/terraform_0.13.3_linux_amd64.zip
-unzip terraform_0.13.3_linux_amd64.zip
-mv terraform /bin
-```
-
-Git:
-
-```bash
-apt update && apt install -y git
-```
+See [prepare-test-environment.sh](./prepare-test-environment.sh) for requirements.
+Or just run the script 😊
 
 ### Run Tests
 

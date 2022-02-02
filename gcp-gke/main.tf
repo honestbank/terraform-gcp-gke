@@ -1,83 +1,22 @@
-provider "google" {
-  alias       = "compute"
-  project     = var.google_project
-  region      = var.google_region
-  credentials = var.google_credentials
-
-  scopes = [
-    # Default scopes
-    "https://www.googleapis.com/auth/compute",
-    "https://www.googleapis.com/auth/cloud-platform",
-    "https://www.googleapis.com/auth/ndev.clouddns.readwrite",
-    "https://www.googleapis.com/auth/devstorage.full_control",
-
-    # Required for google_client_openid_userinfo
-    "https://www.googleapis.com/auth/userinfo.email",
-  ]
-}
-
-provider "google-beta" {
-  alias       = "compute-beta"
-  project     = var.google_project
-  region      = var.google_region
-  credentials = var.google_credentials
-}
-
-provider "google" {
-  alias       = "vpc"
-  project     = var.shared_vpc_host_google_project
-  region      = var.google_region
-  credentials = var.shared_vpc_host_google_credentials
-}
-
 terraform {
-  required_version = ">= 0.13.1"
+  required_version = "~> 1.0"
 
   required_providers {
-    external = {
-      version = "~> 1.2.0"
-    }
-
     google = {
-      version = ">= 3.0.0, <= 4.0.0"
+      version               = "~> 3.0"
+      configuration_aliases = [google.compute, google.vpc]
     }
 
     google-beta = {
-      version = ">= 3.0.0"
-      source  = "hashicorp/google-beta"
-    }
-
-    helm = {
-      # Use provider with Helm 3.x support
-      version = "~> 1.3.0"
-    }
-
-    kubernetes = {
-      version = "~> 1.13"
-    }
-
-    null = {
-      version = ">=2.1.2, <= 3.0"
-      source  = "hashicorp/null"
+      version               = "~> 3.0"
+      source                = "hashicorp/google-beta"
+      configuration_aliases = [google-beta.compute-beta]
     }
 
     random = {
       version = "~> 3.0"
     }
-
-    template = {
-      version = "~> 2.2"
-    }
   }
-}
-
-provider "null" {
-}
-
-provider "random" {
-}
-
-provider "template" {
 }
 
 resource "random_id" "run_id" {
@@ -110,9 +49,8 @@ resource "google_project_iam_binding" "compute-network-user" {
 }
 
 # GKE Cluster Config
-module "primary-cluster" {
+module "gke" {
   providers = {
-    google      = google.compute
     google-beta = google-beta.compute-beta
   }
   source = "./modules/terraform-google-kubernetes-engine/modules/beta-private-cluster-update-variant"
@@ -197,8 +135,8 @@ data "google_client_config" "default" {
 data "google_container_cluster" "current_cluster" {
   provider = google-beta.compute-beta
 
-  name     = module.primary-cluster.name
-  location = module.primary-cluster.location
+  name     = module.gke.name
+  location = module.gke.location
 }
 
 # Networking - create a NAT gateway for the cluster
@@ -211,32 +149,13 @@ module "cloud_nat" {
   providers = {
     google = google.vpc
   }
+
   source        = "terraform-google-modules/cloud-nat/google"
-  version       = "~> 1.3.0"
+  version       = "~> 2.1.0"
   project_id    = var.shared_vpc_host_google_project
   region        = var.google_region
   router        = "gke-router"
   network       = local.network_name
   create_router = true
   nat_ips       = [google_compute_address.cloud_nat_ip.self_link]
-}
-
-# Providers for Bootstrap
-provider "helm" {
-  kubernetes {
-    load_config_file = false
-
-    host                   = "https://${module.primary-cluster.endpoint}"
-    token                  = data.google_client_config.default.access_token
-    cluster_ca_certificate = base64decode(module.primary-cluster.ca_certificate)
-  }
-}
-
-provider "kubernetes" {
-  load_config_file = false
-
-  host                   = "https://${module.primary-cluster.endpoint}"
-  token                  = data.google_client_config.default.access_token
-  cluster_ca_certificate = base64decode(module.primary-cluster.ca_certificate)
-
 }
