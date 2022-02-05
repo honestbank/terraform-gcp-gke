@@ -129,6 +129,10 @@ Temporary Items
 **/.terraform/*
 **/.terraform.lock.hcl
 
+# GCP key files
+**/*.json
+*.json
+
 
 # .tfstate files
 *.tfstate

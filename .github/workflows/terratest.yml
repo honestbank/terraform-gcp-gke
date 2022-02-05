@@ -7,11 +7,11 @@ on:
     branches:
       - main
 env:
-  GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
-  GOOGLE_PROJECT: "test-terraform-project-01"
-  TF_VAR_shared_vpc_host_google_project: "test-gcp-project-01-274314"
-  TF_VAR_shared_vpc_host_google_credentials: ${{ secrets.TF_VAR_shared_vpc_host_google_credentials }}
-  TF_VAR_google_region: "asia-southeast2"
+  GOOGLE_CREDENTIALS: ${{ secrets.TERRATEST_GOOGLE_CREDENTIALS }}
+  GOOGLE_PROJECT: ${{ secrets.TERRATEST_GOOGLE_PROJECT }}
+  GCP_SA_EMAIL: ${{ secrets.TERRATEST_GCP_SA_EMAIL }}
+  TF_VAR_google_credentials: ${{ secrets.TERRATEST_GOOGLE_CREDENTIALS }}
+  TF_VAR_shared_vpc_host_google_credentials: ${{ secrets.TERRATEST_GOOGLE_CREDENTIALS }}
 jobs:
   terratest:
     name: terratest
@@ -21,10 +21,10 @@ jobs:
         uses: actions/checkout@v2
         with:
           submodules: true
-      - name: Set up Go (1.15)
+      - name: Set up Go (1.17)
         uses: actions/setup-go@v2
         with:
-          go-version: 1.15
+          go-version: 1.17
         id: go
       - name: prepare test environment
         run: source ./test/prepare-test-environment.sh
@@ -33,19 +33,22 @@ jobs:
         with:
           version: "latest" # This is the default value anyways, just being explicit
           project_id: ${{ env.GOOGLE_PROJECT }}
-          service_account_email: ${{ secrets.GCP_SA_EMAIL }}
-          service_account_key: ${{ secrets.GOOGLE_CREDENTIALS }}
+          service_account_email: ${{ env.GCP_SA_EMAIL }}
+          service_account_key: ${{ env.GOOGLE_CREDENTIALS }}
           export_default_credentials: false
       - name: Set Google Cloud project
         run: gcloud config set project $GOOGLE_PROJECT
-      - name: Get Go dependencies
-        run: |
-          go get -v -t -d ./...
-          if [ -f Gopkg.toml ]; then
-              curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
-              dep ensure
-          fi
-      - name: Run 'go test -v -timeout 30m'
+      - name: Run terratest
         run: |
           cd test
-          go test -v -timeout 30m
+          go test -v -timeout 60m
+      - name: Release
+        if: github.event_name == 'push'
+        uses: cycjimmy/semantic-release-action@v2
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          extra_plugins: |
+            @semantic-release/git@10.0.1
+            @semantic-release/exec@6.0.3
+            @semantic-release/changelog@6.0.1

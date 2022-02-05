@@ -1,25 +1,22 @@
 # End-to-End Testing
 
-This package uses [Terratest](https://terratest.gruntwork.io) for automatic/E2E 
+This package uses [Terratest](https://terratest.gruntwork.io) for automatic/E2E
 testing.
 
 To run tests, first export the needed env vars - values below are examples:
 
 ```bash
-export GOOGLE_PROJECT="test-terraform-project-01"
-export TF_VAR_google_project="test-terraform-project-01"
 export TF_VAR_google_credentials=$(cat compute.json)
-export TF_VAR_shared_vpc_host_google_project="test-terraform-project-01"
 export TF_VAR_shared_vpc_host_google_credentials=$(cat vpc.json)
 ```
 
 Then run the tests:
 
 ```bash
-go test -v -timeout 30m
+go test -v -timeout 60m
 ```
 
-Tests should always be performed in a separate project (and a separate account, 
+Tests should always be performed in a separate project (and a separate account,
 if possible) to completely isolate live environments from any potential issues.
 
 ## Running in a Docker image
@@ -34,7 +31,7 @@ docker run -it -u 0 -v $(pwd):/terraform-test ubuntu /bin/bash
 ### Install Prerequisites
 
 See [prepare-test-environment.sh](./prepare-test-environment.sh) for requirements.
-Or just run the script 😊
+Or just `source` the script 😊
 
 ### Run Tests
 
