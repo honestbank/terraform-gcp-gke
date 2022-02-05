@@ -49,3 +49,13 @@ jobs:
         run: |
           cd test
           go test -v -timeout 30m
+      - name: Release
+        if: github.event_name == 'push'
+        uses: cycjimmy/semantic-release-action@v2
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          extra_plugins: |
+            @semantic-release/git@10.0.1
+            @semantic-release/exec@6.0.3
+            @semantic-release/changelog@6.0.1

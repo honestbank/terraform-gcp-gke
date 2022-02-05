@@ -15,8 +15,8 @@
  */
 
 output "kubernetes_endpoint" {
-  sensitive = true
-  value     = module.gke.endpoint
+  description = "The kubernetes_endpoint output of the google_container_cluster resource."
+  value       = google_container_cluster.primary.endpoint
 }
 
 output "client_token" {
@@ -26,20 +26,25 @@ output "client_token" {
 
 output "ca_certificate" {
   sensitive = true
-  value     = module.gke.ca_certificate
+  value     = google_container_cluster.primary.master_auth.0.cluster_ca_certificate
 }
 
-output "service_account" {
+output "node_pool_service_account_email" {
   description = "The default service account used for running nodes"
-  value       = module.gke.service_account
+  value       = google_service_account.default.email
 }
 
 output "cluster_name" {
   description = "The GKE cluster name that was built"
-  value       = module.gke.name
+  value       = google_container_cluster.primary.name
 }
 
 output "cluster_nat_ips" {
   description = "The external NAT IP address used by the GKE cluster for internet access"
-  value       = google_compute_address.cloud_nat_ip.address
+  value       = google_compute_router_nat.nat.nat_ips
+}
+
+output "cluster_project" {
+  description = "The project hosting the GKE cluster."
+  value       = google_container_cluster.primary.project
 }
