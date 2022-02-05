@@ -1,0 +1,26 @@
+---
+# This workflow integrates ShiftLeft NG SAST with GitHub
+# Visit https://docs.shiftleft.io for help
+name: shiftleft-terraform
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  shiftleft-terraform:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+      - run: echo "REPO_NAME=${GITHUB_REPOSITORY#*/}" >> $GITHUB_ENV
+      - name: Download ShiftLeft CLI
+        run: |
+          curl https://cdn.shiftleft.io/download/sl > ${GITHUB_WORKSPACE}/sl && chmod a+rx ${GITHUB_WORKSPACE}/sl
+      - name: Extract branch name
+        shell: bash
+        run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+        id: extract_branch
+      - name: NextGen Static Analysis
+        run: ${GITHUB_WORKSPACE}/sl analyze --strict --wait --app ${{ env.REPO_NAME}} --tag branch=${{ github.head_ref || steps.extract_branch.outputs.branch }} --terraform $(pwd)
+        env:
+          SHIFTLEFT_ACCESS_TOKEN: ${{ secrets.SHIFTLEFT_ACCESS_TOKEN }}

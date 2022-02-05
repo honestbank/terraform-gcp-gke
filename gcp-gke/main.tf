@@ -3,12 +3,12 @@ terraform {
 
   required_providers {
     google = {
-      version               = "~> 3.0"
+      version               = "~> 4.0"
       configuration_aliases = [google.compute, google.vpc]
     }
 
     google-beta = {
-      version               = "~> 3.0"
+      version               = "~> 4.0"
       source                = "hashicorp/google-beta"
       configuration_aliases = [google-beta.compute-beta]
     }
@@ -17,10 +17,6 @@ terraform {
       version = "~> 3.0"
     }
   }
-}
-
-resource "random_id" "run_id" {
-  byte_length = 4
 }
 
 # Shared VPC Permissions
@@ -37,93 +33,182 @@ locals {
   project_id     = data.google_project.service_project.project_id
 }
 
-resource "google_project_iam_binding" "compute-network-user" {
-  provider = google.vpc
-  project  = data.google_project.host_project.project_id
-  role     = "roles/compute.networkUser"
-
-  members = [
-    "serviceAccount:${format("service-%s@container-engine-robot.iam.gserviceaccount.com", local.project_number)}",
-    "serviceAccount:${format("%s@cloudservices.gserviceaccount.com", local.project_number)}",
-  ]
+resource "google_service_account" "default" {
+  account_id   = "${var.cluster_name}-sa"
+  display_name = "${var.cluster_name} Service Account"
 }
 
-# GKE Cluster Config
-module "gke" {
-  providers = {
-    google-beta = google-beta.compute-beta
+#tfsec:ignore:google-gke-enforce-pod-security-policy
+#tfsec:ignore:google-gke-metadata-endpoints-disabled (legacy metadata disabled by default since 1.12 https://registry.terraform.io/providers/hashicorp/google-beta/latest/docs/resources/container_cluster#nested_workload_identity_config)
+resource "google_container_cluster" "primary" {
+  provider = google-beta.compute-beta
+
+  #checkov:skip=CKV_GCP_67:Legacy metadata disabled by default since 1.12 https://registry.terraform.io/providers/hashicorp/google-beta/latest/docs/resources/container_cluster#nested_workload_identity_config
+  #checkov:skip=CKV_GCP_24:PodSecurityPolicy is deprecated (https://cloud.google.com/kubernetes-engine/docs/how-to/pod-security-policies)
+  #checkov:skip=CKV_GCP_18:Public access currently needed for development purposes (see https://linear.app/honestbank/issue/DEVOP-746/fix-ckv-gcp-18-for-terraform-gcp-gke)
+  name     = var.cluster_name
+  location = var.google_region
+
+  # We can't create a cluster with no node pool defined, but we want to only use
+  # separately managed node pools. So we create the smallest possible default
+  # node pool and immediately delete it.
+  remove_default_node_pool = true
+  initial_node_count       = 1
+  enable_shielded_nodes    = true
+  min_master_version       = var.min_master_version
+
+  enable_binary_authorization = true
+  dynamic "authenticator_groups_config" {
+    for_each = length(var.gke_authenticator_groups_config) > 0 ? [var.gke_authenticator_groups_config] : []
+    content {
+      security_group = var.gke_authenticator_groups_config
+    }
   }
-  source = "./modules/terraform-google-kubernetes-engine/modules/beta-private-cluster-update-variant"
 
-  # Disables downloading of gcloud CLI and the wait_for_cluster.sh script
-  # Also breaks stub domains
-  skip_provisioners = true
+  master_auth { #tfsec:ignore:google-gke-no-legacy-authentication - False positive?
+    client_certificate_config {
+      issue_client_certificate = true
+    }
+  }
 
-  project_id                 = var.google_project
-  name                       = local.cluster_name
-  region                     = var.google_region
-  zones                      = var.zones
-  network                    = local.network_name
-  network_project_id         = var.shared_vpc_host_google_project
-  subnetwork                 = local.primary_subnet_name
-  ip_range_pods              = local.pods_ip_range_name
-  ip_range_services          = local.services_ip_range_name
-  http_load_balancing        = true
-  horizontal_pod_autoscaling = false
-  create_service_account     = true
-  remove_default_node_pool   = true
-  release_channel            = var.release_channel
+  master_authorized_networks_config {
+    cidr_blocks {
+      cidr_block = "0.0.0.0/0" #tfsec:ignore:google-gke-no-public-control-plane - Public access currently needed for development purposes (see https://linear.app/honestbank/issue/DEVOP-746/fix-ckv-gcp-18-for-terraform-gcp-gke)
+    }
+  }
 
-  // Private nodes better control public exposure, and reduce
-  // the ability of nodes to reach to the Internet without
-  // additional configurations.
-  enable_private_nodes        = true
-  enable_shielded_nodes       = true
+  workload_identity_config {
+    workload_pool = "${data.google_project.service_project.project_id}.svc.id.goog"
+  }
+
+  node_config {
+    image_type   = "COS_CONTAINERD"
+    machine_type = var.machine_type
+
+    workload_metadata_config {
+      mode = "GKE_METADATA"
+    }
+
+    shielded_instance_config {
+      enable_secure_boot          = true
+      enable_integrity_monitoring = true
+    }
+
+    // TODO: Check format and add tags
+    tags = []
+  }
+
+  addons_config {
+    horizontal_pod_autoscaling {
+      disabled = false
+    }
+
+    http_load_balancing {
+      disabled = false
+    }
+
+    network_policy_config {
+      disabled = false
+    }
+
+    istio_config {
+      disabled = true
+    }
+  }
+
+  # Autoscaling/Node Auto-Provisioning
+  # Disable Node Auto-Provisioning and scale at the Node Pool level
+  cluster_autoscaling {
+    enabled = false
+  }
+
+  # Intranode visibility configures networking on each node in the cluster so that traffic sent from one Pod to another
+  # Pod is processed by the cluster's Virtual Private Cloud (VPC) network, even if the Pods are on the same node.
+  # https://cloud.google.com/kubernetes-engine/docs/how-to/intranode-visibility
   enable_intranode_visibility = true
-  add_cluster_firewall_rules  = true
 
-  # Required for GKE-installed Istio
-  network_policy = true
+  network = var.shared_vpc_self_link
+  # Setting VPC_NAME requires the ip_allocation_policy block
+  networking_mode = "VPC_NATIVE"
+  subnetwork      = var.subnetwork_self_link
+  ip_allocation_policy {
+    # Secondary ranges can be built by https://github.com/honestbank/terraform-gcp-vpc
+    cluster_secondary_range_name  = var.pods_ip_range_name
+    services_secondary_range_name = var.services_ip_range_name
+  }
 
-  // Basic Auth disabled
-  basic_auth_username = ""
-  basic_auth_password = ""
+  network_policy {
+    enabled = true
+  }
 
-  // Disable logging and monitoring
-  logging_service    = "none"
-  monitoring_service = "none"
+  private_cluster_config {
+    enable_private_nodes    = true
+    enable_private_endpoint = false
+    master_ipv4_cidr_block  = "10.40.0.0/28"
+    master_global_access_config {
+      enabled = false
+    }
+  }
 
-  // Storage
-  gce_pd_csi_driver = true
+  release_channel {
+    channel = "RAPID"
+  }
 
-  node_pools = [
-    {
-      name            = "pool-01"
-      machine_type    = var.machine_type
-      min_count       = var.minimum_node_count
-      max_count       = var.maximum_node_count
-      node_count      = var.initial_node_count
-      max_surge       = var.maximum_node_count
-      max_unavailable = 1
-      local_ssd_count = 0
-      disk_size_gb    = 200
-      disk_type       = "pd-standard"
-      image_type      = "COS_CONTAINERD"
-      auto_repair     = true
-      auto_upgrade    = true
-      preemptible     = false
-    },
-  ]
+  # must only contain lowercase letters ([a-z]), numeric characters ([0-9]), underscores (_) and dashes (-), and must start with a letter. International characters are allowed.
+  resource_labels = {
+    "terraform" = "true"
+  }
 
-  node_pools_oauth_scopes = {
-    all = [
-      "https://www.googleapis.com/auth/trace.append",
-      "https://www.googleapis.com/auth/service.management.readonly",
-      "https://www.googleapis.com/auth/monitoring",
-      "https://www.googleapis.com/auth/devstorage.read_only",
-      "https://www.googleapis.com/auth/servicecontrol",
-      "https://www.googleapis.com/auth/logging.write",
+  lifecycle {
+    ignore_changes = [
+      node_pool,
+      node_config,
     ]
+  }
+}
+
+resource "google_container_node_pool" "primary_node_pool" {
+  name     = "primary"
+  location = var.google_region
+  node_locations = [
+    "${var.google_region}-a",
+    "${var.google_region}-b",
+    "${var.google_region}-c",
+  ]
+  cluster    = google_container_cluster.primary.name
+  node_count = var.minimum_node_count
+
+  autoscaling {
+    max_node_count = var.maximum_node_count
+    min_node_count = var.minimum_node_count
+  }
+
+  management {
+    auto_repair  = true
+    auto_upgrade = true
+  }
+
+  node_config {
+    image_type   = "COS_CONTAINERD"
+    machine_type = var.machine_type
+
+    # Google recommends custom service accounts that have cloud-platform scope and permissions granted via IAM Roles.
+    service_account = google_service_account.default.email
+    oauth_scopes = [
+      "https://www.googleapis.com/auth/cloud-platform"
+    ]
+
+    workload_metadata_config {
+      mode = "GKE_METADATA"
+    }
+
+    shielded_instance_config {
+      enable_secure_boot          = true
+      enable_integrity_monitoring = true
+    }
+
+    // TODO: Check format and add tags
+    tags = []
   }
 }
 
@@ -135,27 +220,34 @@ data "google_client_config" "default" {
 data "google_container_cluster" "current_cluster" {
   provider = google-beta.compute-beta
 
-  name     = module.gke.name
-  location = module.gke.location
+  name     = google_container_cluster.primary.name
+  location = google_container_cluster.primary.location
 }
 
-# Networking - create a NAT gateway for the cluster
-resource "google_compute_address" "cloud_nat_ip" {
+resource "google_compute_router" "router" {
   provider = google.vpc
-  name     = "gke-nat"
+  name     = "${var.cluster_name}-router"
+  region   = var.google_region
+  network  = var.shared_vpc_id
 }
 
-module "cloud_nat" {
-  providers = {
-    google = google.vpc
+resource "google_compute_router_nat" "nat" {
+  provider                           = google.vpc
+  name                               = "${var.cluster_name}-nat"
+  router                             = google_compute_router.router.name
+  region                             = var.google_region
+  nat_ip_allocate_option             = "AUTO_ONLY"
+  source_subnetwork_ip_ranges_to_nat = "ALL_SUBNETWORKS_ALL_IP_RANGES"
+
+  log_config {
+    enable = true
+    filter = "ERRORS_ONLY"
   }
 
-  source        = "terraform-google-modules/cloud-nat/google"
-  version       = "~> 2.1.0"
-  project_id    = var.shared_vpc_host_google_project
-  region        = var.google_region
-  router        = "gke-router"
-  network       = local.network_name
-  create_router = true
-  nat_ips       = [google_compute_address.cloud_nat_ip.self_link]
+  lifecycle {
+    ignore_changes = [
+      drain_nat_ips,
+      nat_ips,
+    ]
+  }
 }

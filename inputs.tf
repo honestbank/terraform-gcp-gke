@@ -1,3 +1,8 @@
+variable "gke_authenticator_groups_config" {
+  type        = string
+  description = "Value to pass to authenticator_groups_config so members of that Google Group can authenticate to the cluster. Pass an empty string to disable."
+}
+
 variable "google_project" {
   description = "The GCP project to use for this run"
 }
@@ -23,47 +28,67 @@ variable "stage" {
   default     = "test"
 }
 
-variable "cluster_purpose" {
-  description = "Name to assign to GKE cluster built in this run."
-  default     = "gke-wrapper"
-}
-
-variable "cluster_number" {
-  default = 00
-}
-
 variable "initial_node_count" {
-  default     = 1
   description = "Initial node count, per-zone for regional clusters."
 }
 
+variable "min_master_version" {
+  type        = string
+  description = "The min_master_version attribute to pass to the google_container_cluster resource."
+}
 
 variable "minimum_node_count" {
-  default     = 3
+  type        = string
   description = "Minimum nodes for the node pool. This is the total nodes so for regional deployments it is the total nodes across all zones."
 }
 
 variable "maximum_node_count" {
-  default     = 30
+  type        = string
   description = "Maximum nodes for the node pool. This is the total nodes so for regional deployments it is the total nodes across all zones."
 }
 
 variable "machine_type" {
-  default     = "n1-standard-2"
+  type        = string
   description = "Machine types to use for the node pool."
 }
 
-variable "vpc_name" {
-  description = "Name of GCP VPC in which the GKE cluster will be created."
+variable "pods_ip_range_cidr" {
+  type        = string
+  description = "CIDR of the secondary IP range used for Kubernetes Pods."
+}
+
+variable "pods_ip_range_name" {
+  type        = string
+  description = "Name of the secondary IP range used for Kubernetes Pods."
+}
+
+variable "services_ip_range_cidr" {
+  type        = string
+  description = "CIDR of the secondary IP range used for Kubernetes Services."
+}
+
+variable "services_ip_range_name" {
+  type        = string
+  description = "Name of the secondary IP range used for Kubernetes Services."
+}
+
+variable "shared_vpc_id" {
+  type        = string
+  description = "The id of the shared VPC."
+}
+
+variable "shared_vpc_self_link" {
+  type        = string
+  description = "self_link of the shared VPC to place the GKE cluster in."
+}
+
+variable "subnetwork_self_link" {
+  type        = string
+  description = "self_link of the google_compute_subnetwork to place the GKE cluster in."
 }
 
 variable "release_channel" {
   type        = string
   description = "(Beta) The release channel of this cluster. Accepted values are `UNSPECIFIED`, `RAPID`, `REGULAR` and `STABLE`. Defaults to `REGULAR`."
   default     = "RAPID"
-}
-
-variable "zones" {
-  description = "Zones for the VMs in the cluster. Default is set to Jakarta (all zones)."
-  default     = ["asia-southeast2-a", "asia-southeast2-b", "asia-southeast2-c"]
 }
