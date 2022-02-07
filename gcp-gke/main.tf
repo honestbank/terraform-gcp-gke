@@ -59,9 +59,9 @@ resource "google_container_cluster" "primary" {
 
   enable_binary_authorization = true
   dynamic "authenticator_groups_config" {
-    for_each = length(var.gke_authenticator_groups_config) > 0 ? [var.gke_authenticator_groups_config] : []
+    for_each = length(var.gke_authenticator_groups_config_domain) > 0 ? [var.gke_authenticator_groups_config_domain] : []
     content {
-      security_group = var.gke_authenticator_groups_config
+      security_group = "gke-security-groups@${var.gke_authenticator_groups_config_domain}"
     }
   }
 
