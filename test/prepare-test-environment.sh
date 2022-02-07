@@ -5,11 +5,11 @@
 export GOOGLE_PROJECT='test-terraform-project-01'
 export TF_VAR_shared_vpc_host_google_project="test-gcp-project-01-274314"
 
-if ls ../gcp-gke/compute.json; then
+if ls compute.json; then
   export GOOGLE_CREDENTIALS=$(cat ../gcp-gke/compute.json)
 fi
 
-if ls ../gcp-gke/vpc.json; then
+if ls vpc.json; then
   export TF_VAR_shared_vpc_host_google_credentials=$(cat ../gcp-gke/vpc.json)
 fi
 
@@ -45,7 +45,7 @@ fi
 
 if ! command -v go; then
   cd /tmp || mkdir /tmp && cd /tmp
-  wget -O go.tgz https://dl.google.com/go/go1.15.1.linux-amd64.tar.gz
+  curl -o go.tgz https://dl.google.com/go/go1.17.6.linux-amd64.tar.gz
   tar -C /usr/local -xvf go.tgz
   export PATH="/usr/local/go/bin:$PATH"
   export GOPATH=/opt/go/
@@ -57,7 +57,7 @@ if ! command -v unzip; then
 fi
 
 if ! command -v terraform; then
-  curl -O https://releases.hashicorp.com/terraform/0.14.2/terraform_0.14.2_linux_amd64.zip
+  curl -O https://releases.hashicorp.com/terraform/1.1.4/terraform_1.1.4_linux_amd64.zip
   unzip terraform_0.14.2_linux_amd64.zip
   mv terraform /usr/bin
   terraform version || return

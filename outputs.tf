@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-output "kubernetes_endpoint" {
+output "ca_certificate" {
   sensitive = true
-  value     = module.gke.kubernetes_endpoint
+  value     = module.gke.ca_certificate
 }
 
 output "client_token" {
@@ -24,17 +24,22 @@ output "client_token" {
   value     = module.gke.client_token
 }
 
-output "ca_certificate" {
+output "cluster_name" {
+  description = "The GKE cluster name that was built"
+  value       = module.gke.cluster_name
+}
+
+output "cluster_project" {
+  description = "The project hosting the GKE cluster."
+  value       = module.gke.cluster_project
+}
+
+output "kubernetes_endpoint" {
   sensitive = true
-  value = module.gke.ca_certificate
+  value     = module.gke.kubernetes_endpoint
 }
 
 output "service_account" {
   description = "The default service account used for running nodes."
-  value       = module.gke.service_account
-}
-
-output "cluster_name" {
-  description = "The GKE cluster name that was built"
-  value       = module.gke.cluster_name
+  value       = module.gke.node_pool_service_account_email
 }
