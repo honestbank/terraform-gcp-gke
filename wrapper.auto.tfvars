@@ -15,7 +15,7 @@ stage = "test"
 machine_type       = "e2-standard-4"
 minimum_node_count = 3
 maximum_node_count = 9
-min_master_version = "1.22"
+min_master_version = "1.21"
 initial_node_count = 1
 
 pods_ip_range_cidr                           = "10.20.0.0/16"

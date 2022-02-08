@@ -29,6 +29,16 @@ output "ca_certificate" {
   value     = google_container_cluster.primary.master_auth.0.cluster_ca_certificate
 }
 
+output "gke_kubernetes_master_version" {
+  description = "The Kubernetes version installed on the master nodes."
+  value       = data.google_container_engine_versions.asiasoutheast2.latest_master_version
+}
+
+output "gke_kubernetes_node_version" {
+  description = "The Kubernetes version installed on the worker nodes."
+  value       = data.google_container_engine_versions.asiasoutheast2.latest_node_version
+}
+
 output "node_pool_service_account_email" {
   description = "The default service account used for running nodes"
   value       = google_service_account.default.email
@@ -42,4 +52,9 @@ output "cluster_name" {
 output "cluster_project" {
   description = "The project hosting the GKE cluster."
   value       = google_container_cluster.primary.project
+}
+
+output "rapid_channel_latest_version" {
+  description = "The latest version from the RAPID channel with the specified version prefix (min_master_version)."
+  value       = data.google_container_engine_versions.asiasoutheast2.release_channel_default_version["RAPID"]
 }

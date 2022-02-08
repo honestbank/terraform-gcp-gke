@@ -34,6 +34,21 @@ output "cluster_project" {
   value       = module.gke.cluster_project
 }
 
+output "gke_kubernetes_master_version" {
+  description = "The Kubernetes version installed on the master nodes."
+  value       = module.gke.gke_kubernetes_master_version
+}
+
+output "gke_kubernetes_node_version" {
+  description = "The Kubernetes version installed on the worker nodes."
+  value       = module.gke.gke_kubernetes_node_version
+}
+
+output "gke_rapid_channel_latest_version" {
+  description = "The latest version from the RAPID channel with the specified version prefix (min_master_version)."
+  value       = module.gke.rapid_channel_latest_version
+}
+
 output "kubernetes_endpoint" {
   sensitive = true
   value     = module.gke.kubernetes_endpoint
