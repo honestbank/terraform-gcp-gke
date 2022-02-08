@@ -13,8 +13,8 @@ stage = "test"
 
 ### Cluster configuration values
 machine_type       = "e2-standard-4"
-minimum_node_count = 3
-maximum_node_count = 9
+minimum_node_count = 1
+maximum_node_count = 1
 min_master_version = "1.21"
 initial_node_count = 1
 

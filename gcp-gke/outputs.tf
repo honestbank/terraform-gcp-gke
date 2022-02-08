@@ -54,6 +54,16 @@ output "cluster_project" {
   value       = google_container_cluster.primary.project
 }
 
+output "cluster_primary_node_pool_tag" {
+  description = "Tag applied to the node pool instances - used for network/firewall rules."
+  value       = local.gke_node_pool_tag
+}
+
+output "istio_gatekeeper_firewall_rule_self_link" {
+  description = "The self_link attribute of the firewall rule created to allow Gatekeeper and Istio to function."
+  value       = google_compute_firewall.gke_private_cluster_istio_gatekeeper_rules.self_link
+}
+
 output "rapid_channel_latest_version" {
   description = "The latest version from the RAPID channel with the specified version prefix (min_master_version)."
   value       = data.google_container_engine_versions.asiasoutheast2.release_channel_default_version["RAPID"]

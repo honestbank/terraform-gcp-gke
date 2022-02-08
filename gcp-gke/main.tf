@@ -101,8 +101,9 @@ resource "google_container_cluster" "primary" {
       enable_integrity_monitoring = true
     }
 
-    // TODO: Check format and add tags
-    tags = []
+    tags = [
+      local.gke_node_pool_tag
+    ]
   }
 
   addons_config {
@@ -174,6 +175,14 @@ resource "google_container_cluster" "primary" {
   }
 }
 
+resource "random_id" "node_pool_tag" {
+  byte_length = 4
+}
+
+locals {
+  gke_node_pool_tag = "gke-primary-node-pool-${random_id.node_pool_tag.hex}"
+}
+
 resource "google_container_node_pool" "primary_node_pool" {
   provider = google-beta.compute-beta
 
@@ -220,7 +229,13 @@ resource "google_container_node_pool" "primary_node_pool" {
     }
 
     // TODO: Check format and add tags
-    tags = []
+    tags = [
+      local.gke_node_pool_tag
+    ]
+  }
+
+  lifecycle {
+    create_before_destroy = true
   }
 }
 

@@ -114,7 +114,7 @@ with ports `5775/UDP,5778/TCP,6831/UDP,6832/UDP`.
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_enable_network_policy"></a> [enable\_network\_policy](#input\_enable\_network\_policy) | This value is passed to network\_policy.enabled and the negative is passed to addons\_config.network\_policy\_config.disabled. This might conflict with Workload Identity - make sure to read https://cloud.google.com/kubernetes-engine/docs/how-to/network-policy#limitations_and_requirements. | `bool` | n/a | yes |
-| <a name="input_gke_authenticator_groups_config"></a> [gke\_authenticator\_groups\_config](#input\_gke\_authenticator\_groups\_config) | Value to pass to authenticator\_groups\_config so members of that Google Group can authenticate to the cluster. Pass an empty string to disable. | `string` | n/a | yes |
+| <a name="input_gke_authenticator_groups_config_domain"></a> [gke\_authenticator\_groups\_config\_domain](#input\_gke\_authenticator\_groups\_config\_domain) | Domain to append to `gke-security-groups` to pass to authenticator\_groups\_config so members of that Google Group can authenticate to the cluster. Pass an empty string to disable. Domain passed here should be in the format of TLD.EXTENSION. | `string` | n/a | yes |
 | <a name="input_google_credentials"></a> [google\_credentials](#input\_google\_credentials) | Contents of a JSON keyfile of an account with write access to the project | `any` | n/a | yes |
 | <a name="input_google_project"></a> [google\_project](#input\_google\_project) | The GCP project to use for this run | `any` | n/a | yes |
 | <a name="input_google_region"></a> [google\_region](#input\_google\_region) | GCP region used to create all resources in this run | `any` | n/a | yes |
@@ -145,6 +145,11 @@ with ports `5775/UDP,5778/TCP,6831/UDP,6832/UDP`.
 | <a name="output_client_token"></a> [client\_token](#output\_client\_token) | n/a |
 | <a name="output_cluster_name"></a> [cluster\_name](#output\_cluster\_name) | The GKE cluster name that was built |
 | <a name="output_cluster_project"></a> [cluster\_project](#output\_cluster\_project) | The project hosting the GKE cluster. |
+| <a name="output_gke_cluster_istio_gatekeeper_firewall_rule_self_link"></a> [gke\_cluster\_istio\_gatekeeper\_firewall\_rule\_self\_link](#output\_gke\_cluster\_istio\_gatekeeper\_firewall\_rule\_self\_link) | The tags applied to the primary node pool of the GKE cluster. |
+| <a name="output_gke_cluster_primary_node_pool_tag"></a> [gke\_cluster\_primary\_node\_pool\_tag](#output\_gke\_cluster\_primary\_node\_pool\_tag) | Tag applied to the node pool instances - used for network/firewall rules. |
+| <a name="output_gke_kubernetes_master_version"></a> [gke\_kubernetes\_master\_version](#output\_gke\_kubernetes\_master\_version) | The Kubernetes version installed on the master nodes. |
+| <a name="output_gke_kubernetes_node_version"></a> [gke\_kubernetes\_node\_version](#output\_gke\_kubernetes\_node\_version) | The Kubernetes version installed on the worker nodes. |
+| <a name="output_gke_rapid_channel_latest_version"></a> [gke\_rapid\_channel\_latest\_version](#output\_gke\_rapid\_channel\_latest\_version) | The latest version from the RAPID channel with the specified version prefix (min\_master\_version). |
 | <a name="output_kubernetes_endpoint"></a> [kubernetes\_endpoint](#output\_kubernetes\_endpoint) | n/a |
 | <a name="output_service_account"></a> [service\_account](#output\_service\_account) | The default service account used for running nodes. |
 <!-- END_TF_DOCS -->
