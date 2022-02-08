@@ -18,7 +18,7 @@ maximum_node_count = 3
 min_master_version = "1.22"
 initial_node_count = 1
 
-gke_authenticator_groups_config              = "gke-security-groups@honestbank.com"
+gke_authenticator_groups_config_domain       = "honestbank.com"
 enable_network_policy                        = true
 master_ipv4_cidr_block                       = "10.40.0.0/28"
 master_authorized_networks_config_cidr_block = "0.0.0.0/0"

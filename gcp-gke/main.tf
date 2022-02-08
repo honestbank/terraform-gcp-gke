@@ -38,6 +38,13 @@ resource "google_service_account" "default" {
   display_name = "${var.cluster_name} Service Account"
 }
 
+data "google_container_engine_versions" "asiasoutheast2" {
+  provider = google-beta.compute-beta
+
+  location       = var.google_region
+  version_prefix = "${var.min_master_version}."
+}
+
 #tfsec:ignore:google-gke-enforce-pod-security-policy
 #tfsec:ignore:google-gke-metadata-endpoints-disabled (legacy metadata disabled by default since 1.12 https://registry.terraform.io/providers/hashicorp/google-beta/latest/docs/resources/container_cluster#nested_workload_identity_config)
 resource "google_container_cluster" "primary" {
@@ -55,13 +62,13 @@ resource "google_container_cluster" "primary" {
   remove_default_node_pool = true
   initial_node_count       = 1
   enable_shielded_nodes    = true
-  min_master_version       = var.min_master_version
+  min_master_version       = data.google_container_engine_versions.asiasoutheast2.latest_master_version
 
   enable_binary_authorization = true
   dynamic "authenticator_groups_config" {
-    for_each = length(var.gke_authenticator_groups_config) > 0 ? [var.gke_authenticator_groups_config] : []
+    for_each = length(var.gke_authenticator_groups_config_domain) > 0 ? [var.gke_authenticator_groups_config_domain] : []
     content {
-      security_group = var.gke_authenticator_groups_config
+      security_group = "gke-security-groups@${var.gke_authenticator_groups_config_domain}"
     }
   }
 
@@ -168,8 +175,13 @@ resource "google_container_cluster" "primary" {
 }
 
 resource "google_container_node_pool" "primary_node_pool" {
+  provider = google-beta.compute-beta
+
   name     = "primary"
   location = var.google_region
+
+  version = data.google_container_engine_versions.asiasoutheast2.latest_node_version
+
   node_locations = [
     "${var.google_region}-a",
     "${var.google_region}-b",

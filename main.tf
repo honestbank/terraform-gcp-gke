@@ -32,8 +32,8 @@ module "gke" {
   shared_vpc_self_link = var.shared_vpc_self_link
   subnetwork_self_link = var.subnetwork_self_link
 
-  gke_authenticator_groups_config = var.gke_authenticator_groups_config
-  min_master_version              = var.min_master_version
+  gke_authenticator_groups_config_domain = var.gke_authenticator_groups_config_domain
+  min_master_version                     = var.min_master_version
 
   enable_network_policy                        = var.enable_network_policy
   master_authorized_networks_config_cidr_block = var.master_authorized_networks_config_cidr_block

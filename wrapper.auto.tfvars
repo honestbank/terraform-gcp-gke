@@ -15,7 +15,7 @@ stage = "test"
 machine_type       = "e2-standard-4"
 minimum_node_count = 3
 maximum_node_count = 9
-min_master_version = "1.22"
+min_master_version = "1.21"
 initial_node_count = 1
 
 pods_ip_range_cidr                           = "10.20.0.0/16"
@@ -25,7 +25,7 @@ services_ip_range_name                       = "honestcard-compute-services-subn
 shared_vpc_self_link                         = "https://www.googleapis.com/compute/v1/projects/test-terraform-project-01/global/networks/vpc"
 shared_vpc_id                                = "projects/test-terraform-project-01/global/networks/vpc"
 subnetwork_self_link                         = "https://www.googleapis.com/compute/v1/projects/test-terraform-project-01/regions/asia-southeast2/subnetworks/honestcard-compute-primary-subnet"
-gke_authenticator_groups_config              = "gke-security-groups@honestbank.com"
+gke_authenticator_groups_config_domain       = "honestbank.com"
 enable_network_policy                        = true
 master_ipv4_cidr_block                       = "10.40.0.0/28"
 master_authorized_networks_config_cidr_block = "0.0.0.0/0"

@@ -8,9 +8,9 @@ variable "enable_network_policy" {
   description = "This value is passed to network_policy.enabled and the negative is passed to addons_config.network_policy_config.disabled."
 }
 
-variable "gke_authenticator_groups_config" {
+variable "gke_authenticator_groups_config_domain" {
   type        = string
-  description = "Value to pass to authenticator_groups_config so members of that Google Group can authenticate to the cluster. Pass an empty string to disable."
+  description = "Domain to append to `gke-security-groups` to pass to authenticator_groups_config so members of that Google Group can authenticate to the cluster. Pass an empty string to disable. Domain passed here should be in the format of TLD.EXTENSION."
 }
 
 variable "google_project" {
