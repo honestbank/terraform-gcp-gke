@@ -34,6 +34,17 @@ output "cluster_project" {
   value       = module.gke.cluster_project
 }
 
+output "gke_cluster_istio_gatekeeper_firewall_rule_self_link" {
+  description = "The tags applied to the primary node pool of the GKE cluster."
+  value       = module.gke.istio_gatekeeper_firewall_rule_self_link
+}
+
+output "gke_cluster_primary_node_pool_tag" {
+  description = "Tag applied to the node pool instances - used for network/firewall rules."
+  value       = module.gke.cluster_primary_node_pool_tag
+}
+
+
 output "gke_kubernetes_master_version" {
   description = "The Kubernetes version installed on the master nodes."
   value       = module.gke.gke_kubernetes_master_version
