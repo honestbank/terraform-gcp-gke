@@ -104,6 +104,8 @@ resource "google_container_cluster" "primary" {
     tags = [
       local.gke_node_pool_tag
     ]
+
+    service_account = google_service_account.default.email
   }
 
   addons_config {
@@ -173,6 +175,8 @@ resource "google_container_cluster" "primary" {
       node_config,
     ]
   }
+
+  depends_on = [google_service_account.default]
 }
 
 resource "random_id" "node_pool_tag" {
@@ -237,6 +241,8 @@ resource "google_container_node_pool" "primary_node_pool" {
   lifecycle {
     create_before_destroy = true
   }
+
+  depends_on = [google_service_account.default]
 }
 
 # We use this data provider to expose an access token for communicating with the GKE cluster.
