@@ -10,6 +10,8 @@ data "google_container_cluster" "primary" {
 }
 
 resource "google_compute_firewall" "gke_private_cluster_istio_gatekeeper_rules" { #tfsec:ignore:google-compute-no-public-ingress
+  provider = google.vpc
+
   name    = "honest-${var.cluster_name}-private-cluster-allow"
   network = var.shared_vpc_id
 
