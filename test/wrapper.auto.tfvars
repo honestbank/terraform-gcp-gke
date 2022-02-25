@@ -17,6 +17,7 @@ minimum_node_count = 1
 maximum_node_count = 3
 min_master_version = "1.22"
 initial_node_count = 1
+node_count         = 1
 
 gke_authenticator_groups_config_domain       = "honestbank.com"
 enable_network_policy                        = true

@@ -68,6 +68,7 @@ No modules.
 | <a name="input_maximum_node_count"></a> [maximum\_node\_count](#input\_maximum\_node\_count) | Maximum nodes for the node pool per-zone. | `any` | n/a | yes |
 | <a name="input_min_master_version"></a> [min\_master\_version](#input\_min\_master\_version) | The min\_master\_version attribute to pass to the google\_container\_cluster resource. | `any` | n/a | yes |
 | <a name="input_minimum_node_count"></a> [minimum\_node\_count](#input\_minimum\_node\_count) | Minimum nodes for the node pool per-zone. | `any` | n/a | yes |
+| <a name="input_node_count"></a> [node\_count](#input\_node\_count) | The number of nodes per instance group. This field can be used to update the number of nodes per instance group but should not be used alongside autoscaling. Node count management in this module needs to be refactored. | `any` | n/a | yes |
 | <a name="input_pods_ip_range_name"></a> [pods\_ip\_range\_name](#input\_pods\_ip\_range\_name) | Name of the secondary IP range used for Kubernetes Pods. | `string` | n/a | yes |
 | <a name="input_release_channel"></a> [release\_channel](#input\_release\_channel) | (Beta) The release channel of this cluster. Accepted values are `UNSPECIFIED`, `RAPID`, `REGULAR` and `STABLE`. Defaults to `REGULAR`. | `string` | `"RAPID"` | no |
 | <a name="input_services_ip_range_name"></a> [services\_ip\_range\_name](#input\_services\_ip\_range\_name) | Name of the secondary IP range used for Kubernetes Services. | `string` | n/a | yes |

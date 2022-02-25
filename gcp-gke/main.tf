@@ -201,7 +201,7 @@ resource "google_container_node_pool" "primary_node_pool" {
     "${var.google_region}-c",
   ]
   cluster    = google_container_cluster.primary.name
-  node_count = var.minimum_node_count
+  node_count = var.node_count
 
   autoscaling {
     max_node_count = var.maximum_node_count
