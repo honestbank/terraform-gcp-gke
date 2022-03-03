@@ -49,6 +49,10 @@ variable "minimum_node_count" {
   description = "Minimum nodes for the node pool per-zone."
 }
 
+variable "node_count" {
+  description = "The number of nodes per instance group. This field can be used to update the number of nodes per instance group but should not be used alongside autoscaling. Node count management in this module needs to be refactored."
+}
+
 variable "pods_ip_range_name" {
   type        = string
   description = "Name of the secondary IP range used for Kubernetes Pods."

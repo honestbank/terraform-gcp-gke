@@ -17,6 +17,7 @@ minimum_node_count = 1
 maximum_node_count = 1
 min_master_version = "1.21"
 initial_node_count = 1
+node_count         = 1
 
 pods_ip_range_cidr                           = "10.20.0.0/16"
 pods_ip_range_name                           = "honestcard-compute-pods-subnet"
