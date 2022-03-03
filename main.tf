@@ -17,7 +17,10 @@ module "gke" {
   min_master_version = var.min_master_version
   release_channel    = "RAPID"
 
-  enable_network_policy = var.enable_network_policy
+  create_gcp_nat                    = var.create_gcp_nat
+  create_gcp_router                 = var.create_gcp_router
+  create_public_https_firewall_rule = var.create_public_https_firewall_rule
+  enable_network_policy             = var.enable_network_policy
 
   gke_authenticator_groups_config_domain = var.gke_authenticator_groups_config_domain
   google_project                         = var.google_project

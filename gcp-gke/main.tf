@@ -256,31 +256,3 @@ data "google_container_cluster" "current_cluster" {
   name     = google_container_cluster.primary.name
   location = google_container_cluster.primary.location
 }
-
-resource "google_compute_router" "router" {
-  provider = google.vpc
-  name     = "${var.cluster_name}-router"
-  region   = var.google_region
-  network  = var.shared_vpc_id
-}
-
-resource "google_compute_router_nat" "nat" {
-  provider                           = google.vpc
-  name                               = "${var.cluster_name}-nat"
-  router                             = google_compute_router.router.name
-  region                             = var.google_region
-  nat_ip_allocate_option             = "AUTO_ONLY"
-  source_subnetwork_ip_ranges_to_nat = "ALL_SUBNETWORKS_ALL_IP_RANGES"
-
-  log_config {
-    enable = true
-    filter = "ERRORS_ONLY"
-  }
-
-  lifecycle {
-    ignore_changes = [
-      drain_nat_ips,
-      nat_ips,
-    ]
-  }
-}

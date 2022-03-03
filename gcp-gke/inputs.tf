@@ -3,6 +3,21 @@ variable "cluster_name" {
   description = "The name to set on the GKE cluster."
 }
 
+variable "create_gcp_router" {
+  type        = bool
+  description = "Set to `true` to create a router in the VPC network."
+}
+
+variable "create_gcp_nat" {
+  type        = bool
+  description = "Set to `true` to create an Internet NAT for ALL_SUBNETWORKS_ALL_IP_RANGES in the VPC network."
+}
+
+variable "create_public_https_firewall_rule" {
+  type        = bool
+  description = "Set to `true` to create a firewall rule allowing 0.0.0.0/0:443 on TCP to all worker nodes."
+}
+
 variable "enable_network_policy" {
   type        = bool
   description = "This value is passed to network_policy.enabled and the negative is passed to addons_config.network_policy_config.disabled."
