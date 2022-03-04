@@ -1,6 +1,10 @@
 ### Use this file to override variables in the template
 ### Examples are provided below:
 
+create_gcp_router                 = true
+create_gcp_nat                    = true
+create_public_https_firewall_rule = true
+
 ### Full GCP project name
 google_project                 = "test-terraform-project-01"
 shared_vpc_host_google_project = "test-terraform-project-01"
