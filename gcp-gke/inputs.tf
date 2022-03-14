@@ -91,7 +91,6 @@ variable "shared_vpc_self_link" {
 variable "release_channel" {
   type        = string
   description = "(Beta) The release channel of this cluster. Accepted values are `UNSPECIFIED`, `RAPID`, `REGULAR` and `STABLE`. Defaults to `REGULAR`."
-  default     = "RAPID"
 }
 
 variable "shared_vpc_host_google_project" {
