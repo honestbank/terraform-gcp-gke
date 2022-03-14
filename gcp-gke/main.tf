@@ -62,7 +62,7 @@ resource "google_container_cluster" "primary" {
   remove_default_node_pool = true
   initial_node_count       = 1
   enable_shielded_nodes    = true
-  min_master_version       = data.google_container_engine_versions.asiasoutheast2.latest_master_version
+  min_master_version       = data.google_container_engine_versions.asiasoutheast2.release_channel_default_version[var.release_channel]
 
   enable_binary_authorization = true
   dynamic "authenticator_groups_config" {
@@ -193,7 +193,7 @@ resource "google_container_node_pool" "primary_node_pool" {
   name     = "primary"
   location = var.google_region
 
-  version = data.google_container_engine_versions.asiasoutheast2.latest_node_version
+  version = data.google_container_engine_versions.asiasoutheast2.release_channel_default_version[var.release_channel]
 
   node_locations = [
     "${var.google_region}-a",
