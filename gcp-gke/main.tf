@@ -161,7 +161,7 @@ resource "google_container_cluster" "primary" {
   }
 
   release_channel {
-    channel = "RAPID"
+    channel = var.release_channel
   }
 
   # must only contain lowercase letters ([a-z]), numeric characters ([0-9]), underscores (_) and dashes (-), and must start with a letter. International characters are allowed.
