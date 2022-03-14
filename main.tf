@@ -15,7 +15,7 @@ module "gke" {
   cluster_name = "gke-${random_id.run_id.hex}"
 
   min_master_version = var.min_master_version
-  release_channel    = "RAPID"
+  release_channel    = var.release_channel
 
   create_gcp_nat                    = var.create_gcp_nat
   create_gcp_router                 = var.create_gcp_router

@@ -34,3 +34,4 @@ gke_authenticator_groups_config_domain       = "honestbank.com"
 enable_network_policy                        = true
 master_ipv4_cidr_block                       = "10.40.0.0/28"
 master_authorized_networks_config_cidr_block = "0.0.0.0/0"
+release_channel                              = "RAPID"
