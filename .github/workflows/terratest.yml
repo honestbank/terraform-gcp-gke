@@ -30,7 +30,8 @@ jobs:
         run: source ./test/prepare-test-environment.sh
       - name: gcloud-auth
         uses: google-github-actions/auth@v0
-        credentials_json: ${{ env.GOOGLE_CREDENTIALS }}
+        with:
+          credentials_json: ${{ env.GOOGLE_CREDENTIALS }}
       - name: gcloud-setup
         uses: google-github-actions/setup-gcloud@v0
         with:
