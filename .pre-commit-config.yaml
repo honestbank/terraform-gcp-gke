@@ -1,18 +1,26 @@
+# DO NOT CHANGE. This file is being managed from a central repository
+# To know more simply visit https://github.com/honestbank/.github/blob/main/docs/about.md
+
 # See https://pre-commit.com for more information
 # See https://pre-commit.com/hooks.html for more hooks
+
 repos:
-  -   repo: https://github.com/pre-commit/pre-commit-hooks
-      rev: v4.1.0 # Get the latest version from: https://github.com/pre-commit/pre-commit-hooks/releases
-      hooks:
-        -   id: trailing-whitespace
-        -   id: end-of-file-fixer
-        -   id: check-yaml
-        -   id: check-added-large-files
-  - repo: git://github.com/antonbabenko/pre-commit-terraform
-    rev: v1.62.3 # Get the latest from: https://github.com/antonbabenko/pre-commit-terraform/releases
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.2.0 # Get the latest from: https://github.com/pre-commit/pre-commit-hooks/releases
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-added-large-files
+      - id: detect-aws-credentials
+        args: ["--allow-missing-credentials"]
+  - repo: https://github.com/antonbabenko/pre-commit-terraform
+    rev: v1.68.0 # Get the latest from: https://github.com/antonbabenko/pre-commit-terraform/releases
     hooks:
       - id: terraform_fmt
       - id: terraform_docs
       - id: terraform_validate
       - id: terraform_tfsec
-      - id: checkov
+        exclude: "test/"
+      - id: terraform_checkov
+        exclude: "test/"
