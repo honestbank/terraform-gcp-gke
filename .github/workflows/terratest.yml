@@ -28,13 +28,15 @@ jobs:
         id: go
       - name: prepare test environment
         run: source ./test/prepare-test-environment.sh
-      - name: Login to Google Cloud
-        uses: google-github-actions/setup-gcloud@master
+      - name: gcloud-auth
+        uses: google-github-actions/auth@v0
         with:
-          version: "latest" # This is the default value anyways, just being explicit
+          credentials_json: ${{ env.GOOGLE_CREDENTIALS }}
+      - name: gcloud-setup
+        uses: google-github-actions/setup-gcloud@v0
+        with:
+          version: "latest" # This is the default value, just being explicit
           project_id: ${{ env.GOOGLE_PROJECT }}
-          service_account_email: ${{ env.GCP_SA_EMAIL }}
-          service_account_key: ${{ env.GOOGLE_CREDENTIALS }}
           export_default_credentials: false
       - name: Set Google Cloud project
         run: gcloud config set project $GOOGLE_PROJECT
