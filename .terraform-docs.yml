@@ -4,4 +4,4 @@ output:
 formatter: "markdown"
 recursive:
   enabled: true
-  path: gcp-gke
+  path: modules

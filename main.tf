@@ -9,7 +9,7 @@ module "gke" {
     google-beta.compute-beta = google-beta.compute-beta
   }
 
-  source = "./gcp-gke"
+  source = "./modules/gcp-gke"
 
   stage        = var.stage
   cluster_name = "gke-${random_id.run_id.hex}"

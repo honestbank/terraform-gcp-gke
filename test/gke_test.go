@@ -100,7 +100,7 @@ func TestTerraformGcpGkeTemplate(t *testing.T) {
 
 		// GKE cluster
 		test_structure.RunTestStage(t, "create_test_copy", func() {
-			tempTestDir = test_structure.CopyTerraformFolderToTemp(t, "../gcp-gke", ".")
+			tempTestDir = test_structure.CopyTerraformFolderToTemp(t, "../modules/gcp-gke", ".")
 			logger.Logf(t, "path to test folder %s\n", tempTestDir)
 			test_structure.SaveString(t, workingDir, "gkeClusterTerraformModulePath", tempTestDir)
 		})
