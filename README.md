@@ -95,7 +95,7 @@ with ports `5775/UDP,5778/TCP,6831/UDP,6832/UDP`.
 
 | Name | Version |
 |------|---------|
-| <a name="provider_random"></a> [random](#provider\_random) | 3.1.0 |
+| <a name="provider_random"></a> [random](#provider\_random) | 3.2.0 |
 
 ## Modules
 
@@ -122,6 +122,7 @@ with ports `5775/UDP,5778/TCP,6831/UDP,6832/UDP`.
 | <a name="input_google_project"></a> [google\_project](#input\_google\_project) | The GCP project to use for this run | `any` | n/a | yes |
 | <a name="input_google_region"></a> [google\_region](#input\_google\_region) | GCP region used to create all resources in this run | `any` | n/a | yes |
 | <a name="input_initial_node_count"></a> [initial\_node\_count](#input\_initial\_node\_count) | Initial node count, per-zone for regional clusters. | `any` | n/a | yes |
+| <a name="input_kubernetes_version"></a> [kubernetes\_version](#input\_kubernetes\_version) | The Kubernetes version to install on the master and node pool - must be a valid version from the specified `var.release_channel` | `string` | n/a | yes |
 | <a name="input_machine_type"></a> [machine\_type](#input\_machine\_type) | Machine types to use for the node pool. | `string` | n/a | yes |
 | <a name="input_master_authorized_networks_config_cidr_block"></a> [master\_authorized\_networks\_config\_cidr\_block](#input\_master\_authorized\_networks\_config\_cidr\_block) | The IP range allowed to access the control plane, passed to the master\_authorized\_network\_config.cidr\_blocks.cidr\_block field. | `any` | n/a | yes |
 | <a name="input_master_ipv4_cidr_block"></a> [master\_ipv4\_cidr\_block](#input\_master\_ipv4\_cidr\_block) | The IP range to set for master nodes, passed to master\_ipv4\_cidr\_block - /28 required by Google. | `any` | n/a | yes |
@@ -151,9 +152,12 @@ with ports `5775/UDP,5778/TCP,6831/UDP,6832/UDP`.
 | <a name="output_cluster_project"></a> [cluster\_project](#output\_cluster\_project) | The project hosting the GKE cluster. |
 | <a name="output_gke_cluster_istio_gatekeeper_firewall_rule_self_link"></a> [gke\_cluster\_istio\_gatekeeper\_firewall\_rule\_self\_link](#output\_gke\_cluster\_istio\_gatekeeper\_firewall\_rule\_self\_link) | The tags applied to the primary node pool of the GKE cluster. |
 | <a name="output_gke_cluster_primary_node_pool_tag"></a> [gke\_cluster\_primary\_node\_pool\_tag](#output\_gke\_cluster\_primary\_node\_pool\_tag) | Tag applied to the node pool instances - used for network/firewall rules. |
-| <a name="output_gke_kubernetes_master_version"></a> [gke\_kubernetes\_master\_version](#output\_gke\_kubernetes\_master\_version) | The Kubernetes version installed on the master nodes. |
-| <a name="output_gke_kubernetes_node_version"></a> [gke\_kubernetes\_node\_version](#output\_gke\_kubernetes\_node\_version) | The Kubernetes version installed on the worker nodes. |
-| <a name="output_gke_rapid_channel_latest_version"></a> [gke\_rapid\_channel\_latest\_version](#output\_gke\_rapid\_channel\_latest\_version) | The latest version from the RAPID channel with the specified version prefix (min\_master\_version). |
+| <a name="output_gke_kubernetes_latest_master_version"></a> [gke\_kubernetes\_latest\_master\_version](#output\_gke\_kubernetes\_latest\_master\_version) | The `latest_master_version` attribute of the `google_container_engine_versions` data source. |
+| <a name="output_gke_kubernetes_latest_node_version"></a> [gke\_kubernetes\_latest\_node\_version](#output\_gke\_kubernetes\_latest\_node\_version) | The `latest_node_version` attribute of the `google_container_engine_versions` data source. |
+| <a name="output_gke_kubernetes_valid_master_versions"></a> [gke\_kubernetes\_valid\_master\_versions](#output\_gke\_kubernetes\_valid\_master\_versions) | The `valid_master_versions` attribute of the `google_container_engine_versions` data source. |
+| <a name="output_gke_kubernetes_valid_node_versions"></a> [gke\_kubernetes\_valid\_node\_versions](#output\_gke\_kubernetes\_valid\_node\_versions) | The `valid_node_versions` attribute of the `google_container_engine_versions` data source. |
+| <a name="output_google_container_engine_versions_data"></a> [google\_container\_engine\_versions\_data](#output\_google\_container\_engine\_versions\_data) | The data returned by the `google_container_engine_versions` data source. |
 | <a name="output_kubernetes_endpoint"></a> [kubernetes\_endpoint](#output\_kubernetes\_endpoint) | n/a |
+| <a name="output_rapid_channel_default_version"></a> [rapid\_channel\_default\_version](#output\_rapid\_channel\_default\_version) | The default version from the RAPID channel with the specified version prefix (min\_master\_version). |
 | <a name="output_service_account"></a> [service\_account](#output\_service\_account) | The default service account used for running nodes. |
 <!-- END_TF_DOCS -->

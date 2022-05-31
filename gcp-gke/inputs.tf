@@ -40,6 +40,11 @@ variable "initial_node_count" {
   description = "Initial node count, per-zone for regional clusters."
 }
 
+variable "kubernetes_version" {
+  description = "The Kubernetes version to install on the master and node pool - must be a valid version from the specified `var.release_channel`"
+  type        = string
+}
+
 variable "machine_type" {
   description = "Machine types to use for the node pool."
 }
@@ -57,7 +62,7 @@ variable "maximum_node_count" {
 }
 
 variable "min_master_version" {
-  description = "The min_master_version attribute to pass to the google_container_cluster resource."
+  description = "The min_master_version attribute to pass to the google_container_cluster resource. Must be a valid GKE Kubernetes version (eg. `1.23.5-gke.1501`)."
 }
 
 variable "minimum_node_count" {

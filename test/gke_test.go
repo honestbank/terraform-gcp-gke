@@ -27,7 +27,7 @@ func TestTerraformGcpGkeTemplate(t *testing.T) {
 	clusterName := "test-gke-" + runId
 	// Create all resources in the following zone
 	gcpIndonesiaRegion := "asia-southeast2"
-	testProject := "test-terraform-project-01"
+	testProject := "compute-df9f"
 	tempTestDir := ""
 
 	//
@@ -127,7 +127,7 @@ func TestTerraformGcpGkeTemplate(t *testing.T) {
 
 		// Copy supporting files
 		varFile := "wrapper.auto.tfvars"
-		providerFile := "providers.tf"
+		providerFile := "gcp_gke_providers.tf"
 		testFileSourceDir, getTestDirErr := os.Getwd()
 		if getTestDirErr != nil {
 			fmt.Println("calling t.FailNow(): could not execute os.Getwd(): ", getTestDirErr)
@@ -210,8 +210,26 @@ func TestTerraformGcpGkeTemplate(t *testing.T) {
 
 		// Skipping this whole block to see if Terratest will pass
 
-		logger.Log(t, "About to start terraform_verify_plan_noop")
+		logger.Log(t, "About to start verify")
 		test_structure.RunTestStage(t, "terraform_verify_plan_noop", func() {
+
+			// Validate Kubernetes version (1.23)
+			gkeClusterTerraformModulePath := test_structure.LoadString(t, workingDir, "gkeClusterTerraformModulePath")
+			clusterName = strings.ReplaceAll(clusterName, "\"", "")
+			describeClusterCmd := shell.Command{
+				Command: "gcloud",
+				Args: []string{
+					"container",
+					"clusters",
+					"describe", clusterName,
+					"--region", gcpIndonesiaRegion,
+					"--project", testProject,
+				},
+				WorkingDir: gkeClusterTerraformModulePath,
+			}
+			describeClusterCmdOutput := shell.RunCommandAndGetStdOut(t, describeClusterCmd)
+			assert.Contains(t, describeClusterCmdOutput, "1.23.5-gke.1501")
+
 			gkeClusterTerratestOptions := test_structure.LoadTerraformOptions(t, workingDir)
 			planResult := terraform.InitAndPlan(t, gkeClusterTerratestOptions)
 			resourceCount, getResourceCountErr := terraform.GetResourceCountE(t, planResult)
@@ -230,7 +248,6 @@ func TestTerraformGcpGkeTemplate(t *testing.T) {
 				//assert.Equal(t, 0, resourceCount.Add)
 				//assert.Equal(t, 0, resourceCount.Destroy)
 			}
-
 		})
 	})
 }

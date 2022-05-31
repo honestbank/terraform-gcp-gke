@@ -45,19 +45,34 @@ output "gke_cluster_primary_node_pool_tag" {
 }
 
 
-output "gke_kubernetes_master_version" {
-  description = "The Kubernetes version installed on the master nodes."
-  value       = module.gke.gke_kubernetes_master_version
+output "gke_kubernetes_latest_master_version" {
+  description = "The `latest_master_version` attribute of the `google_container_engine_versions` data source."
+  value       = module.gke.google_container_engine_versions_data_latest_master_version
 }
 
-output "gke_kubernetes_node_version" {
-  description = "The Kubernetes version installed on the worker nodes."
-  value       = module.gke.gke_kubernetes_node_version
+output "gke_kubernetes_latest_node_version" {
+  description = "The `latest_node_version` attribute of the `google_container_engine_versions` data source."
+  value       = module.gke.google_container_engine_versions_data_latest_node_version
 }
 
-output "gke_rapid_channel_latest_version" {
-  description = "The latest version from the RAPID channel with the specified version prefix (min_master_version)."
-  value       = module.gke.rapid_channel_latest_version
+output "gke_kubernetes_valid_master_versions" {
+  description = "The `valid_master_versions` attribute of the `google_container_engine_versions` data source."
+  value       = module.gke.google_container_engine_versions_data_valid_master_versions
+}
+
+output "gke_kubernetes_valid_node_versions" {
+  description = "The `valid_node_versions` attribute of the `google_container_engine_versions` data source."
+  value       = module.gke.google_container_engine_versions_data_valid_node_versions
+}
+
+output "rapid_channel_default_version" {
+  description = "The default version from the RAPID channel with the specified version prefix (min_master_version)."
+  value       = module.gke.rapid_channel_default_version
+}
+
+output "google_container_engine_versions_data" {
+  description = "The data returned by the `google_container_engine_versions` data source."
+  value       = module.gke.google_container_engine_versions_data
 }
 
 output "kubernetes_endpoint" {

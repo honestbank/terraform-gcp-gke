@@ -19,7 +19,7 @@ stage = "test"
 machine_type       = "e2-standard-4"
 minimum_node_count = 1
 maximum_node_count = 1
-min_master_version = "1.21"
+min_master_version = "1.23.5-gke.1501"
 initial_node_count = 1
 node_count         = 1
 
@@ -34,4 +34,5 @@ gke_authenticator_groups_config_domain       = "honestbank.com"
 enable_network_policy                        = true
 master_ipv4_cidr_block                       = "10.40.0.0/28"
 master_authorized_networks_config_cidr_block = "0.0.0.0/0"
-release_channel                              = "RAPID"
+release_channel                              = "REGULAR"
+kubernetes_version                           = "1.23.5-gke.1501"

@@ -29,14 +29,31 @@ output "ca_certificate" {
   value     = google_container_cluster.primary.master_auth.0.cluster_ca_certificate
 }
 
-output "gke_kubernetes_master_version" {
-  description = "The Kubernetes version installed on the master nodes."
-  value       = data.google_container_engine_versions.asiasoutheast2.latest_master_version
+
+
+output "google_container_engine_versions_data" {
+  description = "The data returned by the `google_container_engine_versions` data source."
+  value       = data.google_container_engine_versions.gcp_kubernetes_versions.release_channel_default_version
 }
 
-output "gke_kubernetes_node_version" {
-  description = "The Kubernetes version installed on the worker nodes."
-  value       = data.google_container_engine_versions.asiasoutheast2.latest_node_version
+output "google_container_engine_versions_data_latest_master_version" {
+  description = "The `latest_master_version` attribute of the `google_container_engine_versions` data source."
+  value       = data.google_container_engine_versions.gcp_kubernetes_versions.latest_master_version
+}
+
+output "google_container_engine_versions_data_latest_node_version" {
+  description = "The `latest_node_version` attribute of the `google_container_engine_versions` data source."
+  value       = data.google_container_engine_versions.gcp_kubernetes_versions.latest_node_version
+}
+
+output "google_container_engine_versions_data_valid_master_versions" {
+  description = "The `valid_master_versions` attribute of the `google_container_engine_versions` data source."
+  value       = data.google_container_engine_versions.gcp_kubernetes_versions.valid_master_versions
+}
+
+output "google_container_engine_versions_data_valid_node_versions" {
+  description = "The `valid_node_versions` attribute of the `google_container_engine_versions` data source."
+  value       = data.google_container_engine_versions.gcp_kubernetes_versions.valid_node_versions
 }
 
 output "node_pool_service_account_email" {
@@ -64,7 +81,7 @@ output "istio_gatekeeper_firewall_rule_self_link" {
   value       = google_compute_firewall.gke_private_cluster_istio_gatekeeper_rules.self_link
 }
 
-output "rapid_channel_latest_version" {
+output "rapid_channel_default_version" {
   description = "The latest version from the RAPID channel with the specified version prefix (min_master_version)."
-  value       = data.google_container_engine_versions.asiasoutheast2.release_channel_default_version["RAPID"]
+  value       = data.google_container_engine_versions.gcp_kubernetes_versions.release_channel_default_version["RAPID"]
 }

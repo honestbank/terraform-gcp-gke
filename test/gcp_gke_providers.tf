@@ -6,6 +6,7 @@ variable "shared_vpc_host_google_credentials" {
   description = "Service Account with access to shared_vpc_host_google_project networks"
 }
 
+# This default provider is needed by Terraform/the Google provider
 provider "google" {
   project     = var.google_project
   region      = var.google_region
@@ -50,7 +51,7 @@ provider "google-beta" {
 
 provider "google" {
   alias       = "vpc"
-  project     = var.shared_vpc_host_google_project
+  project     = var.google_project
   region      = var.google_region
-  credentials = var.shared_vpc_host_google_credentials
+  credentials = var.google_credentials
 }

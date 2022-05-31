@@ -6,11 +6,17 @@ testing.
 To run tests, first export the needed env vars - values below are examples:
 
 ```bash
-export TF_VAR_google_credentials=$(cat compute.json)
-export TF_VAR_shared_vpc_host_google_credentials=$(cat vpc.json)
+export TF_VAR_google_credentials=$(cat <GCP_KEYFILE>.json)
+export TF_VAR_shared_vpc_host_google_credentials=$(cat <GCP_KEYFILE>.json)
 ```
 
-Then run the tests:
+Ensure the GCP project has the following APIs enabled:
+
+* Compute Engine
+* Kubernetes Engine
+* Cloud Resource Manager
+
+To execute the tests, run the following command - adjust timeout as needed, recommend a 30-minute minimum:
 
 ```bash
 go test -v -timeout 60m

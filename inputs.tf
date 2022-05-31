@@ -40,6 +40,11 @@ variable "initial_node_count" {
   description = "Initial node count, per-zone for regional clusters."
 }
 
+variable "kubernetes_version" {
+  description = "The Kubernetes version to install on the master and node pool - must be a valid version from the specified `var.release_channel`"
+  type        = string
+}
+
 variable "master_authorized_networks_config_cidr_block" {
   description = "The IP range allowed to access the control plane, passed to the master_authorized_network_config.cidr_blocks.cidr_block field."
 }
