@@ -61,10 +61,6 @@ variable "maximum_node_count" {
   description = "Maximum nodes for the node pool per-zone."
 }
 
-variable "min_master_version" {
-  description = "The min_master_version attribute to pass to the google_container_cluster resource. Must be a valid GKE Kubernetes version (eg. `1.23.5-gke.1501`)."
-}
-
 variable "minimum_node_count" {
   description = "Minimum nodes for the node pool per-zone."
 }

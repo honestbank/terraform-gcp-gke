@@ -101,7 +101,7 @@ with ports `5775/UDP,5778/TCP,6831/UDP,6832/UDP`.
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_gke"></a> [gke](#module\_gke) | ./gcp-gke | n/a |
+| <a name="module_gke"></a> [gke](#module\_gke) | ./modules/gcp-gke | n/a |
 
 ## Resources
 

@@ -48,7 +48,6 @@ No modules.
 | [random_id.node_pool_tag](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/id) | resource |
 | [google-beta_google_client_config.default](https://registry.terraform.io/providers/hashicorp/google-beta/latest/docs/data-sources/google_client_config) | data source |
 | [google-beta_google_container_cluster.current_cluster](https://registry.terraform.io/providers/hashicorp/google-beta/latest/docs/data-sources/google_container_cluster) | data source |
-| [google-beta_google_container_engine_versions.asiasoutheast2](https://registry.terraform.io/providers/hashicorp/google-beta/latest/docs/data-sources/google_container_engine_versions) | data source |
 | [google_container_cluster.primary](https://registry.terraform.io/providers/hashicorp/google/latest/docs/data-sources/container_cluster) | data source |
 | [google_project.host_project](https://registry.terraform.io/providers/hashicorp/google/latest/docs/data-sources/project) | data source |
 | [google_project.service_project](https://registry.terraform.io/providers/hashicorp/google/latest/docs/data-sources/project) | data source |
@@ -66,11 +65,11 @@ No modules.
 | <a name="input_google_project"></a> [google\_project](#input\_google\_project) | The GCP project to use for this run | `any` | n/a | yes |
 | <a name="input_google_region"></a> [google\_region](#input\_google\_region) | GCP region used to create all resources in this run | `any` | n/a | yes |
 | <a name="input_initial_node_count"></a> [initial\_node\_count](#input\_initial\_node\_count) | Initial node count, per-zone for regional clusters. | `any` | n/a | yes |
+| <a name="input_kubernetes_version"></a> [kubernetes\_version](#input\_kubernetes\_version) | The Kubernetes version to install on the master and node pool - must be a valid version from the specified `var.release_channel` | `string` | n/a | yes |
 | <a name="input_machine_type"></a> [machine\_type](#input\_machine\_type) | Machine types to use for the node pool. | `any` | n/a | yes |
 | <a name="input_master_authorized_networks_config_cidr_block"></a> [master\_authorized\_networks\_config\_cidr\_block](#input\_master\_authorized\_networks\_config\_cidr\_block) | The IP range allowed to access the control plane, passed to the master\_authorized\_network\_config.cidr\_blocks.cidr\_block field. | `any` | n/a | yes |
 | <a name="input_master_ipv4_cidr_block"></a> [master\_ipv4\_cidr\_block](#input\_master\_ipv4\_cidr\_block) | The IP range to set for master nodes, passed to master\_ipv4\_cidr\_block - /28 required by Google. | `any` | n/a | yes |
 | <a name="input_maximum_node_count"></a> [maximum\_node\_count](#input\_maximum\_node\_count) | Maximum nodes for the node pool per-zone. | `any` | n/a | yes |
-| <a name="input_min_master_version"></a> [min\_master\_version](#input\_min\_master\_version) | The min\_master\_version attribute to pass to the google\_container\_cluster resource. | `any` | n/a | yes |
 | <a name="input_minimum_node_count"></a> [minimum\_node\_count](#input\_minimum\_node\_count) | Minimum nodes for the node pool per-zone. | `any` | n/a | yes |
 | <a name="input_node_count"></a> [node\_count](#input\_node\_count) | The number of nodes per instance group. This field can be used to update the number of nodes per instance group but should not be used alongside autoscaling. Node count management in this module needs to be refactored. | `any` | n/a | yes |
 | <a name="input_pods_ip_range_name"></a> [pods\_ip\_range\_name](#input\_pods\_ip\_range\_name) | Name of the secondary IP range used for Kubernetes Pods. | `string` | n/a | yes |
@@ -91,10 +90,7 @@ No modules.
 | <a name="output_cluster_name"></a> [cluster\_name](#output\_cluster\_name) | The GKE cluster name that was built |
 | <a name="output_cluster_primary_node_pool_tag"></a> [cluster\_primary\_node\_pool\_tag](#output\_cluster\_primary\_node\_pool\_tag) | Tag applied to the node pool instances - used for network/firewall rules. |
 | <a name="output_cluster_project"></a> [cluster\_project](#output\_cluster\_project) | The project hosting the GKE cluster. |
-| <a name="output_gke_kubernetes_master_version"></a> [gke\_kubernetes\_master\_version](#output\_gke\_kubernetes\_master\_version) | The Kubernetes version installed on the master nodes. |
-| <a name="output_gke_kubernetes_node_version"></a> [gke\_kubernetes\_node\_version](#output\_gke\_kubernetes\_node\_version) | The Kubernetes version installed on the worker nodes. |
 | <a name="output_istio_gatekeeper_firewall_rule_self_link"></a> [istio\_gatekeeper\_firewall\_rule\_self\_link](#output\_istio\_gatekeeper\_firewall\_rule\_self\_link) | The self\_link attribute of the firewall rule created to allow Gatekeeper and Istio to function. |
 | <a name="output_kubernetes_endpoint"></a> [kubernetes\_endpoint](#output\_kubernetes\_endpoint) | The kubernetes\_endpoint output of the google\_container\_cluster resource. |
 | <a name="output_node_pool_service_account_email"></a> [node\_pool\_service\_account\_email](#output\_node\_pool\_service\_account\_email) | The default service account used for running nodes |
-| <a name="output_rapid_channel_latest_version"></a> [rapid\_channel\_latest\_version](#output\_rapid\_channel\_latest\_version) | The latest version from the RAPID channel with the specified version prefix (min\_master\_version). |
 <!-- END_TF_DOCS -->

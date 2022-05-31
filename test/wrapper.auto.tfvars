@@ -19,7 +19,6 @@ stage = "test"
 machine_type       = "e2-standard-4"
 minimum_node_count = 1
 maximum_node_count = 3
-min_master_version = "1.23.5-gke.1501"
 initial_node_count = 1
 node_count         = 1
 

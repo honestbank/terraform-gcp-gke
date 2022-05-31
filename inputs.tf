@@ -63,11 +63,6 @@ variable "machine_type" {
   description = "Machine types to use for the node pool."
 }
 
-variable "min_master_version" {
-  type        = string
-  description = "The min_master_version attribute to pass to the google_container_cluster resource."
-}
-
 variable "minimum_node_count" {
   type        = string
   description = "Minimum nodes for the node pool. This is the total nodes so for regional deployments it is the total nodes across all zones."

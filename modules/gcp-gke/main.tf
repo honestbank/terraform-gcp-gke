@@ -38,13 +38,6 @@ resource "google_service_account" "default" {
   display_name = "${var.cluster_name} Service Account"
 }
 
-data "google_container_engine_versions" "gcp_kubernetes_versions" {
-  provider = google-beta.compute-beta
-
-  location       = var.google_region
-  version_prefix = "${var.min_master_version}."
-}
-
 #tfsec:ignore:google-gke-enforce-pod-security-policy
 #tfsec:ignore:google-gke-metadata-endpoints-disabled (legacy metadata disabled by default since 1.12 https://registry.terraform.io/providers/hashicorp/google-beta/latest/docs/resources/container_cluster#nested_workload_identity_config)
 resource "google_container_cluster" "primary" {

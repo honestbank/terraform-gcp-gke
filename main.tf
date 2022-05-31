@@ -15,7 +15,6 @@ module "gke" {
   cluster_name = "gke-${random_id.run_id.hex}"
 
   kubernetes_version = var.kubernetes_version
-  min_master_version = var.min_master_version
   release_channel    = var.release_channel
 
   create_gcp_nat                    = var.create_gcp_nat
