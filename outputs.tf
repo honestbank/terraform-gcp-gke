@@ -1,19 +1,3 @@
-/**
- * Copyright 2020 Google LLC
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 output "ca_certificate" {
   sensitive = true
   value     = module.gke.ca_certificate
@@ -42,22 +26,6 @@ output "gke_cluster_istio_gatekeeper_firewall_rule_self_link" {
 output "gke_cluster_primary_node_pool_tag" {
   description = "Tag applied to the node pool instances - used for network/firewall rules."
   value       = module.gke.cluster_primary_node_pool_tag
-}
-
-
-output "gke_kubernetes_master_version" {
-  description = "The Kubernetes version installed on the master nodes."
-  value       = module.gke.gke_kubernetes_master_version
-}
-
-output "gke_kubernetes_node_version" {
-  description = "The Kubernetes version installed on the worker nodes."
-  value       = module.gke.gke_kubernetes_node_version
-}
-
-output "gke_rapid_channel_latest_version" {
-  description = "The latest version from the RAPID channel with the specified version prefix (min_master_version)."
-  value       = module.gke.rapid_channel_latest_version
 }
 
 output "kubernetes_endpoint" {

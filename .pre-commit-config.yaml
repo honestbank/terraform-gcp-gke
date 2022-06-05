@@ -8,11 +8,20 @@ repos:
         -   id: end-of-file-fixer
         -   id: check-yaml
         -   id: check-added-large-files
-  - repo: git://github.com/antonbabenko/pre-commit-terraform
-    rev: v1.62.3 # Get the latest from: https://github.com/antonbabenko/pre-commit-terraform/releases
+  - repo: https://github.com/antonbabenko/pre-commit-terraform
+    rev: v1.68.0 # Get the latest from: https://github.com/antonbabenko/pre-commit-terraform/releases
     hooks:
       - id: terraform_fmt
       - id: terraform_docs
+      # The terraform_validate hook will error out - see:
+      # https://github.com/antonbabenko/pre-commit-terraform#terraform_validate
+      # Running `terraform validate` inside the component module folder also will not pass.
       - id: terraform_validate
       - id: terraform_tfsec
-      - id: checkov
+        exclude: "test/"
+      - id: terraform_checkov
+        args:
+        - --args=--config-file .checkov.yaml
+        - --args=--skip-path test/
+        - --args=--quiet
+        exclude: "test/"

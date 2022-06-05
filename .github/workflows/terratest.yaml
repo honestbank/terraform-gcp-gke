@@ -7,11 +7,10 @@ on:
     branches:
       - main
 env:
-  GOOGLE_CREDENTIALS: ${{ secrets.TERRATEST_GOOGLE_CREDENTIALS }}
-  GOOGLE_PROJECT: ${{ secrets.TERRATEST_GOOGLE_PROJECT }}
-  GCP_SA_EMAIL: ${{ secrets.TERRATEST_GCP_SA_EMAIL }}
-  TF_VAR_google_credentials: ${{ secrets.TERRATEST_GOOGLE_CREDENTIALS }}
-  TF_VAR_shared_vpc_host_google_credentials: ${{ secrets.TERRATEST_GOOGLE_CREDENTIALS }}
+  COMPUTE_GOOGLE_CREDENTIALS: ${{ secrets.TERRATEST_GOOGLE_CREDENTIALS_COMPUTE }}
+  COMPUTE_GOOGLE_PROJECT: ${{ secrets.TERRATEST_GOOGLE_PROJECT_COMPUTE }}
+  TF_VAR_google_credentials: ${{ secrets.TERRATEST_GOOGLE_CREDENTIALS_COMPUTE }}
+  TF_VAR_shared_vpc_host_google_credentials: ${{ secrets.TERRATEST_GOOGLE_CREDENTIALS_NETWORK }}
 jobs:
   terratest:
     name: terratest
@@ -25,21 +24,16 @@ jobs:
         uses: actions/setup-go@v2
         with:
           go-version: 1.17
-        id: go
-      - name: prepare test environment
-        run: source ./test/prepare-test-environment.sh
       - name: gcloud-auth
         uses: google-github-actions/auth@v0
         with:
-          credentials_json: ${{ env.GOOGLE_CREDENTIALS }}
+          credentials_json: ${{ env.COMPUTE_GOOGLE_CREDENTIALS }}
       - name: gcloud-setup
         uses: google-github-actions/setup-gcloud@v0
         with:
           version: "latest" # This is the default value, just being explicit
-          project_id: ${{ env.GOOGLE_PROJECT }}
+          project_id: ${{ env.COMPUTE_GOOGLE_PROJECT }}
           export_default_credentials: false
-      - name: Set Google Cloud project
-        run: gcloud config set project $GOOGLE_PROJECT
       - name: Run terratest
         run: |
           cd test

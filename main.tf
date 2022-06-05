@@ -9,12 +9,12 @@ module "gke" {
     google-beta.compute-beta = google-beta.compute-beta
   }
 
-  source = "./gcp-gke"
+  source = "./modules/gcp-gke"
 
   stage        = var.stage
   cluster_name = "gke-${random_id.run_id.hex}"
 
-  min_master_version = var.min_master_version
+  kubernetes_version = var.kubernetes_version
   release_channel    = var.release_channel
 
   create_gcp_nat                    = var.create_gcp_nat
