@@ -7,7 +7,7 @@ create_public_https_firewall_rule = true
 
 ### Full GCP project name
 google_project                 = "compute-df9f"
-shared_vpc_host_google_project = "shared-vpc-3d3d"
+shared_vpc_host_google_project = "tf-shared-vpc-host-78a3"
 
 ### GCP region
 google_region = "asia-southeast2"
