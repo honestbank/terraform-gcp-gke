@@ -24,11 +24,11 @@ To run E2E tests, navigate to the [test folder](../test) and run `go test -v -ti
 
 | Name | Version |
 |------|---------|
-| <a name="provider_google"></a> [google](#provider\_google) | 4.9.0 |
-| <a name="provider_google.compute"></a> [google.compute](#provider\_google.compute) | 4.9.0 |
-| <a name="provider_google.vpc"></a> [google.vpc](#provider\_google.vpc) | 4.9.0 |
-| <a name="provider_google-beta.compute-beta"></a> [google-beta.compute-beta](#provider\_google-beta.compute-beta) | 4.9.0 |
-| <a name="provider_random"></a> [random](#provider\_random) | 3.1.0 |
+| <a name="provider_google"></a> [google](#provider\_google) | 4.23.0 |
+| <a name="provider_google.compute"></a> [google.compute](#provider\_google.compute) | 4.23.0 |
+| <a name="provider_google.vpc"></a> [google.vpc](#provider\_google.vpc) | 4.23.0 |
+| <a name="provider_google-beta.compute-beta"></a> [google-beta.compute-beta](#provider\_google-beta.compute-beta) | 4.23.0 |
+| <a name="provider_random"></a> [random](#provider\_random) | 3.2.0 |
 
 ## Modules
 

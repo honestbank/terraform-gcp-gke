@@ -5,9 +5,9 @@ create_gcp_router                 = true
 create_gcp_nat                    = true
 create_public_https_firewall_rule = true
 
-### Full GCP project name
+### Full GCP project IDs
 google_project                 = "compute-df9f"
-shared_vpc_host_google_project = "compute-df9f"
+shared_vpc_host_google_project = "tf-shared-vpc-host-78a3"
 
 ### GCP region
 google_region = "asia-southeast2"

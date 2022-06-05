@@ -3,51 +3,26 @@
 ![terratest](https://github.com/Honestbank/terraform-gcp-gke/workflows/terratest/badge.svg?branch=main)
 ![Terraform GitHub Actions](https://github.com/Honestbank/terraform-gcp-gke/workflows/Terraform%20GitHub%20Actions/badge.svg)
 
-This script/module creates a basic public GKE cluster located in a shared VPC.
-
-## Inputs
-
-* `google_region` - region in which to create resources.
-* `zones` - zones to place compute resources in (defaults to `["asia-southeast2-a", "asia-southeast2-b", "asia-southeast2-c"]`).
-* `google_project` - project in which to place compute resources (defaults to `test-api-cloud-infrastructure`).
-* `google_credentials` - service account with ability to create resources in `google_project`.
-* `shared_vpc_host_google_project` - host project of the shared VPC (defaults to `test-api-shared-vpc`).
-* `shared_vpc_host_google_credentials` - service account with ability to read/get networks from
-  `shared_vpc_host_google_project`
-* `stage` - prefix for all resources (defaults to `test`).
-* `cluster_purpose` - placed into the cluster's name (defaults to `tf-gke-template`).
-* `cluster_number` - a count index suffix for compute resources (defaults to `00`).
-
-**TODO:** Add remaining variables
-
-To run locally,export the following variables:
-
-```bash
-export TF_VAR_google_region="asia-southeast2"
-export TF_VAR_google_project=
-export TF_VAR_google_credentials=
-export TF_VAR_shared_vpc_host_google_project=
-export TF_VAR_shared_vpc_host_google_credentials=
-```
+This module creates a basic public GKE cluster located in a shared VPC.
 
 ## GCP Project Setup
 
 When preparing a GCP project for a Terraform GKE deployment, ensure the
 following APIs/services are enabled:
 
-* GKE
 * Cloud Resource Manager
 * Compute Engine
+* Kubernetes Engine
 * Service Networking
 
 ### Networking
 
-This script requires a shared VPC, and assumes that the main project specified by
+This module requires a shared VPC, and assumes that the main project specified by
 `google_project` is a 'service project' that is attached to a shared VPC originating
 in `shared_vpc_host_google_project`.
 
 Ensure that the secondary IP ranges for Pods and Services in the shared VPC are not used by another
-cluster, otherwise this script will time out/fail.
+cluster, otherwise this module will time out/fail.
 
 **Network and Subnet Names**
 
@@ -59,30 +34,10 @@ IP ranges for Pods and Services:
 * Shared VPC subnet Pods IP range name = `<STAGE>-private-vpc-pods` (eg. `test-private-vpc-pods`)
 * Shared VPC subnet Services IP range name = `<STAGE>-private-vpc-services` (eg. `test-private-vpc-services`)
 
-### Service Account
+### Service Account Permissions
 
-The Service Account specified in `google_credentials` requires:
-
-* Role: Project Owner (in main project) - The Service Account used for Terraform operations needs
-the Owner role in the project. It might be possible to use the Editor role but
-currently using the Editor role returns a 403 error when IAM logWriter Role
-permissions are being assigned. Further troubleshooting is needed.
-
-The `shared_vpc_host_google_credentials` Service Account requires the permissions listed below.
-It is recommended to create a custom role named `Terraform Shared VPC Role` with ID
-`terraform_shared_vpc_host_role` for convenient management:
-
-* `resourcemanager.projects.get`
-* `resourcemanager.projects.getIamPolicy`
-* `resourcemanager.projects.setIamPolicy`
-
-## Cluster Infrastructure
-
-### Tracing/Telemetry
-
-A Jaeger instance is deployed to the `observability` namespace with an endpoint
-accessible at `telemetry-jaeger-operator-jaeger-agent.observability.svc.cluster.local`
-with ports `5775/UDP,5778/TCP,6831/UDP,6832/UDP`.
+The GCP Service Account used by the `compute` Google provider (that builds the GKE cluster) requires the `compute.networkUser`
+role in the shared VPC host project.
 
 <!-- BEGIN_TF_DOCS -->
 ## Requirements
@@ -127,7 +82,6 @@ with ports `5775/UDP,5778/TCP,6831/UDP,6832/UDP`.
 | <a name="input_master_authorized_networks_config_cidr_block"></a> [master\_authorized\_networks\_config\_cidr\_block](#input\_master\_authorized\_networks\_config\_cidr\_block) | The IP range allowed to access the control plane, passed to the master\_authorized\_network\_config.cidr\_blocks.cidr\_block field. | `any` | n/a | yes |
 | <a name="input_master_ipv4_cidr_block"></a> [master\_ipv4\_cidr\_block](#input\_master\_ipv4\_cidr\_block) | The IP range to set for master nodes, passed to master\_ipv4\_cidr\_block - /28 required by Google. | `any` | n/a | yes |
 | <a name="input_maximum_node_count"></a> [maximum\_node\_count](#input\_maximum\_node\_count) | Maximum nodes for the node pool. This is the total nodes so for regional deployments it is the total nodes across all zones. | `string` | n/a | yes |
-| <a name="input_min_master_version"></a> [min\_master\_version](#input\_min\_master\_version) | The min\_master\_version attribute to pass to the google\_container\_cluster resource. | `string` | n/a | yes |
 | <a name="input_minimum_node_count"></a> [minimum\_node\_count](#input\_minimum\_node\_count) | Minimum nodes for the node pool. This is the total nodes so for regional deployments it is the total nodes across all zones. | `string` | n/a | yes |
 | <a name="input_node_count"></a> [node\_count](#input\_node\_count) | The number of nodes per instance group. This field can be used to update the number of nodes per instance group but should not be used alongside autoscaling. Node count management in this module needs to be refactored. See https://linear.app/honestbank/issue/DEVOP-819/incorrect-node-pool-size-management-in-terraform-gcp-gke. | `number` | n/a | yes |
 | <a name="input_pods_ip_range_cidr"></a> [pods\_ip\_range\_cidr](#input\_pods\_ip\_range\_cidr) | CIDR of the secondary IP range used for Kubernetes Pods. | `string` | n/a | yes |
@@ -152,12 +106,6 @@ with ports `5775/UDP,5778/TCP,6831/UDP,6832/UDP`.
 | <a name="output_cluster_project"></a> [cluster\_project](#output\_cluster\_project) | The project hosting the GKE cluster. |
 | <a name="output_gke_cluster_istio_gatekeeper_firewall_rule_self_link"></a> [gke\_cluster\_istio\_gatekeeper\_firewall\_rule\_self\_link](#output\_gke\_cluster\_istio\_gatekeeper\_firewall\_rule\_self\_link) | The tags applied to the primary node pool of the GKE cluster. |
 | <a name="output_gke_cluster_primary_node_pool_tag"></a> [gke\_cluster\_primary\_node\_pool\_tag](#output\_gke\_cluster\_primary\_node\_pool\_tag) | Tag applied to the node pool instances - used for network/firewall rules. |
-| <a name="output_gke_kubernetes_latest_master_version"></a> [gke\_kubernetes\_latest\_master\_version](#output\_gke\_kubernetes\_latest\_master\_version) | The `latest_master_version` attribute of the `google_container_engine_versions` data source. |
-| <a name="output_gke_kubernetes_latest_node_version"></a> [gke\_kubernetes\_latest\_node\_version](#output\_gke\_kubernetes\_latest\_node\_version) | The `latest_node_version` attribute of the `google_container_engine_versions` data source. |
-| <a name="output_gke_kubernetes_valid_master_versions"></a> [gke\_kubernetes\_valid\_master\_versions](#output\_gke\_kubernetes\_valid\_master\_versions) | The `valid_master_versions` attribute of the `google_container_engine_versions` data source. |
-| <a name="output_gke_kubernetes_valid_node_versions"></a> [gke\_kubernetes\_valid\_node\_versions](#output\_gke\_kubernetes\_valid\_node\_versions) | The `valid_node_versions` attribute of the `google_container_engine_versions` data source. |
-| <a name="output_google_container_engine_versions_data"></a> [google\_container\_engine\_versions\_data](#output\_google\_container\_engine\_versions\_data) | The data returned by the `google_container_engine_versions` data source. |
 | <a name="output_kubernetes_endpoint"></a> [kubernetes\_endpoint](#output\_kubernetes\_endpoint) | n/a |
-| <a name="output_rapid_channel_default_version"></a> [rapid\_channel\_default\_version](#output\_rapid\_channel\_default\_version) | The default version from the RAPID channel with the specified version prefix (min\_master\_version). |
 | <a name="output_service_account"></a> [service\_account](#output\_service\_account) | The default service account used for running nodes. |
 <!-- END_TF_DOCS -->

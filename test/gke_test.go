@@ -27,7 +27,10 @@ func TestTerraformGcpGkeTemplate(t *testing.T) {
 	clusterName := "test-gke-" + runId
 	// Create all resources in the following zone
 	gcpIndonesiaRegion := "asia-southeast2"
-	testProject := "compute-df9f"
+
+	// GCP projects
+	computeProject := "compute-df9f"
+	networkingProject := "tf-shared-vpc-host-78a3"
 	tempTestDir := ""
 
 	//
@@ -53,7 +56,7 @@ func TestTerraformGcpGkeTemplate(t *testing.T) {
 			vpcBootstrapTerraformOptions = terraform.WithDefaultRetryableErrors(t, &terraform.Options{
 				TerraformDir: vpcBootstrapWorkingDir,
 				Vars: map[string]interface{}{
-					"google_project":                       testProject,
+					"google_project":                       networkingProject,
 					"google_region":                        gcpIndonesiaRegion,
 					"network_name":                         clusterName + "-vpc",
 					"vpc_primary_subnet_name":              clusterName + "-primary-subnet",
@@ -190,7 +193,7 @@ func TestTerraformGcpGkeTemplate(t *testing.T) {
 					"clusters",
 					"get-credentials", clusterName,
 					"--region", gcpIndonesiaRegion,
-					"--project", testProject,
+					"--project", computeProject,
 					"--quiet",
 				},
 				WorkingDir: gkeClusterTerraformModulePath,
@@ -223,7 +226,7 @@ func TestTerraformGcpGkeTemplate(t *testing.T) {
 					"clusters",
 					"describe", clusterName,
 					"--region", gcpIndonesiaRegion,
-					"--project", testProject,
+					"--project", computeProject,
 				},
 				WorkingDir: gkeClusterTerraformModulePath,
 			}
