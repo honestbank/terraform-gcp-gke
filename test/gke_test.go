@@ -251,6 +251,11 @@ func TestTerraformGcpGkeTemplate(t *testing.T) {
 				//assert.Equal(t, 0, resourceCount.Add)
 				//assert.Equal(t, 0, resourceCount.Destroy)
 			}
+
+			tags := terraform.OutputList(t, gkeClusterTerratestOptions, "cluster_primary_node_pool_all_tags")
+
+			assert.NotNil(t, tags)
+			assert.GreaterOrEqual(t, len(tags), 2)
 		})
 	})
 }
