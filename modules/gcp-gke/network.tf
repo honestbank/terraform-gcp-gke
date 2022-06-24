@@ -21,7 +21,7 @@ resource "google_compute_firewall" "gke_private_cluster_istio_gatekeeper_rules" 
   }
 
   source_ranges = [var.master_ipv4_cidr_block]
-  target_tags   = [local.gke_node_pool_tag]
+  target_tags   = local.all_primary_node_pool_tags
 }
 
 resource "google_compute_router" "router" {
