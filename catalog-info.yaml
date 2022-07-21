@@ -1,0 +1,13 @@
+apiVersion: backstage.io/v1alpha1
+kind: Resource
+metadata:
+  name: terraform-gcp-gke
+  description: TF Component for creating Google Kubernetes Engine in Google Cloud Platform
+  annotations:
+    github.com/project-slug: honestbank/terraform-gcp-gke
+    github.com/team-slug: honestbank/devops-engineers
+spec:
+  type: tf-component
+  lifecycle: production
+  system: infrastructure
+  owner: group:devops-engineers
