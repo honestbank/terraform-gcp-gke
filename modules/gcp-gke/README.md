@@ -24,11 +24,11 @@ To run E2E tests, navigate to the [test folder](../test) and run `go test -v -ti
 
 | Name | Version |
 |------|---------|
-| <a name="provider_google"></a> [google](#provider\_google) | ~> 4.0 |
-| <a name="provider_google.compute"></a> [google.compute](#provider\_google.compute) | ~> 4.0 |
-| <a name="provider_google.vpc"></a> [google.vpc](#provider\_google.vpc) | ~> 4.0 |
-| <a name="provider_google-beta.compute-beta"></a> [google-beta.compute-beta](#provider\_google-beta.compute-beta) | ~> 4.0 |
-| <a name="provider_random"></a> [random](#provider\_random) | ~> 3.0 |
+| <a name="provider_google"></a> [google](#provider\_google) | 4.29.0 |
+| <a name="provider_google.compute"></a> [google.compute](#provider\_google.compute) | 4.29.0 |
+| <a name="provider_google.vpc"></a> [google.vpc](#provider\_google.vpc) | 4.29.0 |
+| <a name="provider_google-beta.compute-beta"></a> [google-beta.compute-beta](#provider\_google-beta.compute-beta) | 4.29.0 |
+| <a name="provider_random"></a> [random](#provider\_random) | 3.3.2 |
 
 ## Modules
 
@@ -89,8 +89,8 @@ No modules.
 |------|-------------|
 | <a name="output_ca_certificate"></a> [ca\_certificate](#output\_ca\_certificate) | n/a |
 | <a name="output_client_token"></a> [client\_token](#output\_client\_token) | n/a |
+| <a name="output_cluster_all_primary_node_pool_tags"></a> [cluster\_all\_primary\_node\_pool\_tags](#output\_cluster\_all\_primary\_node\_pool\_tags) | List of tags applied to the node pool instances. This included the managed-by-GCP tags. |
 | <a name="output_cluster_name"></a> [cluster\_name](#output\_cluster\_name) | The GKE cluster name that was built |
-| <a name="output_cluster_all_primary_node_pool_tags"></a> [cluster\_primary\_node\_pool\_all\_tags](#output\_cluster\_primary\_node\_pool\_all\_tags) | List of tags applied to the node pool instances. This included the managed-by-GCP tags. |
 | <a name="output_cluster_primary_node_pool_tag"></a> [cluster\_primary\_node\_pool\_tag](#output\_cluster\_primary\_node\_pool\_tag) | Tag applied to the node pool instances - used for network/firewall rules. |
 | <a name="output_cluster_project"></a> [cluster\_project](#output\_cluster\_project) | The project hosting the GKE cluster. |
 | <a name="output_istio_gatekeeper_firewall_rule_self_link"></a> [istio\_gatekeeper\_firewall\_rule\_self\_link](#output\_istio\_gatekeeper\_firewall\_rule\_self\_link) | The self\_link attribute of the firewall rule created to allow Gatekeeper and Istio to function. |
