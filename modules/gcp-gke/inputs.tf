@@ -107,3 +107,16 @@ variable "stage" {
   description = "Stage: [test, dev, prod...] used as prefix for all resources."
   default     = "test"
 }
+
+variable "autoscaling_location_policy" {
+  type        = string
+  description = <<EOF
+    (Optional) Location policy specifies the algorithm used when scaling-up the node pool. \ "BALANCED" - Is a best effort policy that aims to balance the sizes of available zones. \ "ANY" - Instructs the cluster autoscaler to prioritize utilization of unused reservations, and reduce preemption risk for Spot VMs.
+  EOF
+  default     = "BALANCED"
+
+  validation {
+    condition     = contains(["BALANCED", "ANY"], var.autoscaling_location_policy)
+    error_message = "autoscaling_location_policy must be either 'BALANCED' or 'ANY'"
+  }
+}
