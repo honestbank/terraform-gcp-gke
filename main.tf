@@ -34,7 +34,6 @@ module "gke" {
   initial_node_count = var.initial_node_count
   minimum_node_count = var.minimum_node_count
   maximum_node_count = var.maximum_node_count
-  node_count         = var.node_count
 
   shared_vpc_id                  = var.shared_vpc_id
   shared_vpc_host_google_project = var.shared_vpc_host_google_project

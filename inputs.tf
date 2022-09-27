@@ -68,11 +68,6 @@ variable "minimum_node_count" {
   description = "Minimum nodes for the node pool. This is the total nodes so for regional deployments it is the total nodes across all zones."
 }
 
-variable "node_count" {
-  type        = number
-  description = "The number of nodes per instance group. This field can be used to update the number of nodes per instance group but should not be used alongside autoscaling. Node count management in this module needs to be refactored. See https://linear.app/honestbank/issue/DEVOP-819/incorrect-node-pool-size-management-in-terraform-gcp-gke."
-}
-
 variable "pods_ip_range_cidr" {
   type        = string
   description = "CIDR of the secondary IP range used for Kubernetes Pods."
