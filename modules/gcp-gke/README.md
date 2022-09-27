@@ -58,6 +58,7 @@ No modules.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
+| <a name="input_autoscaling_location_policy"></a> [autoscaling\_location\_policy](#input\_autoscaling\_location\_policy) | (Optional) Location policy specifies the algorithm used when scaling-up the node pool. \ "BALANCED" - Is a best effort policy that aims to balance the sizes of available zones. \ "ANY" - Instructs the cluster autoscaler to prioritize utilization of unused reservations, and reduce preemption risk for Spot VMs. | `string` | `"BALANCED"` | no |
 | <a name="input_cluster_name"></a> [cluster\_name](#input\_cluster\_name) | The name to set on the GKE cluster. | `string` | n/a | yes |
 | <a name="input_create_gcp_nat"></a> [create\_gcp\_nat](#input\_create\_gcp\_nat) | Set to `true` to create an Internet NAT for ALL\_SUBNETWORKS\_ALL\_IP\_RANGES in the VPC network. | `bool` | n/a | yes |
 | <a name="input_create_gcp_router"></a> [create\_gcp\_router](#input\_create\_gcp\_router) | Set to `true` to create a router in the VPC network. | `bool` | n/a | yes |
