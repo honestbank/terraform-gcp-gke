@@ -52,11 +52,16 @@ resource "google_container_cluster" "primary" {
   # We can't create a cluster with no node pool defined, but we want to only use
   # separately managed node pools. So we create the smallest possible default
   # node pool and immediately delete it.
-  remove_default_node_pool    = true
-  initial_node_count          = 1
-  enable_shielded_nodes       = true
-  min_master_version          = var.kubernetes_version
-  enable_binary_authorization = true
+  remove_default_node_pool = true
+  initial_node_count       = 1
+  enable_shielded_nodes    = true
+  min_master_version       = var.kubernetes_version
+
+  #checkov:skip=CKV_GCP_66:Property renamed from 'enable_binary_authorization' to 'binary_authorization' but Checkov not updated.
+  binary_authorization {
+    evaluation_mode = "PROJECT_SINGLETON_POLICY_ENFORCE"
+  }
+
   dynamic "authenticator_groups_config" {
     for_each = length(var.gke_authenticator_groups_config_domain) > 0 ? [var.gke_authenticator_groups_config_domain] : []
     content {
@@ -192,8 +197,9 @@ resource "google_container_node_pool" "primary_node_pool" {
     "${var.google_region}-b",
     "${var.google_region}-c",
   ]
+
+  node_count = var.minimum_node_count
   cluster    = google_container_cluster.primary.name
-  node_count = var.node_count
 
   autoscaling {
     max_node_count  = var.maximum_node_count
@@ -233,6 +239,9 @@ resource "google_container_node_pool" "primary_node_pool" {
 
   lifecycle {
     create_before_destroy = true
+    ignore_changes = [
+      node_count,
+    ]
   }
 
   depends_on = [google_service_account.default]

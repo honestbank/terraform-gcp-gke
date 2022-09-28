@@ -31,7 +31,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Terraform Init
         id: init
-        run: terraform init
+        run: terraform init -upgrade
       - name: Terraform Validate
         id: validate
         run: terraform validate -no-color
