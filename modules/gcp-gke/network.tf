@@ -12,9 +12,10 @@ data "google_container_cluster" "primary" {
 resource "google_compute_firewall" "gke_private_cluster_istio_gatekeeper_rules" { #tfsec:ignore:google-compute-no-public-ingress
   provider = google.vpc
 
-  name    = "honest-${var.cluster_name}-allow-istio-gatekeeper"
-  network = var.shared_vpc_id
-
+  name      = "honest-${var.cluster_name}-allow-istio-gatekeeper"
+  network   = var.shared_vpc_id
+  disabled  = false
+  direction = "INGRESS"
   allow {
     protocol = "tcp"
     ports    = ["15017", "8443"]
@@ -22,6 +23,14 @@ resource "google_compute_firewall" "gke_private_cluster_istio_gatekeeper_rules" 
 
   source_ranges = [var.master_ipv4_cidr_block]
   target_tags   = local.all_primary_node_pool_tags
+
+  lifecycle {
+    ignore_changes = [
+      source_service_accounts,
+      target_service_accounts,
+    ]
+  }
+
 }
 
 resource "google_compute_router" "router" {

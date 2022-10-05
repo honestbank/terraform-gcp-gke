@@ -170,6 +170,7 @@ resource "google_container_cluster" "primary" {
     ignore_changes = [
       node_pool,
       node_config,
+      master_auth[0].client_certificate_config[0].issue_client_certificate,
     ]
   }
 
