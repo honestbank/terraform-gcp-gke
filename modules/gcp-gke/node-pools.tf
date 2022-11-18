@@ -1,6 +1,6 @@
 module "node_pools" {
   source   = "./modules/gcp-gke-node-pool"
-  for_each = { for node_pool in var.node_pools : node_pool.name => node_pool }
+  for_each = { for node_pool in var.additional_node_pools : node_pool.name => node_pool }
 
   providers = {
     google-beta = google-beta.compute-beta

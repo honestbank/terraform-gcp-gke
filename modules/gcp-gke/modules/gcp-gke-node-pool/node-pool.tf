@@ -3,7 +3,7 @@ resource "google_container_node_pool" "node_pool" {
 
   name     = var.name
   location = var.google_region
-  version = var.kubernetes_version
+  version  = var.kubernetes_version
 
   node_locations = [
     "${var.google_region}-a",
