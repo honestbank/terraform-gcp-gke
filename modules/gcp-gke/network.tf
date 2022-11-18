@@ -5,7 +5,7 @@ data "google_container_cluster" "primary" {
 
   depends_on = [
     google_container_cluster.primary,
-    google_container_node_pool.primary_node_pool,
+    module.node_pools,
   ]
 }
 

@@ -25,15 +25,12 @@ module "gke" {
   gke_authenticator_groups_config_domain = var.gke_authenticator_groups_config_domain
   google_project                         = var.google_project
   google_region                          = var.google_region
-  machine_type                           = var.machine_type
 
   master_authorized_networks_config_cidr_block = var.master_authorized_networks_config_cidr_block
 
   master_ipv4_cidr_block = var.master_ipv4_cidr_block
 
   initial_node_count = var.initial_node_count
-  minimum_node_count = var.minimum_node_count
-  maximum_node_count = var.maximum_node_count
 
   shared_vpc_id                  = var.shared_vpc_id
   shared_vpc_host_google_project = var.shared_vpc_host_google_project
@@ -41,4 +38,14 @@ module "gke" {
   subnetwork_self_link           = var.subnetwork_self_link
   pods_ip_range_name             = var.pods_ip_range_name
   services_ip_range_name         = var.services_ip_range_name
+
+  node_pools = [
+    {
+      name               = "primary"
+      machine_type       = var.machine_type
+      minimum_node_count = var.minimum_node_count
+      maximum_node_count = var.maximum_node_count
+      tags               = ["terratest"]
+    },
+  ]
 }

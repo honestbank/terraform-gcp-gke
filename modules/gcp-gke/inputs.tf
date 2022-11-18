@@ -45,24 +45,12 @@ variable "kubernetes_version" {
   type        = string
 }
 
-variable "machine_type" {
-  description = "Machine types to use for the node pool."
-}
-
 variable "master_authorized_networks_config_cidr_block" {
   description = "The IP range allowed to access the control plane, passed to the master_authorized_network_config.cidr_blocks.cidr_block field."
 }
 
 variable "master_ipv4_cidr_block" {
   description = "The IP range to set for master nodes, passed to master_ipv4_cidr_block - /28 required by Google."
-}
-
-variable "maximum_node_count" {
-  description = "Maximum nodes for the node pool per-zone."
-}
-
-variable "minimum_node_count" {
-  description = "Minimum nodes for the node pool per-zone."
 }
 
 variable "pods_ip_range_name" {
@@ -108,11 +96,22 @@ variable "autoscaling_location_policy" {
   type        = string
   description = <<EOF
     (Optional) Location policy specifies the algorithm used when scaling-up the node pool. \ "BALANCED" - Is a best effort policy that aims to balance the sizes of available zones. \ "ANY" - Instructs the cluster autoscaler to prioritize utilization of unused reservations, and reduce preemption risk for Spot VMs.
-  EOF
+    EOF
   default     = "BALANCED"
 
   validation {
     condition     = contains(["BALANCED", "ANY"], var.autoscaling_location_policy)
     error_message = "autoscaling_location_policy must be either 'BALANCED' or 'ANY'"
   }
+}
+
+variable "node_pools" {
+  type = list(object({
+    name               = string
+    machine_type       = string
+    minimum_node_count = string
+    maximum_node_count = string
+    tags               = list(string)
+  }))
+  nullable = false
 }
