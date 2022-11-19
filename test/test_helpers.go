@@ -6,6 +6,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/gruntwork-io/go-commons/files"
 	"github.com/gruntwork-io/terratest/modules/k8s"
 	"github.com/gruntwork-io/terratest/modules/logger"
 	"github.com/gruntwork-io/terratest/modules/retry"
@@ -49,4 +50,18 @@ func verifyGkeNodesAreReady(t *testing.T, kubectlOptions *k8s.KubectlOptions) {
 
 	readyNodes := k8s.GetReadyNodes(t, kubectlOptions)
 	logger.Log(t, "k8s.GetReadyNodes returned: ", len(readyNodes), " nodes.")
+}
+
+func copyFiles(t *testing.T, filesToCopy []string, source string, destination string) {
+	for _, file := range filesToCopy {
+		src := source + "/" + file
+		dest := destination + "/" + file
+		copyErr := files.CopyFile(src, dest)
+		if copyErr != nil {
+			fmt.Println("😩 calling t.FailNow(): failed copying from: ", src, " to: ", dest, " with error: ", copyErr)
+			t.FailNow()
+		} else {
+			fmt.Println("✌️ Success! Copied from: ", src, " to: ", dest)
+		}
+	}
 }

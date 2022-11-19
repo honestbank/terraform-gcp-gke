@@ -41,4 +41,14 @@ module "gke" {
   subnetwork_self_link           = var.subnetwork_self_link
   pods_ip_range_name             = var.pods_ip_range_name
   services_ip_range_name         = var.services_ip_range_name
+
+  additional_node_pools = [
+    {
+      name               = "primary"
+      machine_type       = var.machine_type
+      minimum_node_count = var.minimum_node_count
+      maximum_node_count = var.maximum_node_count
+      tags               = ["terratest"]
+    },
+  ]
 }

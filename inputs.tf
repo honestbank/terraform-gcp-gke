@@ -31,7 +31,6 @@ variable "google_credentials" {
   description = "Contents of a JSON keyfile of an account with write access to the project"
 }
 
-
 variable "google_region" {
   description = "GCP region used to create all resources in this run"
 }

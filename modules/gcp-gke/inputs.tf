@@ -116,3 +116,22 @@ variable "autoscaling_location_policy" {
     error_message = "autoscaling_location_policy must be either 'BALANCED' or 'ANY'"
   }
 }
+
+variable "additional_node_pools" {
+  default     = []
+  description = "A list of objects used to configure additional node pools (in addition to the primary one created by this module by default)."
+  type = list(object({
+    name               = string
+    machine_type       = string
+    minimum_node_count = string
+    maximum_node_count = string
+    tags               = list(string)
+  }))
+  nullable = false
+}
+
+variable "skip_create_built_in_node_pool" {
+  default     = false
+  description = "Skip creation of the primary node pool that is created with the cluster, and instead use only the `additional_node_pools`."
+  type        = bool
+}

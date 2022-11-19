@@ -5,7 +5,7 @@ data "google_container_cluster" "primary" {
 
   depends_on = [
     google_container_cluster.primary,
-    google_container_node_pool.primary_node_pool,
+    module.node_pools,
   ]
 }
 
@@ -30,7 +30,6 @@ resource "google_compute_firewall" "gke_private_cluster_istio_gatekeeper_rules" 
       target_service_accounts,
     ]
   }
-
 }
 
 resource "google_compute_router" "router" {

@@ -2,7 +2,6 @@ package test
 
 import (
 	"fmt"
-	"github.com/gruntwork-io/terratest/modules/files"
 	"github.com/gruntwork-io/terratest/modules/k8s"
 	"github.com/gruntwork-io/terratest/modules/logger"
 	"github.com/gruntwork-io/terratest/modules/random"
@@ -78,19 +77,7 @@ func TestTerraformGcpGkeTemplate(t *testing.T) {
 			fmt.Println("test working directory is: ", testFileSourceDir)
 
 			filesToCopy := []string{varFile, providerFile}
-
-			fmt.Println("copying files: ", filesToCopy, " to temporary test dir: ", tempTestDir)
-			for _, file := range filesToCopy {
-				src := testFileSourceDir + "/" + file
-				dest := vpcBootstrapWorkingDir + "/" + file
-				copyErr := files.CopyFile(src, dest)
-				if copyErr != nil {
-					fmt.Println("😩 calling t.FailNow(): failed copying from: ", src, " to: ", dest, " with error: ", copyErr)
-					t.FailNow()
-				} else {
-					fmt.Println("✌️ Success! Copied from: ", src, " to: ", dest)
-				}
-			}
+			copyFiles(t, filesToCopy, testFileSourceDir, vpcBootstrapWorkingDir)
 		})
 
 		defer test_structure.RunTestStage(t, "vpc_cleanup", func() {
@@ -142,17 +129,7 @@ func TestTerraformGcpGkeTemplate(t *testing.T) {
 		filesToCopy := []string{varFile, providerFile}
 
 		fmt.Println("copying files: ", filesToCopy, " to temporary test dir: ", tempTestDir)
-		for _, file := range filesToCopy {
-			src := testFileSourceDir + "/" + file
-			dest := tempTestDir + "/" + file
-			copyErr := files.CopyFile(src, dest)
-			if copyErr != nil {
-				fmt.Println("😩 calling t.FailNow(): failed copying from: ", src, " to: ", dest, " with error: ", copyErr)
-				t.FailNow()
-			} else {
-				fmt.Println("✌️ Success! Copied from: ", src, " to: ", dest)
-			}
-		}
+		copyFiles(t, filesToCopy, testFileSourceDir, tempTestDir)
 
 		defer test_structure.RunTestStage(t, "gke_cleanup", func() {
 			gkeClusterTerratestOptions := test_structure.LoadTerraformOptions(t, workingDir)
@@ -231,7 +208,7 @@ func TestTerraformGcpGkeTemplate(t *testing.T) {
 				WorkingDir: gkeClusterTerraformModulePath,
 			}
 			describeClusterCmdOutput := shell.RunCommandAndGetStdOut(t, describeClusterCmd)
-			assert.Contains(t, describeClusterCmdOutput, "1.24.3-gke.900")
+			assert.Contains(t, describeClusterCmdOutput, "1.24.3-gke.2100")
 
 			gkeClusterTerratestOptions := test_structure.LoadTerraformOptions(t, workingDir)
 			planResult := terraform.InitAndPlan(t, gkeClusterTerratestOptions)

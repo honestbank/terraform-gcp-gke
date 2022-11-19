@@ -9,8 +9,8 @@ locals {
 }
 
 data "google_compute_instance_group" "primary_node_pool" {
-  depends_on = [google_container_node_pool.primary_node_pool]
-  self_link  = element(google_container_node_pool.primary_node_pool.managed_instance_group_urls, 0)
+  depends_on = [google_container_node_pool.primary_node_pool[0]]
+  self_link  = element(google_container_node_pool.primary_node_pool[0].managed_instance_group_urls, 0)
 }
 
 data "google_compute_instance" "primary_node_pool" {
