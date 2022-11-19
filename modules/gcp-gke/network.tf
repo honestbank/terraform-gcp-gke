@@ -30,7 +30,6 @@ resource "google_compute_firewall" "gke_private_cluster_istio_gatekeeper_rules" 
       target_service_accounts,
     ]
   }
-
 }
 
 resource "google_compute_router" "router" {

@@ -44,6 +44,14 @@ resource "google_container_node_pool" "node_pool" {
       enable_integrity_monitoring = true
     }
 
+    metadata = {
+      # disable-legacy-endpoints defaults to `true` since GKE 1.12. However if the metadata block is used without
+      # sending this value, Terraform will try to unset it.
+      # Also, tfsec complains: https://aquasecurity.github.io/tfsec/v1.27.6/checks/google/gke/metadata-endpoints-disabled/
+      # So leave this here in case we add metadata in the future.
+      disable-legacy-endpoints = true
+    }
+
     tags = var.tags
   }
 

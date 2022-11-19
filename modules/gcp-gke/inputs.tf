@@ -129,3 +129,9 @@ variable "additional_node_pools" {
   }))
   nullable = false
 }
+
+variable "skip_create_built_in_node_pool" {
+  default     = false
+  description = "Skip creation of the primary node pool that is created with the cluster, and instead use only the `additional_node_pools`."
+  type        = bool
+}

@@ -9,3 +9,5 @@ docs:
 	rm -rf examples/*/.terraform examples/*/.terraform.lock.hcl
 	rm -rf modules/*/.terraform modules/*/.terraform.lock.hcl
 	terraform-docs -c .terraform-docs.yml .
+
+commit: lint docs validate

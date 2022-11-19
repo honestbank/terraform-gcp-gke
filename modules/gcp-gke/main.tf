@@ -3,12 +3,12 @@ terraform {
 
   required_providers {
     google = {
-      version               = "~> 4.0"
+      version               = ">= 4.0"
       configuration_aliases = [google.compute, google.vpc]
     }
 
     google-beta = {
-      version               = "~> 4.0"
+      version               = ">= 4.0"
       source                = "hashicorp/google-beta"
       configuration_aliases = [google-beta.compute-beta]
     }
@@ -197,7 +197,14 @@ data "google_container_cluster" "current_cluster" {
   location = google_container_cluster.primary.location
 }
 
+moved {
+  from = google_container_node_pool.primary_node_pool
+  to   = google_container_node_pool.primary_node_pool.0
+}
+
 resource "google_container_node_pool" "primary_node_pool" {
+  count = (var.skip_create_built_in_node_pool ? 0 : 1)
+
   provider = google-beta.compute-beta
 
   name     = "primary"
@@ -244,7 +251,14 @@ resource "google_container_node_pool" "primary_node_pool" {
       enable_integrity_monitoring = true
     }
 
-    // TODO: Check format and add tags
+    metadata = {
+      # disable-legacy-endpoints defaults to `true` since GKE 1.12. However if the metadata block is used without
+      # sending this value, Terraform will try to unset it.
+      # Also, tfsec complains: https://aquasecurity.github.io/tfsec/v1.27.6/checks/google/gke/metadata-endpoints-disabled/
+      # So leave this here in case we add metadata in the future.
+      disable-legacy-endpoints = true
+    }
+
     tags = [
       local.gke_node_pool_tag
     ]
