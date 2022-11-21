@@ -42,6 +42,7 @@ module "gke" {
   pods_ip_range_name             = var.pods_ip_range_name
   services_ip_range_name         = var.services_ip_range_name
 
+  skip_create_built_in_node_pool = true
   additional_node_pools = [
     {
       name               = "primary"
