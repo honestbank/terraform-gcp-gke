@@ -33,4 +33,4 @@ enable_network_policy                        = true
 master_ipv4_cidr_block                       = "10.40.0.0/28"
 master_authorized_networks_config_cidr_block = "0.0.0.0/0"
 release_channel                              = "REGULAR"
-kubernetes_version                           = "1.24.3-gke.2100"
+kubernetes_version                           = "1.24.4-gke.800"
