@@ -50,8 +50,8 @@ To run E2E tests, navigate to the [test folder](../test) and run `go test -v -ti
 | [random_id.node_pool_tag](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/id) | resource |
 | [google-beta_google_client_config.default](https://registry.terraform.io/providers/hashicorp/google-beta/latest/docs/data-sources/google_client_config) | data source |
 | [google-beta_google_container_cluster.current_cluster](https://registry.terraform.io/providers/hashicorp/google-beta/latest/docs/data-sources/google_container_cluster) | data source |
-| [google_compute_instance.primary_node_pool](https://registry.terraform.io/providers/hashicorp/google/latest/docs/data-sources/compute_instance) | data source |
-| [google_compute_instance_group.primary_node_pool](https://registry.terraform.io/providers/hashicorp/google/latest/docs/data-sources/compute_instance_group) | data source |
+| [google_compute_instance.exemplar_node_pool_instance](https://registry.terraform.io/providers/hashicorp/google/latest/docs/data-sources/compute_instance) | data source |
+| [google_compute_instance_group.exemplar_node_pool_instance_group](https://registry.terraform.io/providers/hashicorp/google/latest/docs/data-sources/compute_instance_group) | data source |
 | [google_container_cluster.primary](https://registry.terraform.io/providers/hashicorp/google/latest/docs/data-sources/container_cluster) | data source |
 | [google_project.host_project](https://registry.terraform.io/providers/hashicorp/google/latest/docs/data-sources/project) | data source |
 | [google_project.service_project](https://registry.terraform.io/providers/hashicorp/google/latest/docs/data-sources/project) | data source |
@@ -83,7 +83,7 @@ To run E2E tests, navigate to the [test folder](../test) and run `go test -v -ti
 | <a name="input_shared_vpc_host_google_project"></a> [shared\_vpc\_host\_google\_project](#input\_shared\_vpc\_host\_google\_project) | The GCP project that hosts the VPC to place the GKE cluster in - can be an in-project VPC or a shared VPC. In the case of a shared VPC, the Service Account used to run this module must have permissions to create a Router/NAT in the VPC host project. | `any` | n/a | yes |
 | <a name="input_shared_vpc_id"></a> [shared\_vpc\_id](#input\_shared\_vpc\_id) | The id of the shared VPC. | `string` | n/a | yes |
 | <a name="input_shared_vpc_self_link"></a> [shared\_vpc\_self\_link](#input\_shared\_vpc\_self\_link) | self\_link of the shared VPC to place the GKE cluster in. | `string` | n/a | yes |
-| <a name="input_skip_create_built_in_node_pool"></a> [skip\_create\_built\_in\_node\_pool](#input\_skip\_create\_built\_in\_node\_pool) | Skip creation of the primary node pool that is created with the cluster, and instead use only the `additional_node_pools`. | `bool` | `false` | no |
+| <a name="input_skip_create_built_in_node_pool"></a> [skip\_create\_built\_in\_node\_pool](#input\_skip\_create\_built\_in\_node\_pool) | Skip creation of the primary node pool that is created with the cluster, and instead use only the `additional_node_pools`.<br>    Note: setting var.skip\_create\_built\_in\_node\_pool to true requires at least one node pool specified in var.additional\_node\_pools" | `bool` | `false` | no |
 | <a name="input_stage"></a> [stage](#input\_stage) | Stage: [test, dev, prod...] used as prefix for all resources. | `string` | `"test"` | no |
 | <a name="input_subnetwork_self_link"></a> [subnetwork\_self\_link](#input\_subnetwork\_self\_link) | self\_link of the google\_compute\_subnetwork to place the GKE cluster in. | `string` | n/a | yes |
 

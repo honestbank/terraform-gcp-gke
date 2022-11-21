@@ -5,14 +5,16 @@
 
 locals {
   # includes the by GCP-managed tags
-  all_primary_node_pool_tags = sort(data.google_compute_instance.primary_node_pool.tags)
+  all_primary_node_pool_tags = sort(data.google_compute_instance.exemplar_node_pool_instance.tags)
+
+  exemplar_node_pool_group_url = var.skip_create_built_in_node_pool ? module.node_pools[0].managed_instance_group_urls : google_container_node_pool.primary_node_pool[0].managed_instance_group_urls
 }
 
-data "google_compute_instance_group" "primary_node_pool" {
+data "google_compute_instance_group" "exemplar_node_pool_instance_group" {
   depends_on = [google_container_node_pool.primary_node_pool[0]]
-  self_link  = element(google_container_node_pool.primary_node_pool[0].managed_instance_group_urls, 0)
+  self_link  = element(local.exemplar_node_pool_group_url, 0)
 }
 
-data "google_compute_instance" "primary_node_pool" {
-  self_link = tolist(data.google_compute_instance_group.primary_node_pool.instances)[0]
+data "google_compute_instance" "exemplar_node_pool_instance" {
+  self_link = tolist(data.google_compute_instance_group.exemplar_node_pool_instance_group.instances)[0]
 }
