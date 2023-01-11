@@ -48,7 +48,7 @@ func TestTerraformGcpGkeTemplate(t *testing.T) {
 		vpcBootstrapTerraformOptions := &terraform.Options{}
 		test_structure.RunTestStage(t, "create_vpc_options", func() {
 			// In this case we use "." for the rootFolder because the module is in the same folder as this test file
-			vpcBootstrapWorkingDir = test_structure.CopyTerraformFolderToTemp(t, ".", "modules/terraform-gcp-vpc/vpc")
+			vpcBootstrapWorkingDir = test_structure.CopyTerraformFolderToTemp(t, "../examples/modules/terraform-gcp-vpc/vpc", ".")
 
 			// The variable set below assumes you have exported the following env vars:
 			// export TF_VAR_google_credentials=$(cat vpc.json)

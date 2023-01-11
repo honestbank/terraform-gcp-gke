@@ -1,3 +1,30 @@
+variable "google_region" {
+  description = "GCP region used to create all resources in this run"
+  default     = "asia-southeast2"
+}
+
+variable "network_name" {
+  type        = string
+  description = "VPC name"
+  default     = "test-cluster-vpc"
+}
+
+variable "vpc_primary_subnet_name" {
+  type        = string
+  description = "The name of the primary subnet of the VPC."
+  default     = "test-cluster-primary-subnet"
+}
+
+variable "vpc_secondary_ip_range_pods_name" {
+  description = "Name of first secondary IP range - to be used for Kumbernetes Pods."
+  default     = "test-cluster-pods-subnet"
+}
+
+variable "vpc_secondary_ip_range_services_name" {
+  description = "Name of second secondary IP range - to be used for Kubernetes Services."
+  default     = "test-cluster-services-subnet"
+}
+
 variable "create_gcp_router" {
   type        = bool
   description = "Set to `true` to create a router in the VPC network."
@@ -29,10 +56,6 @@ variable "google_project" {
 
 variable "google_credentials" {
   description = "Contents of a JSON keyfile of an account with write access to the project"
-}
-
-variable "google_region" {
-  description = "GCP region used to create all resources in this run"
 }
 
 variable "initial_node_count" {

@@ -1,4 +1,6 @@
 resource "google_container_node_pool" "node_pool" {
+  project = var.google_project
+
   name     = var.name
   location = var.google_region
   version  = var.kubernetes_version

@@ -10,6 +10,10 @@ variable "cluster_name" {
   nullable    = false
 }
 
+variable "google_project" {
+  description = "The GCP project to use for this run"
+}
+
 variable "google_region" {
   description = "GCP region used to create all resources in this run"
   type        = string
