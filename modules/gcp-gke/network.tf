@@ -10,8 +10,6 @@ data "google_container_cluster" "primary" {
 }
 
 resource "google_compute_firewall" "gke_private_cluster_istio_gatekeeper_rules" { #tfsec:ignore:google-compute-no-public-ingress
-  provider = google.vpc
-
   name      = "honest-${var.cluster_name}-allow-istio-gatekeeper"
   network   = var.shared_vpc_id
   disabled  = false
@@ -35,16 +33,14 @@ resource "google_compute_firewall" "gke_private_cluster_istio_gatekeeper_rules" 
 resource "google_compute_router" "router" {
   count = var.create_gcp_router ? 1 : 0
 
-  provider = google.vpc
-  name     = "${var.cluster_name}-router"
-  region   = var.google_region
-  network  = var.shared_vpc_id
+  name    = "${var.cluster_name}-router"
+  region  = var.google_region
+  network = var.shared_vpc_id
 }
 
 resource "google_compute_router_nat" "nat" {
   count = var.create_gcp_nat ? 1 : 0
 
-  provider                           = google.vpc
   name                               = "${var.cluster_name}-nat"
   router                             = google_compute_router.router[0].name
   region                             = var.google_region
@@ -67,8 +63,6 @@ resource "google_compute_router_nat" "nat" {
 
 resource "google_compute_firewall" "gke_private_cluster_public_https_firewall_rule" { #tfsec:ignore:google-compute-no-public-ingress
   count = var.create_public_https_firewall_rule ? 1 : 0
-
-  provider = google.vpc
 
   name    = "honest-${var.cluster_name}-allow-https"
   network = var.shared_vpc_id

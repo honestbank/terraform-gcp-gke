@@ -67,6 +67,11 @@ variable "minimum_node_count" {
   description = "Minimum nodes for the node pool. This is the total nodes so for regional deployments it is the total nodes across all zones."
 }
 
+variable "project_id" {
+  type        = string
+  description = "Project id of the account where gke will be deployed. Used by provider"
+}
+
 variable "pods_ip_range_cidr" {
   type        = string
   description = "CIDR of the secondary IP range used for Kubernetes Pods."

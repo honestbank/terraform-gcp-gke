@@ -1,36 +1,14 @@
-terraform {
-  required_version = ">= 1.2.9"
-
-  required_providers {
-    google = {
-      version               = ">= 4.0"
-      configuration_aliases = [google.compute, google.vpc]
-    }
-
-    google-beta = {
-      version               = ">= 4.0"
-      source                = "hashicorp/google-beta"
-      configuration_aliases = [google-beta.compute-beta]
-    }
-
-    random = {
-      version = "~> 3.0"
-    }
-  }
-}
-
 # Shared VPC Permissions
 data "google_project" "service_project" {
-  provider = google.compute
+  project_id = var.google_project
 }
 
 data "google_project" "host_project" {
-  provider = google.vpc
+  project_id = var.google_project
 }
 
 locals {
   project_number = data.google_project.service_project.number
-  project_id     = data.google_project.service_project.project_id
 }
 
 resource "google_service_account" "default" {
@@ -41,7 +19,7 @@ resource "google_service_account" "default" {
 #tfsec:ignore:google-gke-enforce-pod-security-policy
 #tfsec:ignore:google-gke-metadata-endpoints-disabled (legacy metadata disabled by default since 1.12 https://registry.terraform.io/providers/hashicorp/google-beta/latest/docs/resources/container_cluster#nested_workload_identity_config)
 resource "google_container_cluster" "primary" {
-  provider = google-beta.compute-beta
+  provider = google-beta
 
   #checkov:skip=CKV_GCP_67:Legacy metadata disabled by default since 1.12 https://registry.terraform.io/providers/hashicorp/google-beta/latest/docs/resources/container_cluster#nested_workload_identity_config
   #checkov:skip=CKV_GCP_24:PodSecurityPolicy is deprecated (https://cloud.google.com/kubernetes-engine/docs/how-to/pod-security-policies)
@@ -187,12 +165,9 @@ locals {
 
 # We use this data provider to expose an access token for communicating with the GKE cluster.
 data "google_client_config" "default" {
-  provider = google-beta.compute-beta
 }
 
 data "google_container_cluster" "current_cluster" {
-  provider = google-beta.compute-beta
-
   name     = google_container_cluster.primary.name
   location = google_container_cluster.primary.location
 }
@@ -204,8 +179,6 @@ moved {
 
 resource "google_container_node_pool" "primary_node_pool" {
   count = (var.skip_create_built_in_node_pool ? 0 : 1)
-
-  provider = google-beta.compute-beta
 
   name     = "primary"
   location = var.google_region

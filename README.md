@@ -85,6 +85,7 @@ role in the shared VPC host project.
 | <a name="input_minimum_node_count"></a> [minimum\_node\_count](#input\_minimum\_node\_count) | Minimum nodes for the node pool. This is the total nodes so for regional deployments it is the total nodes across all zones. | `string` | n/a | yes |
 | <a name="input_pods_ip_range_cidr"></a> [pods\_ip\_range\_cidr](#input\_pods\_ip\_range\_cidr) | CIDR of the secondary IP range used for Kubernetes Pods. | `string` | n/a | yes |
 | <a name="input_pods_ip_range_name"></a> [pods\_ip\_range\_name](#input\_pods\_ip\_range\_name) | Name of the secondary IP range used for Kubernetes Pods. | `string` | n/a | yes |
+| <a name="input_project_id"></a> [project\_id](#input\_project\_id) | Project id of the account where gke will be deployed. Used by provider | `string` | n/a | yes |
 | <a name="input_release_channel"></a> [release\_channel](#input\_release\_channel) | (Beta) The release channel of this cluster. Accepted values are `UNSPECIFIED`, `RAPID`, `REGULAR` and `STABLE`. Defaults to `REGULAR`. | `string` | `"RAPID"` | no |
 | <a name="input_services_ip_range_cidr"></a> [services\_ip\_range\_cidr](#input\_services\_ip\_range\_cidr) | CIDR of the secondary IP range used for Kubernetes Services. | `string` | n/a | yes |
 | <a name="input_services_ip_range_name"></a> [services\_ip\_range\_name](#input\_services\_ip\_range\_name) | Name of the secondary IP range used for Kubernetes Services. | `string` | n/a | yes |

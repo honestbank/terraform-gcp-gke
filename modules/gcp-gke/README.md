@@ -13,22 +13,15 @@ To run E2E tests, navigate to the [test folder](../test) and run `go test -v -ti
 <!-- BEGIN_TF_DOCS -->
 ## Requirements
 
-| Name | Version |
-|------|---------|
-| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.2.9 |
-| <a name="requirement_google"></a> [google](#requirement\_google) | >= 4.0 |
-| <a name="requirement_google-beta"></a> [google-beta](#requirement\_google-beta) | >= 4.0 |
-| <a name="requirement_random"></a> [random](#requirement\_random) | ~> 3.0 |
+No requirements.
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_google"></a> [google](#provider\_google) | >= 4.0 |
-| <a name="provider_google.compute"></a> [google.compute](#provider\_google.compute) | >= 4.0 |
-| <a name="provider_google.vpc"></a> [google.vpc](#provider\_google.vpc) | >= 4.0 |
-| <a name="provider_google-beta.compute-beta"></a> [google-beta.compute-beta](#provider\_google-beta.compute-beta) | >= 4.0 |
-| <a name="provider_random"></a> [random](#provider\_random) | ~> 3.0 |
+| <a name="provider_google"></a> [google](#provider\_google) | n/a |
+| <a name="provider_google-beta"></a> [google-beta](#provider\_google-beta) | n/a |
+| <a name="provider_random"></a> [random](#provider\_random) | n/a |
 
 ## Modules
 
@@ -41,17 +34,17 @@ To run E2E tests, navigate to the [test folder](../test) and run `go test -v -ti
 | Name | Type |
 |------|------|
 | [google-beta_google_container_cluster.primary](https://registry.terraform.io/providers/hashicorp/google-beta/latest/docs/resources/google_container_cluster) | resource |
-| [google-beta_google_container_node_pool.primary_node_pool](https://registry.terraform.io/providers/hashicorp/google-beta/latest/docs/resources/google_container_node_pool) | resource |
 | [google_compute_firewall.gke_private_cluster_istio_gatekeeper_rules](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_firewall) | resource |
 | [google_compute_firewall.gke_private_cluster_public_https_firewall_rule](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_firewall) | resource |
 | [google_compute_router.router](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_router) | resource |
 | [google_compute_router_nat.nat](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_router_nat) | resource |
+| [google_container_node_pool.primary_node_pool](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/container_node_pool) | resource |
 | [google_service_account.default](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/service_account) | resource |
 | [random_id.node_pool_tag](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/id) | resource |
-| [google-beta_google_client_config.default](https://registry.terraform.io/providers/hashicorp/google-beta/latest/docs/data-sources/google_client_config) | data source |
-| [google-beta_google_container_cluster.current_cluster](https://registry.terraform.io/providers/hashicorp/google-beta/latest/docs/data-sources/google_container_cluster) | data source |
+| [google_client_config.default](https://registry.terraform.io/providers/hashicorp/google/latest/docs/data-sources/client_config) | data source |
 | [google_compute_instance.exemplar_node_pool_instance](https://registry.terraform.io/providers/hashicorp/google/latest/docs/data-sources/compute_instance) | data source |
 | [google_compute_instance_group.exemplar_node_pool_instance_group](https://registry.terraform.io/providers/hashicorp/google/latest/docs/data-sources/compute_instance_group) | data source |
+| [google_container_cluster.current_cluster](https://registry.terraform.io/providers/hashicorp/google/latest/docs/data-sources/container_cluster) | data source |
 | [google_container_cluster.primary](https://registry.terraform.io/providers/hashicorp/google/latest/docs/data-sources/container_cluster) | data source |
 | [google_project.host_project](https://registry.terraform.io/providers/hashicorp/google/latest/docs/data-sources/project) | data source |
 | [google_project.service_project](https://registry.terraform.io/providers/hashicorp/google/latest/docs/data-sources/project) | data source |
