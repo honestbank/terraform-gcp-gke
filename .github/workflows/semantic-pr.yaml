@@ -1,5 +1,5 @@
 name: "Semantic Pull Request"
-
+permissions: read-all
 on:
   pull_request:
     types:

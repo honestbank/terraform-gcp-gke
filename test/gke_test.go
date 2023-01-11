@@ -23,13 +23,14 @@ func TestTerraformGcpGkeTemplate(t *testing.T) {
 	// GCP only allows hyphens in names, no underscores
 	runId := strings.ToLower(random.UniqueId())
 
-	clusterName := "test-gke-" + runId
+	clusterName := "gke-" + runId
+
+	masterVersionPrefix := "1.25."
 	// Create all resources in the following zone
 	gcpIndonesiaRegion := "asia-southeast2"
 
 	// GCP projects
 	computeProject := "compute-df9f"
-	networkingProject := "tf-shared-vpc-host-78a3"
 	tempTestDir := ""
 
 	//
@@ -43,54 +44,9 @@ func TestTerraformGcpGkeTemplate(t *testing.T) {
 		// Create a directory path that won't conflict
 		workingDir := filepath.Join(".", "test-runs", applyDestroyTestCaseName)
 
-		vpcBootstrapWorkingDir := ""
-
-		vpcBootstrapTerraformOptions := &terraform.Options{}
-		test_structure.RunTestStage(t, "create_vpc_options", func() {
-			// In this case we use "." for the rootFolder because the module is in the same folder as this test file
-			vpcBootstrapWorkingDir = test_structure.CopyTerraformFolderToTemp(t, ".", "modules/terraform-gcp-vpc/vpc")
-
-			// The variable set below assumes you have exported the following env vars:
-			// export TF_VAR_google_credentials=$(cat vpc.json)
-			vpcBootstrapTerraformOptions = terraform.WithDefaultRetryableErrors(t, &terraform.Options{
-				TerraformDir: vpcBootstrapWorkingDir,
-				Vars: map[string]interface{}{
-					"google_project":                       networkingProject,
-					"google_region":                        gcpIndonesiaRegion,
-					"network_name":                         clusterName + "-vpc",
-					"vpc_primary_subnet_name":              clusterName + "-primary-subnet",
-					"vpc_secondary_ip_range_pods_name":     clusterName + "-pods-subnet",
-					"vpc_secondary_ip_range_services_name": clusterName + "-services-subnet",
-				},
-				EnvVars: map[string]string{},
-			})
-
-			// Copy supporting files needed for VPC build
-			varFile := "vpc.auto.tfvars"
-			providerFile := "vpc_providers.tf"
-			testFileSourceDir, getTestDirErr := os.Getwd()
-			if getTestDirErr != nil {
-				fmt.Println("calling t.FailNow(): could not execute os.Getwd(): ", getTestDirErr)
-				t.FailNow()
-			}
-
-			fmt.Println("test working directory is: ", testFileSourceDir)
-
-			filesToCopy := []string{varFile, providerFile}
-			copyFiles(t, filesToCopy, testFileSourceDir, vpcBootstrapWorkingDir)
-		})
-
-		defer test_structure.RunTestStage(t, "vpc_cleanup", func() {
-			terraform.Destroy(t, vpcBootstrapTerraformOptions)
-		})
-
-		test_structure.RunTestStage(t, "create_vpc", func() {
-			terraform.InitAndApply(t, vpcBootstrapTerraformOptions)
-		})
-
 		// GKE cluster
 		test_structure.RunTestStage(t, "create_test_copy", func() {
-			tempTestDir = test_structure.CopyTerraformFolderToTemp(t, "../modules/gcp-gke", ".")
+			tempTestDir = test_structure.CopyTerraformFolderToTemp(t, "..", "./examples/multi-az-cluster/")
 			logger.Logf(t, "path to test folder %s\n", tempTestDir)
 			test_structure.SaveString(t, workingDir, "gkeClusterTerraformModulePath", tempTestDir)
 		})
@@ -102,12 +58,8 @@ func TestTerraformGcpGkeTemplate(t *testing.T) {
 			gkeClusterTerratestOptions := &terraform.Options{
 				TerraformDir: tempTestDir,
 				Vars: map[string]interface{}{
-					"cluster_name":           clusterName,
-					"pods_ip_range_name":     terraform.Output(t, vpcBootstrapTerraformOptions, "pods_subnet_name"),
-					"services_ip_range_name": terraform.Output(t, vpcBootstrapTerraformOptions, "services_subnet_name"),
-					"shared_vpc_self_link":   terraform.Output(t, vpcBootstrapTerraformOptions, "shared_vpc_self_link"),
-					"shared_vpc_id":          terraform.Output(t, vpcBootstrapTerraformOptions, "shared_vpc_id"),
-					"subnetwork_self_link":   terraform.Output(t, vpcBootstrapTerraformOptions, "primary_subnet_self_link"),
+					"cluster_name":              clusterName,
+					"kubernetes_version_prefix": masterVersionPrefix,
 				},
 			}
 
@@ -117,7 +69,7 @@ func TestTerraformGcpGkeTemplate(t *testing.T) {
 
 		// Copy supporting files
 		varFile := "wrapper.auto.tfvars"
-		providerFile := "gcp_gke_providers.tf"
+		// providerFile := "providers.tf"
 		testFileSourceDir, getTestDirErr := os.Getwd()
 		if getTestDirErr != nil {
 			fmt.Println("calling t.FailNow(): could not execute os.Getwd(): ", getTestDirErr)
@@ -126,7 +78,7 @@ func TestTerraformGcpGkeTemplate(t *testing.T) {
 
 		fmt.Println("test working directory is: ", testFileSourceDir)
 
-		filesToCopy := []string{varFile, providerFile}
+		filesToCopy := []string{varFile}
 
 		fmt.Println("copying files: ", filesToCopy, " to temporary test dir: ", tempTestDir)
 		copyFiles(t, filesToCopy, testFileSourceDir, tempTestDir)
@@ -208,7 +160,7 @@ func TestTerraformGcpGkeTemplate(t *testing.T) {
 				WorkingDir: gkeClusterTerraformModulePath,
 			}
 			describeClusterCmdOutput := shell.RunCommandAndGetStdOut(t, describeClusterCmd)
-			assert.Contains(t, describeClusterCmdOutput, "1.24.4-gke.800")
+			assert.Contains(t, describeClusterCmdOutput, "1.25.5-gke.1500")
 
 			gkeClusterTerratestOptions := test_structure.LoadTerraformOptions(t, workingDir)
 			planResult := terraform.InitAndPlan(t, gkeClusterTerratestOptions)

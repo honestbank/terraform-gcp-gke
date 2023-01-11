@@ -1,15 +1,19 @@
 // tfsec ignore rule because it triggers a false-positive
 data "google_container_cluster" "primary" {
+  project = var.google_project
+
   name     = var.cluster_name
   location = var.google_region
 
   depends_on = [
     google_container_cluster.primary,
-    module.node_pools,
+    google_container_node_pool.primary_node_pool,
   ]
 }
 
 resource "google_compute_firewall" "gke_private_cluster_istio_gatekeeper_rules" { #tfsec:ignore:google-compute-no-public-ingress
+  project = var.shared_vpc_host_google_project
+
   name      = "honest-${var.cluster_name}-allow-istio-gatekeeper"
   network   = var.shared_vpc_id
   disabled  = false
@@ -31,6 +35,8 @@ resource "google_compute_firewall" "gke_private_cluster_istio_gatekeeper_rules" 
 }
 
 resource "google_compute_router" "router" {
+  project = var.shared_vpc_host_google_project
+
   count = var.create_gcp_router ? 1 : 0
 
   name    = "${var.cluster_name}-router"
@@ -39,6 +45,8 @@ resource "google_compute_router" "router" {
 }
 
 resource "google_compute_router_nat" "nat" {
+  project = var.shared_vpc_host_google_project
+
   count = var.create_gcp_nat ? 1 : 0
 
   name                               = "${var.cluster_name}-nat"
@@ -62,6 +70,8 @@ resource "google_compute_router_nat" "nat" {
 
 
 resource "google_compute_firewall" "gke_private_cluster_public_https_firewall_rule" { #tfsec:ignore:google-compute-no-public-ingress
+  project = var.shared_vpc_host_google_project
+
   count = var.create_public_https_firewall_rule ? 1 : 0
 
   name    = "honest-${var.cluster_name}-allow-https"

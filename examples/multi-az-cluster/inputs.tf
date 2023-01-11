@@ -1,21 +1,30 @@
+variable "cluster_name" {
+  type        = string
+  description = "Name of the cluster"
+}
+
 variable "create_gcp_router" {
   type        = bool
   description = "Set to `true` to create a router in the VPC network."
+  default     = false
 }
 
 variable "create_gcp_nat" {
   type        = bool
   description = "Set to `true` to create an Internet NAT for ALL_SUBNETWORKS_ALL_IP_RANGES in the VPC network."
+  default     = false
 }
 
 variable "create_public_https_firewall_rule" {
   type        = bool
   description = "Set to `true` to create a firewall rule allowing 0.0.0.0/0:443 on TCP to all worker nodes."
+  default     = false
 }
 
 variable "enable_network_policy" {
   type        = bool
   description = "This value is passed to network_policy.enabled and the negative is passed to addons_config.network_policy_config.disabled. This might conflict with Workload Identity - make sure to read https://cloud.google.com/kubernetes-engine/docs/how-to/network-policy#limitations_and_requirements."
+  default     = false
 }
 
 variable "gke_authenticator_groups_config_domain" {
@@ -37,9 +46,10 @@ variable "google_region" {
 
 variable "initial_node_count" {
   description = "Initial node count, per-zone for regional clusters."
+  default     = 2
 }
 
-variable "kubernetes_version" {
+variable "kubernetes_version_prefix" {
   description = "The Kubernetes version to install on the master and node pool - must be a valid version from the specified `var.release_channel`"
   type        = string
 }
@@ -55,31 +65,19 @@ variable "master_ipv4_cidr_block" {
 variable "maximum_node_count" {
   type        = string
   description = "Maximum nodes for the node pool. This is the total nodes so for regional deployments it is the total nodes across all zones."
+  default     = "5"
 }
 
 variable "machine_type" {
   type        = string
   description = "Machine types to use for the node pool."
+  default     = "e2-medium"
 }
 
 variable "minimum_node_count" {
   type        = string
   description = "Minimum nodes for the node pool. This is the total nodes so for regional deployments it is the total nodes across all zones."
-}
-
-variable "project_id" {
-  type        = string
-  description = "Project id of the account where gke will be deployed. Used by provider"
-}
-
-variable "pods_ip_range_cidr" {
-  type        = string
-  description = "CIDR of the secondary IP range used for Kubernetes Pods."
-}
-
-variable "pods_ip_range_name" {
-  type        = string
-  description = "Name of the secondary IP range used for Kubernetes Pods."
+  default     = "2"
 }
 
 variable "release_channel" {
@@ -88,32 +86,13 @@ variable "release_channel" {
   default     = "RAPID"
 }
 
-variable "services_ip_range_cidr" {
-  type        = string
-  description = "CIDR of the secondary IP range used for Kubernetes Services."
-}
-
-variable "services_ip_range_name" {
-  type        = string
-  description = "Name of the secondary IP range used for Kubernetes Services."
-}
-
 variable "shared_vpc_host_google_credentials" {
   description = "Service Account with access to shared_vpc_host_google_project networks"
 }
 
 variable "shared_vpc_host_google_project" {
   description = "The GCP project that hosts the shared VPC to place resources into"
-}
-
-variable "shared_vpc_id" {
-  type        = string
-  description = "The id of the shared VPC."
-}
-
-variable "shared_vpc_self_link" {
-  type        = string
-  description = "self_link of the shared VPC to place the GKE cluster in."
+  default     = "tf-shared-vpc-host-78a3"
 }
 
 variable "stage" {
@@ -121,7 +100,44 @@ variable "stage" {
   default     = "test"
 }
 
-variable "subnetwork_self_link" {
+# VPC
+
+variable "network_name" {
+  description = "The name of the VPC."
+  default     = "test-gke-vpc"
+}
+
+variable "vpc_routing_mode" {
   type        = string
-  description = "self_link of the google_compute_subnetwork to place the GKE cluster in."
+  description = "Routing mode of the VPC"
+  default     = "REGIONAL"
+}
+
+variable "vpc_primary_subnet_name" {
+  type        = string
+  description = "The name of the primary subnet of the VPC. Validation regex: `'^(?:[a-z](?:[-a-z0-9]{0,61}[a-z0-9])?)$'`"
+  default     = "test-gke-vpc-primary-subnet"
+}
+
+variable "vpc_primary_subnet_ip_range_cidr" {
+  type        = string
+  description = "The primary subnet IP range in CIDR notation."
+}
+
+variable "vpc_secondary_ip_range_pods_name" {
+  description = "Name of first secondary IP range - to be used for Kubernetes Pods. Validation regex: `'^(?:[a-z](?:[-a-z0-9]{0,61}[a-z0-9])?)$'`"
+  default     = "test-gke-vpc-secondary-subnet"
+}
+
+variable "vpc_secondary_ip_range_pods_cidr" {
+  description = "First (Pods) secondary IP range in CIDR notation."
+}
+
+variable "vpc_secondary_ip_range_services_name" {
+  description = "Name of second secondary IP range - to be used for Kubernetes Services. Validation regex: `'^(?:[a-z](?:[-a-z0-9]{0,61}[a-z0-9])?)$'`"
+  default     = "test-gke-vpc-secondary-service-subent"
+}
+
+variable "vpc_secondary_ip_range_services_cidr" {
+  description = "Second (Services) secondary IP range in CIDR notation."
 }

@@ -1,3 +1,3 @@
-[submodule "test/modules/terraform-gcp-vpc"]
-	path = test/modules/terraform-gcp-vpc
-	url = https://github.com/honestbank/terraform-gcp-vpc
+[submodule "examples/modules/terraform-gcp-vpc"]
+	path = examples/modules/terraform-gcp-vpc
+	url = git@github.com:honestbank/terraform-gcp-vpc.git

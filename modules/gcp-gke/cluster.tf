@@ -1,3 +1,21 @@
+terraform {
+  required_version = ">= 1.2.9"
+
+  required_providers {
+    google = {
+      version = ">= 4.0"
+    }
+
+    google-beta = {
+      version = ">= 4.0"
+      source  = "hashicorp/google-beta"
+    }
+
+    random = {
+      version = "~> 3.0"
+    }
+  }
+}
 # Shared VPC Permissions
 data "google_project" "service_project" {
   project_id = var.google_project
@@ -5,6 +23,12 @@ data "google_project" "service_project" {
 
 data "google_project" "host_project" {
   project_id = var.google_project
+}
+
+data "google_container_engine_versions" "version" {
+  project        = var.google_project
+  location       = var.google_region
+  version_prefix = var.kubernetes_version_prefix
 }
 
 locals {
@@ -20,6 +44,7 @@ resource "google_service_account" "default" {
 #tfsec:ignore:google-gke-metadata-endpoints-disabled (legacy metadata disabled by default since 1.12 https://registry.terraform.io/providers/hashicorp/google-beta/latest/docs/resources/container_cluster#nested_workload_identity_config)
 resource "google_container_cluster" "primary" {
   provider = google-beta
+  project  = var.google_project
 
   #checkov:skip=CKV_GCP_67:Legacy metadata disabled by default since 1.12 https://registry.terraform.io/providers/hashicorp/google-beta/latest/docs/resources/container_cluster#nested_workload_identity_config
   #checkov:skip=CKV_GCP_24:PodSecurityPolicy is deprecated (https://cloud.google.com/kubernetes-engine/docs/how-to/pod-security-policies)
@@ -33,7 +58,7 @@ resource "google_container_cluster" "primary" {
   remove_default_node_pool = true
   initial_node_count       = 1
   enable_shielded_nodes    = true
-  min_master_version       = var.kubernetes_version
+  min_master_version       = data.google_container_engine_versions.version.latest_node_version
 
   #checkov:skip=CKV_GCP_66:Property renamed from 'enable_binary_authorization' to 'binary_authorization' but Checkov not updated.
   binary_authorization {
@@ -172,18 +197,13 @@ data "google_container_cluster" "current_cluster" {
   location = google_container_cluster.primary.location
 }
 
-moved {
-  from = google_container_node_pool.primary_node_pool
-  to   = google_container_node_pool.primary_node_pool.0
-}
-
 resource "google_container_node_pool" "primary_node_pool" {
   count = (var.skip_create_built_in_node_pool ? 0 : 1)
 
   name     = "primary"
   location = var.google_region
 
-  version = var.kubernetes_version
+  version = data.google_container_engine_versions.version.latest_node_version
 
   node_locations = [
     "${var.google_region}-a",
