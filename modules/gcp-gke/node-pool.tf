@@ -1,7 +1,10 @@
 resource "google_container_node_pool" "node_pool" {
   provider = google-beta
+  project  = var.google_project
 
-  name     = var.name
+  for_each = { for node_pool in var.additional_node_pools : node_pool.name => node_pool }
+  
+  name     = each.value.name
   location = var.google_region
   version  = var.kubernetes_version
 
@@ -11,12 +14,12 @@ resource "google_container_node_pool" "node_pool" {
     "${var.google_region}-c",
   ]
 
-  node_count = var.minimum_node_count
-  cluster    = var.cluster_name
+  node_count = each.value.minimum_node_count
+  cluster    = google_container_cluster.primary.name
 
   autoscaling {
-    max_node_count  = var.maximum_node_count
-    min_node_count  = var.minimum_node_count
+    max_node_count  = each.value.maximum_node_count
+    min_node_count  = each.value.minimum_node_count
     location_policy = var.autoscaling_location_policy
   }
 
@@ -27,10 +30,10 @@ resource "google_container_node_pool" "node_pool" {
 
   node_config {
     image_type   = "COS_CONTAINERD"
-    machine_type = var.machine_type
+    machine_type = each.value.machine_type
 
     # Google recommends custom service accounts that have cloud-platform scope and permissions granted via IAM Roles.
-    service_account = var.gcp_service_account_email
+    service_account = google_service_account.default.email
     oauth_scopes = [
       "https://www.googleapis.com/auth/cloud-platform",
     ]
@@ -52,7 +55,7 @@ resource "google_container_node_pool" "node_pool" {
       disable-legacy-endpoints = true
     }
 
-    tags = var.tags
+    tags = concat([local.gke_node_pool_tag], each.value.tags)
   }
 
   lifecycle {

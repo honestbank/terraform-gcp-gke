@@ -40,13 +40,21 @@ variable "initial_node_count" {
   description = "Initial node count, per-zone for regional clusters."
 }
 
+variable "kubernetes_version_prefix" {
+  description = "The Kubernetes version (passing prefix. Version will be inferred by google data source) to install on the master and node pool - must be a valid version from the specified `var.release_channel`"
+  type        = string
+}
+
 variable "kubernetes_version" {
   description = "The Kubernetes version to install on the master and node pool - must be a valid version from the specified `var.release_channel`"
   type        = string
+  default     = "1.25.5-gke.1500"
 }
 
 variable "machine_type" {
   description = "Machine types to use for the node pool."
+  type        = string
+  nullable    = false
 }
 
 variable "master_authorized_networks_config_cidr_block" {
@@ -59,10 +67,18 @@ variable "master_ipv4_cidr_block" {
 
 variable "maximum_node_count" {
   description = "Maximum nodes for the node pool per-zone."
+  type        = number
+  nullable    = false
+  validation {
+    condition     = var.maximum_node_count > 0
+    error_message = "var.maximum_node_count must be greated than 0, but ${var.maximum_node_count} specified"
+  }
 }
 
 variable "minimum_node_count" {
   description = "Minimum nodes for the node pool per-zone."
+  type        = number
+  nullable    = false
 }
 
 variable "pods_ip_range_name" {
@@ -137,4 +153,10 @@ variable "skip_create_built_in_node_pool" {
     Note: setting var.skip_create_built_in_node_pool to true requires at least one node pool specified in var.additional_node_pools"
    EOF
   type        = bool
+}
+
+variable "tags" {
+  description = "Tags to associate to the node pool. You may add tags related to the firewall rules here."
+  type        = list(string)
+  default     = []
 }

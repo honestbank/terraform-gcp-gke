@@ -16,8 +16,8 @@ repos:
       # See https://github.com/antonbabenko/pre-commit-terraform#terraform_validate
       # Running `terraform validate` inside the component module folder will not pass.
       - id: terraform_validate
-        exclude: 'test/[^/]+$|modules/gcp-gke/[^/]+$'
+        exclude: (test/|examples/)
       - id: terraform_tfsec
-        exclude: test/
+        exclude: (test/|examples/)
       - id: terraform_checkov
-        exclude: test/
+        exclude: (test/|examples/)

@@ -3,19 +3,13 @@ resource "random_id" "run_id" {
 }
 
 module "gke" {
-  providers = {
-    google.compute           = google
-    google.vpc               = google.vpc
-    google-beta.compute-beta = google-beta.compute-beta
-  }
-
-  source = "./modules/gcp-gke"
+  source = "../../modules/gcp-gke"
 
   stage        = var.stage
-  cluster_name = "gke-${random_id.run_id.hex}"
+  cluster_name = var.cluster_name
 
-  kubernetes_version = var.kubernetes_version
-  release_channel    = var.release_channel
+  kubernetes_version_prefix = var.kubernetes_version_prefix
+  release_channel           = var.release_channel
 
   create_gcp_nat                    = var.create_gcp_nat
   create_gcp_router                 = var.create_gcp_router
@@ -35,12 +29,12 @@ module "gke" {
   minimum_node_count = var.minimum_node_count
   maximum_node_count = var.maximum_node_count
 
-  shared_vpc_id                  = var.shared_vpc_id
+  shared_vpc_id                  = module.vpc.network_id
   shared_vpc_host_google_project = var.shared_vpc_host_google_project
-  shared_vpc_self_link           = var.shared_vpc_self_link
-  subnetwork_self_link           = var.subnetwork_self_link
-  pods_ip_range_name             = var.pods_ip_range_name
-  services_ip_range_name         = var.services_ip_range_name
+  shared_vpc_self_link           = module.vpc.shared_vpc_self_link
+  subnetwork_self_link           = module.vpc.primary_subnet_self_link
+  pods_ip_range_name             = module.vpc.pods_subnet_name
+  services_ip_range_name         = module.vpc.services_subnet_name
 
   skip_create_built_in_node_pool = true
   additional_node_pools = [
@@ -52,4 +46,5 @@ module "gke" {
       tags               = ["terratest"]
     },
   ]
+
 }
