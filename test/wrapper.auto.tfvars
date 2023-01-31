@@ -44,10 +44,6 @@ additional_node_pools = [
   },
 ]
 
-#google_project = "test-terraform-project-01"
-#network_name   = "vpc"
-#google_region  = "asia-southeast2"
-
 vpc_routing_mode = "REGIONAL"
 
 vpc_primary_subnet_ip_range_cidr = "10.10.0.0/16"

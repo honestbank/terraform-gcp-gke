@@ -3,7 +3,8 @@ terraform {
 
   required_providers {
     google = {
-      version = ">= 4.0"
+      version               = ">= 4.0"
+      configuration_aliases = [google.compute, google.vpc]
     }
 
     google-beta = {
@@ -16,6 +17,7 @@ terraform {
     }
   }
 }
+
 # Shared VPC Permissions
 data "google_project" "service_project" {
   project_id = var.google_project

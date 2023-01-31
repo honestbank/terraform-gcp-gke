@@ -13,7 +13,6 @@ provider "google" {
 }
 
 provider "google-beta" {
-  alias       = "compute-beta"
   project     = var.google_project
   region      = var.google_region
   credentials = var.google_credentials
