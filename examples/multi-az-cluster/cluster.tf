@@ -3,6 +3,12 @@ resource "random_id" "run_id" {
 }
 
 module "gke" {
+  providers = {
+    google.compute = google
+    google.vpc     = google.vpc
+    google-beta    = google-beta
+  }
+
   source = "../../modules/gcp-gke"
 
   stage        = var.stage
