@@ -1,4 +1,5 @@
 name: terratest
+permissions: read-all
 on:
   pull_request:
     branches:
@@ -33,6 +34,7 @@ jobs:
         with:
           version: "latest" # This is the default value, just being explicit
           project_id: ${{ env.COMPUTE_GOOGLE_PROJECT }}
+          install_components: 'gke-gcloud-auth-plugin'
           export_default_credentials: false
       - name: Run terratest
         run: |

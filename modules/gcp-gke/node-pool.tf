@@ -1,9 +1,10 @@
 module "node_pools" {
-  source   = "./modules/gcp-gke-node-pool"
+  source   = "../gcp-gke-node-pool"
   for_each = { for node_pool in var.additional_node_pools : node_pool.name => node_pool }
 
+  google_project = var.google_project
   providers = {
-    google-beta = google-beta.compute-beta
+    google-beta = google-beta
   }
 
   name               = each.value.name

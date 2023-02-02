@@ -16,6 +16,10 @@ variable "google_region" {
   nullable    = false
 }
 
+variable "google_project" {
+  description = "The GCP project to use for this run"
+}
+
 variable "kubernetes_version" {
   description = "The Kubernetes version to install on the master and node pool - must be a valid version from the specified `var.release_channel`"
   type        = string

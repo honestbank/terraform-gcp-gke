@@ -18,6 +18,11 @@ output "cluster_project" {
   value       = module.gke.cluster_project
 }
 
+output "cluster_all_primary_node_pool_tags" {
+  description = "List of tags applied to the node pool instances. This included the managed-by-GCP tags."
+  value       = module.gke.cluster_all_primary_node_pool_tags
+}
+
 output "gke_cluster_istio_gatekeeper_firewall_rule_self_link" {
   description = "The tags applied to the primary node pool of the GKE cluster."
   value       = module.gke.istio_gatekeeper_firewall_rule_self_link

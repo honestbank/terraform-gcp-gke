@@ -1,4 +1,5 @@
 name: "Terraform GitHub Actions"
+permissions: read-all
 on:
   pull_request:
     branches:

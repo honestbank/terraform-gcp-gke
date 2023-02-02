@@ -9,3 +9,4 @@ framework:
 quiet: true
 skip-path:
   - test
+  - examples
