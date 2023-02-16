@@ -52,6 +52,9 @@ resource "google_container_node_pool" "node_pool" {
       disable-legacy-endpoints = true
     }
 
+    # Use a conditional expression to add the taint only if the 'taint' variable is non-empty
+    taint = length(var.taints) > 0 ? var.taints : null
+
     tags = var.tags
   }
 

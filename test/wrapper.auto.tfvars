@@ -26,13 +26,14 @@ enable_network_policy                        = true
 master_ipv4_cidr_block                       = "10.40.0.0/28"
 master_authorized_networks_config_cidr_block = "0.0.0.0/0"
 release_channel                              = "REGULAR"
-kubernetes_version                           = "1.24.4-gke.800"
+kubernetes_version                           = "1.24.9-gke.2000"
 additional_node_pools = [
   {
     name               = "highmem",
     machine_type       = "e2-highmem-4"
     minimum_node_count = 1
     maximum_node_count = 3
+    taints             = []
     tags               = ["terratest"]
   },
   {
@@ -40,6 +41,11 @@ additional_node_pools = [
     machine_type       = "e2-highcpu-8"
     minimum_node_count = 1
     maximum_node_count = 3
-    tags               = ["terratest"]
+    taints = [{
+      key    = "terratest"
+      value  = "true"
+      effect = "NO_SCHEDULE"
+    }]
+    tags = ["terratest"]
   },
 ]
