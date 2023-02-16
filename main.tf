@@ -49,7 +49,12 @@ module "gke" {
       machine_type       = var.machine_type
       minimum_node_count = var.minimum_node_count
       maximum_node_count = var.maximum_node_count
-      tags               = ["terratest"]
+      taints = [{
+        key    = "terratest"
+        value  = "true"
+        effect = "NO_SCHEDULE"
+      }]
+      tags = ["terratest"]
     },
   ]
 }

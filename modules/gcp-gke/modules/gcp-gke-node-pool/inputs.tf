@@ -57,6 +57,16 @@ variable "autoscaling_location_policy" {
   }
 }
 
+variable "taints" {
+  type = list(object({
+    key    = string
+    value  = string
+    effect = string
+  }))
+  description = "A list of Kubernetes taints to apply to nodes. GKE's API can only set this field on cluster creation"
+  default     = []
+}
+
 variable "gcp_service_account_email" {
   description = "Email of the GCP Service Account for the Node pool"
   type        = string

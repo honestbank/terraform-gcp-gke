@@ -70,6 +70,16 @@ variable "pods_ip_range_name" {
   description = "Name of the secondary IP range used for Kubernetes Pods."
 }
 
+variable "taints" {
+  type = list(object({
+    key    = string
+    value  = string
+    effect = string
+  }))
+  description = "A list of Kubernetes taints to apply to nodes. GKE's API can only set this field on cluster creation"
+  default     = []
+}
+
 variable "subnetwork_self_link" {
   type        = string
   description = "self_link of the google_compute_subnetwork to place the GKE cluster in."
@@ -125,7 +135,12 @@ variable "additional_node_pools" {
     machine_type       = string
     minimum_node_count = string
     maximum_node_count = string
-    tags               = list(string)
+    taints = list(object({
+      key    = string
+      value  = string
+      effect = string
+    }))
+    tags = list(string)
   }))
   nullable = false
 }

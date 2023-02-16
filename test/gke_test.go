@@ -208,7 +208,7 @@ func TestTerraformGcpGkeTemplate(t *testing.T) {
 				WorkingDir: gkeClusterTerraformModulePath,
 			}
 			describeClusterCmdOutput := shell.RunCommandAndGetStdOut(t, describeClusterCmd)
-			assert.Contains(t, describeClusterCmdOutput, "1.24.4-gke.800")
+			assert.Contains(t, describeClusterCmdOutput, "1.24.9-gke.2000")
 
 			gkeClusterTerratestOptions := test_structure.LoadTerraformOptions(t, workingDir)
 			planResult := terraform.InitAndPlan(t, gkeClusterTerratestOptions)

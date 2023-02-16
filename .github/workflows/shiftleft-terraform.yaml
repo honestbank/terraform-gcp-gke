@@ -2,6 +2,7 @@
 # This workflow integrates ShiftLeft NG SAST with GitHub
 # Visit https://docs.shiftleft.io for help
 name: shiftleft-terraform
+permissions: read-all
 
 on:
   pull_request:

@@ -60,7 +60,7 @@ To run E2E tests, navigate to the [test folder](../test) and run `go test -v -ti
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_additional_node_pools"></a> [additional\_node\_pools](#input\_additional\_node\_pools) | A list of objects used to configure additional node pools (in addition to the primary one created by this module by default). | <pre>list(object({<br>    name               = string<br>    machine_type       = string<br>    minimum_node_count = string<br>    maximum_node_count = string<br>    tags               = list(string)<br>  }))</pre> | `[]` | no |
+| <a name="input_additional_node_pools"></a> [additional\_node\_pools](#input\_additional\_node\_pools) | A list of objects used to configure additional node pools (in addition to the primary one created by this module by default). | <pre>list(object({<br>    name               = string<br>    machine_type       = string<br>    minimum_node_count = string<br>    maximum_node_count = string<br>    taints             = list(any)<br>    tags               = list(string)<br>  }))</pre> | `[]` | no |
 | <a name="input_autoscaling_location_policy"></a> [autoscaling\_location\_policy](#input\_autoscaling\_location\_policy) | (Optional) Location policy specifies the algorithm used when scaling-up the node pool. \ "BALANCED" - Is a best effort policy that aims to balance the sizes of available zones. \ "ANY" - Instructs the cluster autoscaler to prioritize utilization of unused reservations, and reduce preemption risk for Spot VMs. | `string` | `"BALANCED"` | no |
 | <a name="input_cluster_name"></a> [cluster\_name](#input\_cluster\_name) | The name to set on the GKE cluster. | `string` | n/a | yes |
 | <a name="input_create_gcp_nat"></a> [create\_gcp\_nat](#input\_create\_gcp\_nat) | Set to `true` to create an Internet NAT for ALL\_SUBNETWORKS\_ALL\_IP\_RANGES in the VPC network. | `bool` | n/a | yes |
@@ -86,6 +86,7 @@ To run E2E tests, navigate to the [test folder](../test) and run `go test -v -ti
 | <a name="input_skip_create_built_in_node_pool"></a> [skip\_create\_built\_in\_node\_pool](#input\_skip\_create\_built\_in\_node\_pool) | Skip creation of the primary node pool that is created with the cluster, and instead use only the `additional_node_pools`.<br>    Note: setting var.skip\_create\_built\_in\_node\_pool to true requires at least one node pool specified in var.additional\_node\_pools" | `bool` | `false` | no |
 | <a name="input_stage"></a> [stage](#input\_stage) | Stage: [test, dev, prod...] used as prefix for all resources. | `string` | `"test"` | no |
 | <a name="input_subnetwork_self_link"></a> [subnetwork\_self\_link](#input\_subnetwork\_self\_link) | self\_link of the google\_compute\_subnetwork to place the GKE cluster in. | `string` | n/a | yes |
+| <a name="input_taints"></a> [taints](#input\_taints) | A list of Kubernetes taints to apply to nodes. GKE's API can only set this field on cluster creation | <pre>list(object({<br>    key    = string<br>    value  = string<br>    effect = string<br>  }))</pre> | `[]` | no |
 
 ## Outputs
 
