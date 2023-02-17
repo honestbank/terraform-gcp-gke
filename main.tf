@@ -54,7 +54,8 @@ module "gke" {
         value  = "true"
         effect = "NO_SCHEDULE"
       }]
-      tags = ["terratest"]
+      tags  = ["terratest"]
+      zones = ["asia-southeast2-a", "asia-southeast2-b", "asia-southeast2-c"]
     },
   ]
 }

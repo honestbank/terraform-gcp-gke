@@ -5,14 +5,9 @@ resource "google_container_node_pool" "node_pool" {
   location = var.google_region
   version  = var.kubernetes_version
 
-  node_locations = [
-    "${var.google_region}-a",
-    "${var.google_region}-b",
-    "${var.google_region}-c",
-  ]
-
-  node_count = var.minimum_node_count
-  cluster    = var.cluster_name
+  node_locations = var.zones
+  node_count     = var.minimum_node_count
+  cluster        = var.cluster_name
 
   autoscaling {
     max_node_count  = var.maximum_node_count

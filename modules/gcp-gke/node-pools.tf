@@ -12,6 +12,7 @@ module "node_pools" {
   minimum_node_count = each.value.minimum_node_count
   taints             = each.value.taints
   tags               = concat([local.gke_node_pool_tag], each.value.tags)
+  zones              = each.value.zones
 
   google_region               = var.google_region
   autoscaling_location_policy = var.autoscaling_location_policy
