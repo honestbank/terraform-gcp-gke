@@ -154,13 +154,3 @@ variable "skip_create_built_in_node_pool" {
    EOF
   type        = bool
 }
-
-variable "zones" {
-  type        = list(string)
-  description = "List zones where node-pool will be created"
-  default = [
-    "asia-southeast2-a",
-    "asia-southeast2-b",
-    "asia-southeast2-c",
-  ]
-}
