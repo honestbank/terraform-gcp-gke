@@ -78,3 +78,13 @@ variable "tags" {
   type        = list(string)
   default     = []
 }
+
+variable "zones" {
+  type        = list(string)
+  description = "List zones where node-pool will be created"
+  default = [
+    "asia-southeast2-a",
+    "asia-southeast2-b",
+    "asia-southeast2-c",
+  ]
+}

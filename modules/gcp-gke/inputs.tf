@@ -140,7 +140,8 @@ variable "additional_node_pools" {
       value  = string
       effect = string
     }))
-    tags = list(string)
+    tags  = list(string)
+    zones = list(string)
   }))
   nullable = false
 }
@@ -152,4 +153,14 @@ variable "skip_create_built_in_node_pool" {
     Note: setting var.skip_create_built_in_node_pool to true requires at least one node pool specified in var.additional_node_pools"
    EOF
   type        = bool
+}
+
+variable "zones" {
+  type        = list(string)
+  description = "List zones where node-pool will be created"
+  default = [
+    "asia-southeast2-a",
+    "asia-southeast2-b",
+    "asia-southeast2-c",
+  ]
 }

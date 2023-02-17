@@ -35,6 +35,7 @@ additional_node_pools = [
     maximum_node_count = 3
     taints             = []
     tags               = ["terratest"]
+    zones              = ["asia-southeast2-a", "asia-southeast2-b", "asia-southeast2-c"]
   },
   {
     name               = "compute",
@@ -46,6 +47,7 @@ additional_node_pools = [
       value  = "true"
       effect = "NO_SCHEDULE"
     }]
-    tags = ["terratest"]
+    tags  = ["terratest"]
+    zones = ["asia-southeast2-b"]
   },
 ]
