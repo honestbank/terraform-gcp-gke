@@ -271,6 +271,7 @@ resource "google_container_node_pool" "primary_node_pool" {
     create_before_destroy = true
     ignore_changes = [
       node_count,
+      version,
     ]
   }
 
