@@ -87,7 +87,6 @@ To run E2E tests, navigate to the [test folder](../test) and run `go test -v -ti
 | <a name="input_stage"></a> [stage](#input\_stage) | Stage: [test, dev, prod...] used as prefix for all resources. | `string` | `"test"` | no |
 | <a name="input_subnetwork_self_link"></a> [subnetwork\_self\_link](#input\_subnetwork\_self\_link) | self\_link of the google\_compute\_subnetwork to place the GKE cluster in. | `string` | n/a | yes |
 | <a name="input_taints"></a> [taints](#input\_taints) | A list of Kubernetes taints to apply to nodes. GKE's API can only set this field on cluster creation | <pre>list(object({<br>    key    = string<br>    value  = string<br>    effect = string<br>  }))</pre> | `[]` | no |
-| <a name="input_zones"></a> [zones](#input\_zones) | List zones where node-pool will be created | `list(string)` | <pre>[<br>  "asia-southeast2-a",<br>  "asia-southeast2-b",<br>  "asia-southeast2-c"<br>]</pre> | no |
 
 ## Outputs
 
