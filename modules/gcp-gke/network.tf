@@ -9,22 +9,24 @@ data "google_container_cluster" "primary" {
   ]
 }
 
-resource "google_compute_firewall" "gke_private_cluster_istio_gatekeeper_rules" { #tfsec:ignore:google-compute-no-public-ingress
+resource "google_compute_firewall" "gke_private_cluster_cp_to_nodepool_comm" { #tfsec:ignore:google-compute-no-public-ingress
   provider = google.vpc
 
-  name      = "honest-${var.cluster_name}-allow-istio-gatekeeper"
+  name      = "honest-${var.cluster_name}-allow-master-to-nodepool-comm"
   network   = var.shared_vpc_id
   disabled  = false
   direction = "INGRESS"
+
   allow {
     protocol = "tcp"
-    ports    = ["15017", "8443"]
+    ports    = var.firewall_allow_ports_k8_cp_to_np
   }
 
   source_ranges = [var.master_ipv4_cidr_block]
   target_tags   = local.all_primary_node_pool_tags
 
   lifecycle {
+    create_before_destroy = true
     ignore_changes = [
       source_service_accounts,
       target_service_accounts,
@@ -78,20 +80,5 @@ resource "google_compute_firewall" "gke_private_cluster_public_https_firewall_ru
   }
 
   source_ranges = ["0.0.0.0/0"]
-  target_tags   = [local.gke_node_pool_tag]
-}
-
-resource "google_compute_firewall" "gke_private_cluster_allow_9443_kyverno" {
-  provider = google.vpc
-
-  name    = "k8s-fw-${var.cluster_name}-allow-kyverno-comms"
-  network = var.shared_vpc_id
-
-  allow {
-    protocol = "tcp"
-    ports    = ["9443"]
-  }
-
-  source_ranges = [var.master_ipv4_cidr_block]
   target_tags   = [local.gke_node_pool_tag]
 }

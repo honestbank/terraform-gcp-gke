@@ -39,6 +39,6 @@ output "cluster_all_primary_node_pool_tags" {
 }
 
 output "istio_gatekeeper_firewall_rule_self_link" {
-  description = "The self_link attribute of the firewall rule created to allow Gatekeeper and Istio to function."
-  value       = google_compute_firewall.gke_private_cluster_istio_gatekeeper_rules.self_link
+  description = "The self_link attribute of the firewall rule created to allow CP to NP communication"
+  value       = google_compute_firewall.gke_private_cluster_cp_to_nodepool_comm.self_link
 }

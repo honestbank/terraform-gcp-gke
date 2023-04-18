@@ -18,6 +18,14 @@ variable "create_public_https_firewall_rule" {
   description = "Set to `true` to create a firewall rule allowing 0.0.0.0/0:443 on TCP to all worker nodes."
 }
 
+variable "firewall_allow_ports_k8_cp_to_np" {
+  type        = list(string)
+  description = "List of ports to allow K8 Control plane to communicate with nodepool"
+  default     = ["15017", "8443", "9443"]
+  # 15017 and 8443 are for Istio and Gatekeeper
+  # 9443 is for Kyverno
+}
+
 variable "enable_network_policy" {
   type        = bool
   description = "This value is passed to network_policy.enabled and the negative is passed to addons_config.network_policy_config.disabled."
