@@ -53,6 +53,12 @@ resource "google_container_node_pool" "node_pool" {
     tags = var.tags
   }
 
+  timeouts {
+    create = var.nodepool_ops_timeouts.create
+    update = var.nodepool_ops_timeouts.update
+    delete = var.nodepool_ops_timeouts.delete
+  }
+
   lifecycle {
     create_before_destroy = true
     ignore_changes = [
