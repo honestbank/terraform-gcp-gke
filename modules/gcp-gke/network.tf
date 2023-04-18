@@ -9,10 +9,11 @@ data "google_container_cluster" "primary" {
   ]
 }
 
-resource "google_compute_firewall" "gke_private_cluster_cp_to_nodepool_comm" { #tfsec:ignore:google-compute-no-public-ingress
+resource "google_compute_firewall" "gke_private_cluster_master_to_nodepool" {
   provider = google.vpc
+  count    = length(var.firewall_allow_ports_k8_cp_to_np) > 0 ? 1 : 0
 
-  name      = "honest-${var.cluster_name}-allow-master-to-nodepool-comm"
+  name      = "honest-${var.cluster_name}-allow-master-to-nodepool"
   network   = var.shared_vpc_id
   disabled  = false
   direction = "INGRESS"

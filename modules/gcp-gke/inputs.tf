@@ -21,9 +21,7 @@ variable "create_public_https_firewall_rule" {
 variable "firewall_allow_ports_k8_cp_to_np" {
   type        = list(string)
   description = "List of ports to allow K8 Control plane to communicate with nodepool"
-  default     = ["15017", "8443", "9443"]
-  # 15017 and 8443 are for Istio and Gatekeeper
-  # 9443 is for Kyverno
+  default     = []
 }
 
 variable "enable_network_policy" {
