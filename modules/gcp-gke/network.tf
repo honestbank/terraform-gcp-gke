@@ -9,22 +9,25 @@ data "google_container_cluster" "primary" {
   ]
 }
 
-resource "google_compute_firewall" "gke_private_cluster_istio_gatekeeper_rules" { #tfsec:ignore:google-compute-no-public-ingress
+resource "google_compute_firewall" "gke_private_cluster_master_to_nodepool" {
   provider = google.vpc
+  count    = length(var.firewall_allow_ports_k8_cp_to_np) > 0 ? 1 : 0
 
-  name      = "honest-${var.cluster_name}-allow-istio-gatekeeper"
+  name      = "honest-${var.cluster_name}-allow-master-to-nodepool"
   network   = var.shared_vpc_id
   disabled  = false
   direction = "INGRESS"
+
   allow {
     protocol = "tcp"
-    ports    = ["15017", "8443"]
+    ports    = var.firewall_allow_ports_k8_cp_to_np
   }
 
   source_ranges = [var.master_ipv4_cidr_block]
   target_tags   = local.all_primary_node_pool_tags
 
   lifecycle {
+    create_before_destroy = true
     ignore_changes = [
       source_service_accounts,
       target_service_accounts,
@@ -63,7 +66,6 @@ resource "google_compute_router_nat" "nat" {
     ]
   }
 }
-
 
 resource "google_compute_firewall" "gke_private_cluster_public_https_firewall_rule" { #tfsec:ignore:google-compute-no-public-ingress
   count = var.create_public_https_firewall_rule ? 1 : 0

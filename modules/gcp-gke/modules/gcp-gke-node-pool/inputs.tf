@@ -88,3 +88,13 @@ variable "zones" {
     "asia-southeast2-c",
   ]
 }
+
+variable "nodepool_ops_timeouts" {
+  type        = map(string)
+  description = "Timeout values for nodepool create/update/delete operations"
+  default = {
+    "create" : "60m",
+    "update" : "60m",
+    "delete" : "60m"
+  }
+}

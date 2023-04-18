@@ -50,7 +50,7 @@ role in the shared VPC host project.
 
 | Name | Version |
 |------|---------|
-| <a name="provider_random"></a> [random](#provider\_random) | 3.4.3 |
+| <a name="provider_random"></a> [random](#provider\_random) | 3.5.1 |
 
 ## Modules
 
@@ -103,7 +103,6 @@ role in the shared VPC host project.
 | <a name="output_client_token"></a> [client\_token](#output\_client\_token) | n/a |
 | <a name="output_cluster_name"></a> [cluster\_name](#output\_cluster\_name) | The GKE cluster name that was built |
 | <a name="output_cluster_project"></a> [cluster\_project](#output\_cluster\_project) | The project hosting the GKE cluster. |
-| <a name="output_gke_cluster_istio_gatekeeper_firewall_rule_self_link"></a> [gke\_cluster\_istio\_gatekeeper\_firewall\_rule\_self\_link](#output\_gke\_cluster\_istio\_gatekeeper\_firewall\_rule\_self\_link) | The tags applied to the primary node pool of the GKE cluster. |
 | <a name="output_gke_cluster_primary_node_pool_tag"></a> [gke\_cluster\_primary\_node\_pool\_tag](#output\_gke\_cluster\_primary\_node\_pool\_tag) | Tag applied to the node pool instances - used for network/firewall rules. |
 | <a name="output_kubernetes_endpoint"></a> [kubernetes\_endpoint](#output\_kubernetes\_endpoint) | n/a |
 | <a name="output_service_account"></a> [service\_account](#output\_service\_account) | The default service account used for running nodes. |

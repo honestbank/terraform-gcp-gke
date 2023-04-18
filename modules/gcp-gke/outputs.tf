@@ -37,8 +37,3 @@ output "cluster_all_primary_node_pool_tags" {
   description = "List of tags applied to the node pool instances. This included the managed-by-GCP tags."
   value       = local.all_primary_node_pool_tags
 }
-
-output "istio_gatekeeper_firewall_rule_self_link" {
-  description = "The self_link attribute of the firewall rule created to allow Gatekeeper and Istio to function."
-  value       = google_compute_firewall.gke_private_cluster_istio_gatekeeper_rules.self_link
-}

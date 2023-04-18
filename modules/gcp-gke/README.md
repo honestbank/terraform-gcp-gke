@@ -42,7 +42,7 @@ To run E2E tests, navigate to the [test folder](../test) and run `go test -v -ti
 |------|------|
 | [google-beta_google_container_cluster.primary](https://registry.terraform.io/providers/hashicorp/google-beta/latest/docs/resources/google_container_cluster) | resource |
 | [google-beta_google_container_node_pool.primary_node_pool](https://registry.terraform.io/providers/hashicorp/google-beta/latest/docs/resources/google_container_node_pool) | resource |
-| [google_compute_firewall.gke_private_cluster_istio_gatekeeper_rules](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_firewall) | resource |
+| [google_compute_firewall.gke_private_cluster_master_to_nodepool](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_firewall) | resource |
 | [google_compute_firewall.gke_private_cluster_public_https_firewall_rule](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_firewall) | resource |
 | [google_compute_router.router](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_router) | resource |
 | [google_compute_router_nat.nat](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_router_nat) | resource |
@@ -67,6 +67,7 @@ To run E2E tests, navigate to the [test folder](../test) and run `go test -v -ti
 | <a name="input_create_gcp_router"></a> [create\_gcp\_router](#input\_create\_gcp\_router) | Set to `true` to create a router in the VPC network. | `bool` | n/a | yes |
 | <a name="input_create_public_https_firewall_rule"></a> [create\_public\_https\_firewall\_rule](#input\_create\_public\_https\_firewall\_rule) | Set to `true` to create a firewall rule allowing 0.0.0.0/0:443 on TCP to all worker nodes. | `bool` | n/a | yes |
 | <a name="input_enable_network_policy"></a> [enable\_network\_policy](#input\_enable\_network\_policy) | This value is passed to network\_policy.enabled and the negative is passed to addons\_config.network\_policy\_config.disabled. | `bool` | n/a | yes |
+| <a name="input_firewall_allow_ports_k8_cp_to_np"></a> [firewall\_allow\_ports\_k8\_cp\_to\_np](#input\_firewall\_allow\_ports\_k8\_cp\_to\_np) | List of ports to allow K8 Control plane to communicate with nodepool | `list(string)` | `[]` | no |
 | <a name="input_gke_authenticator_groups_config_domain"></a> [gke\_authenticator\_groups\_config\_domain](#input\_gke\_authenticator\_groups\_config\_domain) | Domain to append to `gke-security-groups` to pass to authenticator\_groups\_config so members of that Google Group can authenticate to the cluster. Pass an empty string to disable. Domain passed here should be in the format of TLD.EXTENSION. | `string` | n/a | yes |
 | <a name="input_google_project"></a> [google\_project](#input\_google\_project) | The GCP project to use for this run | `any` | n/a | yes |
 | <a name="input_google_region"></a> [google\_region](#input\_google\_region) | GCP region used to create all resources in this run | `any` | n/a | yes |
@@ -98,7 +99,6 @@ To run E2E tests, navigate to the [test folder](../test) and run `go test -v -ti
 | <a name="output_cluster_name"></a> [cluster\_name](#output\_cluster\_name) | The GKE cluster name that was built |
 | <a name="output_cluster_primary_node_pool_tag"></a> [cluster\_primary\_node\_pool\_tag](#output\_cluster\_primary\_node\_pool\_tag) | Tag applied to the node pool instances - used for network/firewall rules. |
 | <a name="output_cluster_project"></a> [cluster\_project](#output\_cluster\_project) | The project hosting the GKE cluster. |
-| <a name="output_istio_gatekeeper_firewall_rule_self_link"></a> [istio\_gatekeeper\_firewall\_rule\_self\_link](#output\_istio\_gatekeeper\_firewall\_rule\_self\_link) | The self\_link attribute of the firewall rule created to allow Gatekeeper and Istio to function. |
 | <a name="output_kubernetes_endpoint"></a> [kubernetes\_endpoint](#output\_kubernetes\_endpoint) | The kubernetes\_endpoint output of the google\_container\_cluster resource. |
 | <a name="output_node_pool_service_account_email"></a> [node\_pool\_service\_account\_email](#output\_node\_pool\_service\_account\_email) | The default service account used for running nodes |
 <!-- END_TF_DOCS -->
