@@ -64,7 +64,6 @@ resource "google_compute_router_nat" "nat" {
   }
 }
 
-
 resource "google_compute_firewall" "gke_private_cluster_public_https_firewall_rule" { #tfsec:ignore:google-compute-no-public-ingress
   count = var.create_public_https_firewall_rule ? 1 : 0
 
@@ -79,5 +78,20 @@ resource "google_compute_firewall" "gke_private_cluster_public_https_firewall_ru
   }
 
   source_ranges = ["0.0.0.0/0"]
+  target_tags   = [local.gke_node_pool_tag]
+}
+
+resource "google_compute_firewall" "gke_private_cluster_allow_9443_kyverno" {
+  provider = google.vpc
+
+  name    = "k8s-fw-${var.cluster_name}-allow-kyverno-comms"
+  network = var.shared_vpc_id
+
+  allow {
+    protocol = "tcp"
+    ports    = ["9443"]
+  }
+
+  source_ranges = [var.master_ipv4_cidr_block]
   target_tags   = [local.gke_node_pool_tag]
 }
