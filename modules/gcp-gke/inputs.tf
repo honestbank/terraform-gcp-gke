@@ -18,9 +18,9 @@ variable "create_public_https_firewall_rule" {
   description = "Set to `true` to create a firewall rule allowing 0.0.0.0/0:443 on TCP to all worker nodes."
 }
 
-variable "firewall_allow_ports_k8_cp_to_np" {
+variable "allow_k8s_control_plane" {
   type        = list(string)
-  description = "List of ports to allow K8 Control plane to communicate with nodepool"
+  description = "List of ports to allow k8s Control plane to communicate with nodepool"
   default     = []
 }
 
