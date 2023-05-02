@@ -13,6 +13,7 @@ module "node_pools" {
   taints             = each.value.taints
   tags               = concat([local.gke_node_pool_tag], each.value.tags)
   zones              = each.value.zones
+  enable_secure_boot = each.value.enable_secure_boot
 
   google_region               = var.google_region
   autoscaling_location_policy = var.autoscaling_location_policy

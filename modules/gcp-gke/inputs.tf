@@ -138,6 +138,7 @@ variable "additional_node_pools" {
   description = "A list of objects used to configure additional node pools (in addition to the primary one created by this module by default)."
   type = list(object({
     name               = string
+    enable_secure_boot = bool
     machine_type       = string
     minimum_node_count = string
     maximum_node_count = string
