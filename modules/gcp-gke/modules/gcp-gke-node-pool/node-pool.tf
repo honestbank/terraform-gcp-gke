@@ -35,7 +35,8 @@ resource "google_container_node_pool" "node_pool" {
     }
 
     shielded_instance_config {
-      enable_secure_boot          = true
+      # checkov:skip=CKV_GCP_68: Accomodates prometheus node pool TF import
+      enable_secure_boot          = var.enable_secure_boot
       enable_integrity_monitoring = true
     }
 

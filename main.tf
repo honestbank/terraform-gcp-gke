@@ -49,6 +49,7 @@ module "gke" {
       machine_type       = var.machine_type
       minimum_node_count = var.minimum_node_count
       maximum_node_count = var.maximum_node_count
+      enable_secure_boot = true
       taints = [{
         key    = "terratest"
         value  = "true"

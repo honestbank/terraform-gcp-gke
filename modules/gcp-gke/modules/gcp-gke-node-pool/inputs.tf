@@ -10,6 +10,11 @@ variable "cluster_name" {
   nullable    = false
 }
 
+variable "enable_secure_boot" {
+  description = "Enable secure boot of node pool"
+  type        = bool
+}
+
 variable "google_region" {
   description = "GCP region used to create all resources in this run"
   type        = string
