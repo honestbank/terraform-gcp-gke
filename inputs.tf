@@ -44,8 +44,9 @@ variable "kubernetes_version" {
   type        = string
 }
 
-variable "master_authorized_networks_config_cidr_block" {
-  description = "The IP range allowed to access the control plane, passed to the master_authorized_network_config.cidr_blocks.cidr_block field."
+variable "master_authorized_networks" {
+  type        = list(object({ cidr_block = string, display_name = string }))
+  description = "List of authorized networks to access the control plane. If none are provided, disallow external access (except the cluster node IPs, which GKE automatically whitelists)."
 }
 
 variable "master_ipv4_cidr_block" {

@@ -26,8 +26,7 @@ module "gke" {
   google_project                         = var.google_project
   google_region                          = var.google_region
   machine_type                           = var.machine_type
-
-  master_authorized_networks_config_cidr_block = var.master_authorized_networks_config_cidr_block
+  master_authorized_networks             = var.master_authorized_networks
 
   master_ipv4_cidr_block = var.master_ipv4_cidr_block
 
