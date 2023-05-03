@@ -40,12 +40,12 @@ resource "google_service_account" "default" {
 
 #tfsec:ignore:google-gke-enforce-pod-security-policy
 #tfsec:ignore:google-gke-metadata-endpoints-disabled (legacy metadata disabled by default since 1.12 https://registry.terraform.io/providers/hashicorp/google-beta/latest/docs/resources/container_cluster#nested_workload_identity_config)
+#tfsec:ignore:google-gke-enable-master-networks
 resource "google_container_cluster" "primary" {
   provider = google-beta.compute-beta
 
   #checkov:skip=CKV_GCP_67:Legacy metadata disabled by default since 1.12 https://registry.terraform.io/providers/hashicorp/google-beta/latest/docs/resources/container_cluster#nested_workload_identity_config
   #checkov:skip=CKV_GCP_24:PodSecurityPolicy is deprecated (https://cloud.google.com/kubernetes-engine/docs/how-to/pod-security-policies)
-  #checkov:skip=CKV_GCP_18:Public access currently needed for development purposes (see https://linear.app/honestbank/issue/DEVOP-746/fix-ckv-gcp-18-for-terraform-gcp-gke)
   name     = var.cluster_name
   location = var.google_region
 
@@ -75,9 +75,16 @@ resource "google_container_cluster" "primary" {
     }
   }
 
-  master_authorized_networks_config {
-    cidr_blocks {
-      cidr_block = var.master_authorized_networks_config_cidr_block
+  dynamic "master_authorized_networks_config" {
+    for_each = length(var.master_authorized_networks) == 0 ? [] : [{ cidr_blocks : var.master_authorized_networks }]
+    content {
+      dynamic "cidr_blocks" {
+        for_each = master_authorized_networks_config.value.cidr_blocks
+        content {
+          cidr_block   = lookup(cidr_blocks.value, "cidr_block", "")
+          display_name = lookup(cidr_blocks.value, "display_name", "")
+        }
+      }
     }
   }
 
