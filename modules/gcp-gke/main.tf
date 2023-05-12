@@ -231,7 +231,7 @@ resource "google_container_node_pool" "primary_node_pool" {
   autoscaling {
     max_node_count  = var.maximum_node_count
     min_node_count  = var.minimum_node_count
-    location_policy = var.autoscaling_location_policy
+    #location_policy = var.autoscaling_location_policy
   }
 
   management {
