@@ -163,3 +163,8 @@ variable "skip_create_built_in_node_pool" {
    EOF
   type        = bool
 }
+
+variable "enable_dataplane_v2" {
+  default     = false
+  description = "enable GKE Dataplane V2 for control plane. male this valur true if you need to enable it"
+}
