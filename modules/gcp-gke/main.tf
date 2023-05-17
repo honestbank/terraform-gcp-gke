@@ -155,6 +155,9 @@ resource "google_container_cluster" "primary" {
     enabled = var.enable_network_policy
   }
 
+  # Enable dataplane v2
+  datapath_provider = var.enable_dataplane_v2 ? "ADVANCED_DATAPATH" : "DATAPATH_PROVIDER_UNSPECIFIED"
+
   private_cluster_config {
     enable_private_nodes    = true
     enable_private_endpoint = false
@@ -204,10 +207,6 @@ data "google_container_cluster" "current_cluster" {
   location = google_container_cluster.primary.location
 }
 
-moved {
-  from = google_container_node_pool.primary_node_pool
-  to   = google_container_node_pool.primary_node_pool.0
-}
 
 resource "google_container_node_pool" "primary_node_pool" {
   count = (var.skip_create_built_in_node_pool ? 0 : 1)
