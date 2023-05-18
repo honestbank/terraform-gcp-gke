@@ -168,3 +168,13 @@ variable "enable_dataplane_v2" {
   default     = false
   description = "Enable GKE DataPlane V2 for control plane.Set this value true if need to enable this feature."
 }
+
+variable "maintenance_policy_config" {
+  type = list(object({
+    maintenance_start_time = string
+    maintenance_end_time   = string
+    maintenance_recurrence = string
+  }))
+  description = "(OPTIONAL) A list of objects used to configure maintenance policy "
+  default     = []
+}

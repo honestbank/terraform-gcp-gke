@@ -31,6 +31,13 @@ master_authorized_networks = [
     display_name = "Access from Everywhere"
   }
 ]
+maintenance_policy_config = [
+  {
+    maintenance_start_time = "2023-05-18T13:00:00Z"
+    maintenance_end_time   = "2023-05-18T17:00:00Z"
+    maintenance_recurrence = "FREQ=WEEKLY;BYDAY=MO,TH;TZID=Asia/Bangkok"
+  }
+]
 
 release_channel    = "REGULAR"
 kubernetes_version = "1.26.2-gke.1000"
