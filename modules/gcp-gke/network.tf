@@ -1,5 +1,7 @@
 // tfsec ignore rule because it triggers a false-positive
 data "google_container_cluster" "primary" {
+  provider = google.compute
+
   name     = var.cluster_name
   location = var.google_region
 
@@ -10,8 +12,9 @@ data "google_container_cluster" "primary" {
 }
 
 resource "google_compute_firewall" "gke_private_cluster_master_to_nodepool" {
+  count = length(var.allow_k8s_control_plane) > 0 ? 1 : 0
+
   provider = google.vpc
-  count    = length(var.allow_k8s_control_plane) > 0 ? 1 : 0
 
   name      = "honest-${var.cluster_name}-allow-master-to-nodepool"
   network   = var.shared_vpc_id
@@ -39,15 +42,17 @@ resource "google_compute_router" "router" {
   count = var.create_gcp_router ? 1 : 0
 
   provider = google.vpc
-  name     = "${var.cluster_name}-router"
-  region   = var.google_region
-  network  = var.shared_vpc_id
+
+  name    = "${var.cluster_name}-router"
+  region  = var.google_region
+  network = var.shared_vpc_id
 }
 
 resource "google_compute_router_nat" "nat" {
   count = var.create_gcp_nat ? 1 : 0
 
-  provider                           = google.vpc
+  provider = google.vpc
+
   name                               = "${var.cluster_name}-nat"
   router                             = google_compute_router.router[0].name
   region                             = var.google_region
