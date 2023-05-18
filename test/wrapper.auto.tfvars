@@ -33,7 +33,7 @@ master_authorized_networks = [
 ]
 
 release_channel    = "REGULAR"
-kubernetes_version = "1.24.10-gke.2300"
+kubernetes_version = "1.26.2-gke.1000"
 additional_node_pools = [
   {
     name               = "highmem",
