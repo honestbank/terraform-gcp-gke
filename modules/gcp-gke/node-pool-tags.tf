@@ -11,10 +11,14 @@ locals {
 }
 
 data "google_compute_instance_group" "exemplar_node_pool_instance_group" {
+  provider = google.compute
+
   depends_on = [google_container_node_pool.primary_node_pool[0]]
   self_link  = element(local.exemplar_node_pool_group_url, 0)
 }
 
 data "google_compute_instance" "exemplar_node_pool_instance" {
+  provider = google.compute
+
   self_link = tolist(data.google_compute_instance_group.exemplar_node_pool_instance_group.instances)[0]
 }

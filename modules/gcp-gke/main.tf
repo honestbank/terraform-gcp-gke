@@ -34,6 +34,8 @@ locals {
 }
 
 resource "google_service_account" "default" {
+  provider = google.compute
+
   account_id   = "${var.cluster_name}-sa"
   display_name = "${var.cluster_name} Service Account"
 }
