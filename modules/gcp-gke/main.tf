@@ -91,7 +91,7 @@ resource "google_container_cluster" "primary" {
   }
 
   dynamic "maintenance_policy" {
-    for_each = var.maintenance_policy_config != null ? var.maintenance_policy_config : []
+    for_each = var.maintenance_policy_config
     content {
       recurring_window {
         start_time = maintenance_policy.value.maintenance_start_time
