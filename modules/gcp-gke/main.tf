@@ -90,6 +90,17 @@ resource "google_container_cluster" "primary" {
     }
   }
 
+  dynamic "maintenance_policy" {
+    for_each = var.maintenance_policy_config
+    content {
+      recurring_window {
+        start_time = maintenance_policy.value.maintenance_start_time
+        end_time   = maintenance_policy.value.maintenance_end_time
+        recurrence = maintenance_policy.value.maintenance_recurrence
+      }
+    }
+  }
+
   workload_identity_config {
     workload_pool = "${data.google_project.service_project.project_id}.svc.id.goog"
   }
