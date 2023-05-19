@@ -33,9 +33,9 @@ master_authorized_networks = [
 ]
 maintenance_policy_config = [
   {
-    maintenance_start_time = "2023-05-18T13:00:00Z"
-    maintenance_end_time   = "2023-05-18T17:00:00Z"
-    maintenance_recurrence = "FREQ=WEEKLY;BYDAY=MO,TH;TZID=Asia/Bangkok"
+    maintenance_start_time = "2023-05-18T06:00:00Z"
+    maintenance_end_time   = "2023-05-18T11:00:00Z"
+    maintenance_recurrence = "FREQ=WEEKLY;BYDAY=MO,TH"
   }
 ]
 
