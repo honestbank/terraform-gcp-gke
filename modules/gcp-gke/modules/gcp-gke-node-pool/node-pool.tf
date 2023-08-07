@@ -61,7 +61,7 @@ resource "google_container_node_pool" "node_pool" {
   }
 
   lifecycle {
-    create_before_destroy = true
+    create_before_destroy = false
     ignore_changes = [
       node_count,
       version,
