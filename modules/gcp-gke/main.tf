@@ -165,7 +165,8 @@ resource "google_container_cluster" "primary" {
   }
 
   network_policy {
-    enabled = var.enable_network_policy
+    enabled  = var.enable_network_policy
+    provider = var.enable_network_policy ? "CALICO" : "PROVIDER_UNSPECIFIED"
   }
 
   # Enable dataplane v2

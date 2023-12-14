@@ -3,7 +3,7 @@ permissions: read-all
 
 on:
   pull_request:
-    branches: [test, dev, qa, prod, main]
+    branches: [main]
 
 jobs:
   checkov:
