@@ -40,7 +40,7 @@ maintenance_policy_config = [
 ]
 
 release_channel    = "REGULAR"
-kubernetes_version = "1.26.2-gke.1000"
+kubernetes_version = "1.28.3-gke.1203001"
 additional_node_pools = [
   {
     name               = "highmem",

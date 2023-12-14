@@ -3,7 +3,7 @@ permissions: read-all
 
 on:
   pull_request:
-    branches: [test, dev, qa, prod, main]
+    branches: [main]
 
 jobs:
   checkov:
@@ -14,7 +14,7 @@ jobs:
         uses: actions/checkout@v3
         with:
           submodules: "recursive"
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.ENGINEERING_GITHUB_PERSONAL_ACCESS_TOKEN }}
       - name: Run Checkov
         id: checkov
         uses: bridgecrewio/checkov-action@master
