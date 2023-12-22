@@ -61,8 +61,7 @@ resource "google_compute_router" "router" {
 }
 
 resource "google_compute_router_nat" "nat" {
-  count             = var.create_gcp_nat ? 1 : 0
-  external_ip_count = length(local.ip_addresses) > 0 ? 1 : 0
+  count = var.create_gcp_nat ? 1 : 0
 
   provider = google.vpc
 
