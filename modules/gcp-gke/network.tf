@@ -11,6 +11,18 @@ data "google_container_cluster" "primary" {
   ]
 }
 
+locals {
+  ip_addresses = ["a", "b", "c", "d"]
+}
+
+resource "google_compute_global_address" "external_nat_ips" {
+  for_each = toset(local.ip_addresses)
+
+  name         = "nat-ip-${each.key}"
+  address_type = "EXTERNAL"
+  purpose      = "GLOBAL"
+}
+
 resource "google_compute_firewall" "gke_private_cluster_master_to_nodepool" {
   count = length(var.allow_k8s_control_plane) > 0 ? 1 : 0
 
@@ -49,15 +61,17 @@ resource "google_compute_router" "router" {
 }
 
 resource "google_compute_router_nat" "nat" {
-  count = var.create_gcp_nat ? 1 : 0
+  count             = var.create_gcp_nat ? 1 : 0
+  external_ip_count = length(local.ip_addresses) > 0 ? 1 : 0
 
   provider = google.vpc
 
   name                               = "${var.cluster_name}-nat"
   router                             = google_compute_router.router[0].name
   region                             = var.google_region
-  nat_ip_allocate_option             = "AUTO_ONLY"
+  nat_ip_allocate_option             = length(local.ip_addresses) > 0 ? "MANUAL_ONLY" : "AUTO_ONLY"
   source_subnetwork_ip_ranges_to_nat = "ALL_SUBNETWORKS_ALL_IP_RANGES"
+  nat_ips                            = length(local.ip_addresses) > 0 ? tolist(values(google_compute_global_address.external_nat_ips)) : []
 
   log_config {
     enable = true
