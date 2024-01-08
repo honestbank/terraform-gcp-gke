@@ -68,6 +68,12 @@ variable "minimum_node_count" {
   description = "Minimum nodes for the node pool. This is the total nodes so for regional deployments it is the total nodes across all zones."
 }
 
+variable "nat_ip_address_self_links" {
+  type        = list(string)
+  description = "List of IP address self links to use for NAT"
+  default     = []
+}
+
 variable "pods_ip_range_cidr" {
   type        = string
   description = "CIDR of the secondary IP range used for Kubernetes Pods."
