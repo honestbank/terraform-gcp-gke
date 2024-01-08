@@ -178,3 +178,9 @@ variable "maintenance_policy_config" {
   description = "(OPTIONAL) A list of objects used to configure maintenance policy "
   default     = []
 }
+
+variable "nat_ip_addresses" {
+  type        = list(string)
+  description = "List of IP addresses to use for NAT"
+  default     = []
+}

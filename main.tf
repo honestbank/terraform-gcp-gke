@@ -21,6 +21,7 @@ module "gke" {
   create_gcp_router                 = var.create_gcp_router
   create_public_https_firewall_rule = var.create_public_https_firewall_rule
   enable_network_policy             = var.enable_network_policy
+  nat_ip_addresses                  = var.nat_ip_addresses
 
   gke_authenticator_groups_config_domain = var.gke_authenticator_groups_config_domain
   google_project                         = var.google_project
