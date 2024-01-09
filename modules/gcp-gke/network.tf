@@ -56,8 +56,9 @@ resource "google_compute_router_nat" "nat" {
   name                               = "${var.cluster_name}-nat"
   router                             = google_compute_router.router[0].name
   region                             = var.google_region
-  nat_ip_allocate_option             = "AUTO_ONLY"
+  nat_ip_allocate_option             = length(var.nat_ip_address_self_links) > 0 ? "MANUAL_ONLY" : "AUTO_ONLY"
   source_subnetwork_ip_ranges_to_nat = "ALL_SUBNETWORKS_ALL_IP_RANGES"
+  nat_ips                            = length(var.nat_ip_address_self_links) > 0 ? var.nat_ip_address_self_links : []
 
   log_config {
     enable = true
