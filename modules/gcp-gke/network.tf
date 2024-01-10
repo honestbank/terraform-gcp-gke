@@ -64,13 +64,6 @@ resource "google_compute_router_nat" "nat" {
     enable = true
     filter = "ERRORS_ONLY"
   }
-
-  lifecycle {
-    ignore_changes = [
-      drain_nat_ips,
-      nat_ips,
-    ]
-  }
 }
 
 resource "google_compute_firewall" "gke_private_cluster_public_https_firewall_rule" { #tfsec:ignore:google-compute-no-public-ingress
