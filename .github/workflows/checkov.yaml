@@ -1,22 +1,27 @@
-name: "Checkov GitHub Action"
+# yamllint disable rule:line-length
+# Use template from https://github.com/honestbank/workflows/tree/main/examples/repository-workflows
+---
+name: "repository-checkov"
 permissions: read-all
 
-on:
+on:  # yamllint disable-line rule:truthy
   pull_request:
-    branches: [main]
+    branches:
+      - test
+      - dev
+      - qa
+      - prod
+      - main
+  push:
+    branches:
+      - test
+      - dev
+      - qa
+      - prod
+      - main
 
 jobs:
-  checkov:
-    name: checkov
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-        with:
-          submodules: "recursive"
-          token: ${{ secrets.GITHUB_TOKEN }}
-      - name: Run Checkov
-        id: checkov
-        uses: bridgecrewio/checkov-action@master
-        with:
-          config_file: ".checkov.yaml"
+  repository-checkov:
+    name: repository-checkov
+    uses: honestbank/workflows/.github/workflows/shared-checkov.yaml@main
+    secrets: inherit

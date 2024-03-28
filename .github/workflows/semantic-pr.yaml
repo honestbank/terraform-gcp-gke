@@ -1,7 +1,15 @@
-name: "Semantic Pull Request"
-permissions: read-all
+# DO NOT CHANGE. This file is being managed from a central repository
+# To know more simply visit https://github.com/honestbank/.github/blob/main/docs/about.md
 
-on:
+# yamllint disable rule:line-length
+# Use template from https://github.com/honestbank/workflows/tree/main/examples/repository-workflows
+---
+name: "repository-semantic-pr"
+permissions:
+  contents: write
+  pull-requests: write
+
+on: # yamllint disable-line rule:truthy
   pull_request:
     types:
       - opened
@@ -9,11 +17,7 @@ on:
       - synchronize
 
 jobs:
-  main:
-    name: Semantic Pull Request
-    runs-on: ubuntu-latest
-    steps:
-      - uses: amannn/action-semantic-pull-request@v4
-        name: Semantic Pull Request
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  repository-semantic-pr:
+    name: repository-semantic-pr
+    uses: honestbank/workflows/.github/workflows/shared-semantic-pr.yaml@main
+    secrets: inherit
