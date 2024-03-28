@@ -1,11 +1,14 @@
 compact: true
 directory:
-  - modules
+  - .
 download-external-modules: true
 evaluate-variables: true
 external-modules-download-path: .external_modules
 framework:
-- all
+  - all
 quiet: true
 skip-path:
-  - test
+  - .external_modules
+  - modules
+  - catalog-info.yml
+baseline: .checkov.baseline
