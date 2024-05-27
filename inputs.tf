@@ -24,18 +24,22 @@ variable "gke_authenticator_groups_config_domain" {
 }
 
 variable "google_project" {
+  type        = string
   description = "The GCP project to use for this run"
 }
 
 variable "google_credentials" {
+  type        = string
   description = "Contents of a JSON keyfile of an account with write access to the project"
 }
 
 variable "google_region" {
+  type        = string
   description = "GCP region used to create all resources in this run"
 }
 
 variable "initial_node_count" {
+  type        = number
   description = "Initial node count, per-zone for regional clusters."
 }
 
@@ -50,6 +54,7 @@ variable "master_authorized_networks" {
 }
 
 variable "master_ipv4_cidr_block" {
+  type        = string
   description = "The IP range to set for master nodes, passed to master_ipv4_cidr_block - /28 required by Google."
 }
 
@@ -101,10 +106,12 @@ variable "services_ip_range_name" {
 }
 
 variable "shared_vpc_host_google_credentials" {
+  type        = string
   description = "Service Account with access to shared_vpc_host_google_project networks"
 }
 
 variable "shared_vpc_host_google_project" {
+  type        = string
   description = "The GCP project that hosts the shared VPC to place resources into"
 }
 
@@ -119,6 +126,7 @@ variable "shared_vpc_self_link" {
 }
 
 variable "stage" {
+  type        = string
   description = "Stage: [test, dev, prod...] used as prefix for all resources."
   default     = "test"
 }
