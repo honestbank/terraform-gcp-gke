@@ -38,9 +38,12 @@ maintenance_policy_config = [
     maintenance_recurrence = "FREQ=WEEKLY;BYDAY=MO,TU,WE,TH"
   }
 ]
+enable_cost_allocation_feature = true
+enable_l4_ilb_subsetting       = true
 
-release_channel    = "REGULAR"
-kubernetes_version = "1.28.3-gke.1203001"
+release_channel    = "RAPID"
+kubernetes_version = "1.30.1-gke.1156000"
+
 additional_node_pools = [
   {
     name               = "highmem",
@@ -51,19 +54,5 @@ additional_node_pools = [
     taints             = []
     tags               = ["terratest"]
     zones              = ["asia-southeast2-a", "asia-southeast2-b", "asia-southeast2-c"]
-  },
-  {
-    name               = "compute",
-    machine_type       = "e2-highcpu-8"
-    minimum_node_count = 1
-    maximum_node_count = 3
-    enable_secure_boot = true
-    taints = [{
-      key    = "terratest"
-      value  = "true"
-      effect = "NO_SCHEDULE"
-    }]
-    tags  = ["terratest"]
-    zones = ["asia-southeast2-b"]
-  },
+  }
 ]

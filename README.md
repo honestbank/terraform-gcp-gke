@@ -50,7 +50,7 @@ role in the shared VPC host project.
 
 | Name | Version |
 |------|---------|
-| <a name="provider_random"></a> [random](#provider\_random) | 3.5.1 |
+| <a name="provider_random"></a> [random](#provider\_random) | 3.6.2 |
 
 ## Modules
 
@@ -71,6 +71,8 @@ role in the shared VPC host project.
 | <a name="input_create_gcp_nat"></a> [create\_gcp\_nat](#input\_create\_gcp\_nat) | Set to `true` to create an Internet NAT for ALL\_SUBNETWORKS\_ALL\_IP\_RANGES in the VPC network. | `bool` | n/a | yes |
 | <a name="input_create_gcp_router"></a> [create\_gcp\_router](#input\_create\_gcp\_router) | Set to `true` to create a router in the VPC network. | `bool` | n/a | yes |
 | <a name="input_create_public_https_firewall_rule"></a> [create\_public\_https\_firewall\_rule](#input\_create\_public\_https\_firewall\_rule) | Set to `true` to create a firewall rule allowing 0.0.0.0/0:443 on TCP to all worker nodes. | `bool` | n/a | yes |
+| <a name="input_enable_cost_allocation_feature"></a> [enable\_cost\_allocation\_feature](#input\_enable\_cost\_allocation\_feature) | Whether to enable the cost allocation feature. | `bool` | `false` | no |
+| <a name="input_enable_l4_ilb_subsetting"></a> [enable\_l4\_ilb\_subsetting](#input\_enable\_l4\_ilb\_subsetting) | Enable L4 ILB Subsetting | `bool` | `false` | no |
 | <a name="input_enable_network_policy"></a> [enable\_network\_policy](#input\_enable\_network\_policy) | This value is passed to network\_policy.enabled and the negative is passed to addons\_config.network\_policy\_config.disabled. This might conflict with Workload Identity - make sure to read https://cloud.google.com/kubernetes-engine/docs/how-to/network-policy#limitations_and_requirements. | `bool` | n/a | yes |
 | <a name="input_gke_authenticator_groups_config_domain"></a> [gke\_authenticator\_groups\_config\_domain](#input\_gke\_authenticator\_groups\_config\_domain) | Domain to append to `gke-security-groups` to pass to authenticator\_groups\_config so members of that Google Group can authenticate to the cluster. Pass an empty string to disable. Domain passed here should be in the format of TLD.EXTENSION. | `string` | n/a | yes |
 | <a name="input_google_credentials"></a> [google\_credentials](#input\_google\_credentials) | Contents of a JSON keyfile of an account with write access to the project | `any` | n/a | yes |

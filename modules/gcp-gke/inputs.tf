@@ -184,3 +184,15 @@ variable "nat_ip_address_self_links" {
   description = "List of self links IP addresses to use for NAT"
   default     = []
 }
+
+variable "enable_l4_ilb_subsetting" {
+  type        = bool
+  description = "Enable L4 ILB Subsetting"
+  default     = false
+}
+
+variable "enable_cost_allocation_feature" {
+  type        = bool
+  description = "Whether to enable the cost allocation feature."
+  default     = false
+}

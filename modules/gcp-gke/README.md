@@ -15,19 +15,19 @@ To run E2E tests, navigate to the [test folder](../test) and run `go test -v -ti
 
 | Name | Version |
 |------|---------|
-| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.2.9 |
-| <a name="requirement_google"></a> [google](#requirement\_google) | >= 4.0 |
-| <a name="requirement_google-beta"></a> [google-beta](#requirement\_google-beta) | >= 4.0 |
-| <a name="requirement_random"></a> [random](#requirement\_random) | ~> 3.0 |
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.8, < 2 |
+| <a name="requirement_google"></a> [google](#requirement\_google) | >= 4.0, < 6.0 |
+| <a name="requirement_google-beta"></a> [google-beta](#requirement\_google-beta) | >= 4.0, < 6.0 |
+| <a name="requirement_random"></a> [random](#requirement\_random) | >= 3.0, < 4.0 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_google.compute"></a> [google.compute](#provider\_google.compute) | >= 4.0 |
-| <a name="provider_google.vpc"></a> [google.vpc](#provider\_google.vpc) | >= 4.0 |
-| <a name="provider_google-beta.compute-beta"></a> [google-beta.compute-beta](#provider\_google-beta.compute-beta) | >= 4.0 |
-| <a name="provider_random"></a> [random](#provider\_random) | ~> 3.0 |
+| <a name="provider_google.compute"></a> [google.compute](#provider\_google.compute) | >= 4.0, < 6.0 |
+| <a name="provider_google.vpc"></a> [google.vpc](#provider\_google.vpc) | >= 4.0, < 6.0 |
+| <a name="provider_google-beta.compute-beta"></a> [google-beta.compute-beta](#provider\_google-beta.compute-beta) | >= 4.0, < 6.0 |
+| <a name="provider_random"></a> [random](#provider\_random) | >= 3.0, < 4.0 |
 
 ## Modules
 
@@ -66,7 +66,9 @@ To run E2E tests, navigate to the [test folder](../test) and run `go test -v -ti
 | <a name="input_create_gcp_nat"></a> [create\_gcp\_nat](#input\_create\_gcp\_nat) | Set to `true` to create an Internet NAT for ALL\_SUBNETWORKS\_ALL\_IP\_RANGES in the VPC network. | `bool` | n/a | yes |
 | <a name="input_create_gcp_router"></a> [create\_gcp\_router](#input\_create\_gcp\_router) | Set to `true` to create a router in the VPC network. | `bool` | n/a | yes |
 | <a name="input_create_public_https_firewall_rule"></a> [create\_public\_https\_firewall\_rule](#input\_create\_public\_https\_firewall\_rule) | Set to `true` to create a firewall rule allowing 0.0.0.0/0:443 on TCP to all worker nodes. | `bool` | n/a | yes |
+| <a name="input_enable_cost_allocation_feature"></a> [enable\_cost\_allocation\_feature](#input\_enable\_cost\_allocation\_feature) | Whether to enable the cost allocation feature. | `bool` | `false` | no |
 | <a name="input_enable_dataplane_v2"></a> [enable\_dataplane\_v2](#input\_enable\_dataplane\_v2) | Enable GKE DataPlane V2 for control plane.Set this value true if need to enable this feature. | `bool` | `false` | no |
+| <a name="input_enable_l4_ilb_subsetting"></a> [enable\_l4\_ilb\_subsetting](#input\_enable\_l4\_ilb\_subsetting) | Enable L4 ILB Subsetting | `bool` | `false` | no |
 | <a name="input_enable_network_policy"></a> [enable\_network\_policy](#input\_enable\_network\_policy) | This value is passed to network\_policy.enabled and the negative is passed to addons\_config.network\_policy\_config.disabled. | `bool` | n/a | yes |
 | <a name="input_gke_authenticator_groups_config_domain"></a> [gke\_authenticator\_groups\_config\_domain](#input\_gke\_authenticator\_groups\_config\_domain) | Domain to append to `gke-security-groups` to pass to authenticator\_groups\_config so members of that Google Group can authenticate to the cluster. Pass an empty string to disable. Domain passed here should be in the format of TLD.EXTENSION. | `string` | n/a | yes |
 | <a name="input_google_project"></a> [google\_project](#input\_google\_project) | The GCP project to use for this run | `any` | n/a | yes |

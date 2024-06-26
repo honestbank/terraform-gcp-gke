@@ -1,20 +1,21 @@
 terraform {
-  required_version = ">= 1.2.9"
+  required_version = ">= 1.8, < 2"
 
   required_providers {
     google = {
-      version               = ">= 4.0"
+      version               = ">= 4.0, < 6.0"
+      source                = "hashicorp/google"
       configuration_aliases = [google.compute, google.vpc]
     }
 
     google-beta = {
-      version               = ">= 4.0"
+      version               = ">= 4.0, < 6.0"
       source                = "hashicorp/google-beta"
       configuration_aliases = [google-beta.compute-beta]
     }
 
     random = {
-      version = "~> 3.0"
+      version = ">= 3.0, < 4.0"
     }
   }
 }
@@ -58,6 +59,11 @@ resource "google_container_cluster" "primary" {
   initial_node_count       = 1
   enable_shielded_nodes    = true
   min_master_version       = var.kubernetes_version
+  enable_l4_ilb_subsetting = var.enable_l4_ilb_subsetting
+
+  cost_management_config {
+    enabled = var.enable_cost_allocation_feature
+  }
 
   #checkov:skip=CKV_GCP_66:Property renamed from 'enable_binary_authorization' to 'binary_authorization' but Checkov not updated.
   binary_authorization {

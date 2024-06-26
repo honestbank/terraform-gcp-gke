@@ -41,6 +41,8 @@ module "gke" {
   subnetwork_self_link           = var.subnetwork_self_link
   pods_ip_range_name             = var.pods_ip_range_name
   services_ip_range_name         = var.services_ip_range_name
+  enable_cost_allocation_feature = var.enable_cost_allocation_feature
+  enable_l4_ilb_subsetting       = var.enable_l4_ilb_subsetting
 
   skip_create_built_in_node_pool = true
   additional_node_pools = [
