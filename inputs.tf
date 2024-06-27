@@ -127,3 +127,15 @@ variable "subnetwork_self_link" {
   type        = string
   description = "self_link of the google_compute_subnetwork to place the GKE cluster in."
 }
+
+variable "enable_l4_ilb_subsetting" {
+  type        = bool
+  description = "Enable L4 ILB Subsetting"
+  default     = false
+}
+
+variable "enable_cost_allocation_feature" {
+  type        = bool
+  description = "Whether to enable the cost allocation feature."
+  default     = false
+}
