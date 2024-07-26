@@ -42,7 +42,7 @@ enable_cost_allocation_feature = true
 enable_l4_ilb_subsetting       = true
 
 release_channel    = "RAPID"
-kubernetes_version = "1.30.1-gke.1156000"
+kubernetes_version = "1.30.2-gke.1587000"
 
 additional_node_pools = [
   {

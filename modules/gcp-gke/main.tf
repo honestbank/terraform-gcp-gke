@@ -286,7 +286,14 @@ resource "google_container_node_pool" "primary_node_pool" {
     }
 
     # Use a conditional expression to add the taint only if the 'taint' variable is non-empty
-    taint = length(var.taints) > 0 ? var.taints : null
+    dynamic "taint" {
+      for_each = var.taints != null ? var.taints : []
+      content {
+        key    = taint.value.key
+        value  = taint.value.value
+        effect = taint.value.effect
+      }
+    }
 
     tags = [
       local.gke_node_pool_tag
