@@ -43,6 +43,7 @@ module "gke" {
   services_ip_range_name         = var.services_ip_range_name
   enable_cost_allocation_feature = var.enable_cost_allocation_feature
   enable_l4_ilb_subsetting       = var.enable_l4_ilb_subsetting
+  deletion_protection            = false
 
   skip_create_built_in_node_pool = true
   additional_node_pools = [

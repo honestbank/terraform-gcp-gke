@@ -42,7 +42,7 @@ enable_cost_allocation_feature = true
 enable_l4_ilb_subsetting       = true
 
 release_channel    = "RAPID"
-kubernetes_version = "1.30.1-gke.1156000"
+kubernetes_version = "1.30.2-gke.1587003"
 
 additional_node_pools = [
   {
@@ -51,8 +51,12 @@ additional_node_pools = [
     minimum_node_count = 1
     maximum_node_count = 3
     enable_secure_boot = true
-    taints             = []
-    tags               = ["terratest"]
-    zones              = ["asia-southeast2-a", "asia-southeast2-b", "asia-southeast2-c"]
+    taints = [{
+      key    = "test"
+      value  = "true"
+      effect = "NO_SCHEDULE"
+    }]
+    tags  = ["terratest"]
+    zones = ["asia-southeast2-a", "asia-southeast2-b", "asia-southeast2-c"]
   }
 ]
