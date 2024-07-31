@@ -53,11 +53,21 @@ additional_node_pools = [
     maximum_node_count = 3
     enable_secure_boot = true
     taints = [{
-      key    = "test"
+      key    = "highmem"
       value  = "true"
       effect = "NO_SCHEDULE"
     }]
     tags  = ["terratest"]
     zones = ["asia-southeast2-a", "asia-southeast2-b", "asia-southeast2-c"]
+  },
+  {
+    name               = "standard",
+    machine_type       = "e2-highmem-4"
+    minimum_node_count = 1
+    maximum_node_count = 3
+    enable_secure_boot = true
+    taints             = []
+    tags               = ["terratest"]
+    zones              = ["asia-southeast2-a", "asia-southeast2-b", "asia-southeast2-c"]
   }
 ]
