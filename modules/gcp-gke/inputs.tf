@@ -86,6 +86,11 @@ variable "taints" {
   }))
   description = "A list of Kubernetes taints to apply to nodes. GKE's API can only set this field on cluster creation"
   default     = []
+
+  validation {
+    condition     = alltrue([for e in var.taints : contains(["NO_SCHEDULE", "PREFER_NO_SCHEDULE", "PREFER_NO_SCHEDULE"], e.effect)])
+    error_message = "Each taint object must have an effect that is one of 'NO_SCHEDULE', 'PREFER_NO_SCHEDULE', or 'NO_EXECUTE'. For more details https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/"
+  }
 }
 
 variable "subnetwork_self_link" {
@@ -195,4 +200,10 @@ variable "enable_cost_allocation_feature" {
   type        = bool
   description = "Whether to enable the cost allocation feature."
   default     = false
+}
+
+variable "deletion_protection" {
+  type        = string
+  description = "(Optional) Whether or not to allow Terraform to destroy the cluster. https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/container_cluster#nested_taint:~:text=Cloud)%20Learn%20tutorial-,Note,-On%20version%205.0.0"
+  default     = true
 }
