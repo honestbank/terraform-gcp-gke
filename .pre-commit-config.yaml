@@ -1,23 +1,70 @@
+# DO NOT CHANGE. This file is being managed from a central repository
+# To know more simply visit https://github.com/honestbank/.github/blob/main/docs/about.md
+
 # See https://pre-commit.com for more information
 # See https://pre-commit.com/hooks.html for more hooks
+
 repos:
-  -   repo: https://github.com/pre-commit/pre-commit-hooks
-      rev: v4.6.0 # Get the latest version from: https://github.com/pre-commit/pre-commit-hooks/releases
-      hooks:
-        -   id: trailing-whitespace
-        -   id: end-of-file-fixer
-        -   id: check-yaml
-        -   id: check-added-large-files
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0 # Get the latest from: https://github.com/pre-commit/pre-commit-hooks/releases
+    hooks:
+      - id: check-yaml
+        args: ["--allow-multiple-documents"]
+      - id: check-added-large-files
+      - id: detect-aws-credentials
+        args: ["--allow-missing-credentials"]
+  - repo: local
+    hooks:
+      - id: create-checkov-baseline
+        name: Create Checkov Baseline
+        entry: bash -c 'if [ ! -f .checkov.baseline ]; then echo "{}" > .checkov.baseline && touch baseline-created; fi'
+        language: system
+        stages: [commit]
+        pass_filenames: false
   - repo: https://github.com/antonbabenko/pre-commit-terraform
-    rev: v1.92.0 # Get the latest from: https://github.com/antonbabenko/pre-commit-terraform/releases
+    rev: v1.88.4 # Get the latest from: https://github.com/antonbabenko/pre-commit-terraform/releases
     hooks:
       - id: terraform_fmt
-      - id: terraform_docs
-      # See https://github.com/antonbabenko/pre-commit-terraform#terraform_validate
-      # Running `terraform validate` inside the component module folder will not pass.
       - id: terraform_validate
-        exclude: 'test/[^/]+$|modules/gcp-gke/[^/]+$'
+        args:
+          - --hook-config=--retry-once-with-cleanup=true
+          - --tf-init-args=-upgrade
       - id: terraform_tfsec
-        exclude: test/
+        exclude: "test/"
+        args:
+          - --args=--exclude-downloaded-modules
       - id: terraform_checkov
-        exclude: test/
+        exclude: "test/"
+        args:
+          - --args=--config-file __GIT_WORKING_DIR__/.checkov.yaml --baseline __GIT_WORKING_DIR__/.checkov.baseline
+  - repo: local
+    hooks:
+      - id: delete-checkov-baseline
+        name: Delete Checkov Baseline
+        entry: bash -c 'if [ -f baseline-created ]; then rm .checkov.baseline && rm baseline-created; fi'
+        language: system
+        stages: [commit]
+        pass_filenames: false
+  - repo: https://github.com/gitguardian/ggshield
+    rev: v1.26.0
+    hooks:
+      - id: ggshield
+        language: python
+        stages: [commit]
+        args: ["secret", "scan", "pre-commit"]
+  - repo: local
+    hooks:
+      - id: docs
+        name: docs
+        entry: make
+        args: ["docs"]
+        language: system
+        pass_filenames: false
+  # Run this at the end so that we don't end up in infinite loop
+  # where the end of line fixer runs first and then the docs and fmt
+  # and other hooks that modify files will break it again.
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0 # Get the latest from: https://github.com/pre-commit/pre-commit-hooks/releases
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
