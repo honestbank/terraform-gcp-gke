@@ -3,7 +3,7 @@ permissions: read-all
 
 on:
   pull_request:
-    branches: [main]
+    branches: [test, dev, qa, prod, main]
 
 jobs:
   checkov:
@@ -15,6 +15,18 @@ jobs:
         with:
           submodules: "recursive"
           token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Create empty baseline (if needed)
+        run: |
+          if [ -f .checkov.baseline ]; then
+            echo "⏩⏩⏩ Baseline file exists - do nothing."
+          else
+            echo "🆕🆕🆕 Baseline file does not exist - creating empty baseline file."
+            echo "{}" >> .checkov.baseline
+          fi
+      - name: Output baseline contents to console
+        run: |
+            echo "Checkov baseline file (.checkov.baseline) contents:"
+            cat .checkov.baseline
       - name: Run Checkov
         id: checkov
         uses: bridgecrewio/checkov-action@master
