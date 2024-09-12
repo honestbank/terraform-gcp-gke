@@ -1,55 +1,30 @@
-name: terratest
-permissions:
-  contents: write
-  pull-requests: write
-
+name: "Terratest GitHub Action"
 on:
   pull_request:
-    branches:
-      - main
+    branches: [test, dev, qa, prod, main]
   push:
-    branches:
-      - main
+    branches: [test, dev, qa, prod, main]
 env:
-  COMPUTE_GOOGLE_CREDENTIALS: ${{ secrets.TERRATEST_GOOGLE_CREDENTIALS_COMPUTE }}
-  COMPUTE_GOOGLE_PROJECT: ${{ secrets.TERRATEST_GOOGLE_PROJECT_COMPUTE }}
-  TF_VAR_google_credentials: ${{ secrets.TERRATEST_GOOGLE_CREDENTIALS_COMPUTE }}
-  TF_VAR_shared_vpc_host_google_credentials: ${{ secrets.TERRATEST_GOOGLE_CREDENTIALS_NETWORK }}
+  AWS_ACCESS_KEY_ID: ${{ secrets.TERRATEST_AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_KEY: ${{ secrets.TERRATEST_AWS_SECRET_ACCESS_KEY }}
+  AWS_DEFAULT_REGION: ${{ secrets.TERRATEST_AWS_REGION }}
+  AWS_REGION: ${{ secrets.TERRATEST_AWS_REGION }}
 jobs:
   terratest:
     name: terratest
     runs-on: ubuntu-latest
     steps:
-      - name: Check out code into the Go module directory
+      - name: Checkout
         uses: actions/checkout@v4
         with:
           submodules: true
-      - name: Set up Go (latest version greater than 1.19)
+      - name: Set up Go
         uses: actions/setup-go@v5
         with:
-          go-version: '~>1.21'
-      - name: gcloud-auth
-        uses: google-github-actions/auth@v1
-        with:
-          credentials_json: ${{ env.COMPUTE_GOOGLE_CREDENTIALS }}
-      - name: gcloud-setup
-        uses: google-github-actions/setup-gcloud@v1
-        with:
-          version: "latest" # This is the default value, just being explicit
-          project_id: ${{ env.COMPUTE_GOOGLE_PROJECT }}
-          install_components: 'gke-gcloud-auth-plugin'
-          export_default_credentials: false
-      - name: Run terratest
+          go-version: 1.20
+        id: go
+      - name: Run 'go test -v -timeout 60m'
         run: |
           cd test
-          go test -v -timeout 120m
-      - name: Release
-        if: github.event_name == 'push'
-        uses: cycjimmy/semantic-release-action@v4
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          extra_plugins: |
-            @semantic-release/git@10.0.1
-            @semantic-release/exec@6.0.3
-            @semantic-release/changelog@6.0.1
+          go mod download
+          go test -v -timeout 30m
