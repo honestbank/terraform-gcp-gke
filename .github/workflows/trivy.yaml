@@ -1,0 +1,30 @@
+---
+name: Trivy Security Scan
+
+# permissions required for the action, restricting to read-only for repository contents.
+permissions:
+  contents: read
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  trivy-security-scan:
+    name: Run Trivy Security Scan
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          submodules: "recursive"  # Ensure any submodules are included in the scan.
+          token: ${{ secrets.ENGINEERING_GITHUB_PERSONAL_ACCESS_TOKEN }}
+
+      # Run Trivy Configuration Scan with specified options.
+      - name: Run Trivy Security Scan
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          scan-type: 'config'
+          trivy-config: 'trivy.yaml'
