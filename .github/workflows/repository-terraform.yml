@@ -1,0 +1,46 @@
+---
+name: "repository-terraform"
+permissions:
+  actions: read
+  pull-requests: write
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+
+env:
+  tf_version: "latest"
+  tf_working_dir: "."
+  TF_VAR_google_credentials: ${{ secrets.GOOGLE_CREDENTIALS }}
+  TF_WORKSPACE: ${{ github.base_ref }}
+
+jobs:
+  repository-terraform:
+    name: repository-terraform
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          submodules: "recursive"
+          token: ${{ secrets.ENGINEERING_GITHUB_PERSONAL_ACCESS_TOKEN }}
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
+      - name: Terraform Format
+        id: fmt
+        run: terraform fmt
+        continue-on-error: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.ENGINEERING_GITHUB_PERSONAL_ACCESS_TOKEN }}
+      - name: Terraform Init
+        id: init
+        run: terraform init
+      - name: Terraform Validate
+        id: validate
+        run: terraform validate -no-color

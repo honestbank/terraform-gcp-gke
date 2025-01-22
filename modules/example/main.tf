@@ -9,10 +9,10 @@ module "gke" {
     google-beta.compute-beta = google-beta.compute-beta
   }
 
-  source = "./modules/gcp-gke"
+  source = "../gcp-gke"
 
   stage        = var.stage
-  cluster_name = "gke-${random_id.run_id.hex}"
+  cluster_name = var.cluster_name
 
   kubernetes_version = var.kubernetes_version
   release_channel    = var.release_channel
@@ -21,6 +21,7 @@ module "gke" {
   create_gcp_router                 = var.create_gcp_router
   create_public_https_firewall_rule = var.create_public_https_firewall_rule
   enable_network_policy             = var.enable_network_policy
+  enable_auto_upgrade               = var.enable_auto_upgrade
   nat_ip_address_self_links         = var.nat_ip_address_self_links
 
   gke_authenticator_groups_config_domain = var.gke_authenticator_groups_config_domain
@@ -43,23 +44,9 @@ module "gke" {
   services_ip_range_name         = var.services_ip_range_name
   enable_cost_allocation_feature = var.enable_cost_allocation_feature
   enable_l4_ilb_subsetting       = var.enable_l4_ilb_subsetting
-  deletion_protection            = false
+  deletion_protection            = var.deletion_protection
 
   skip_create_built_in_node_pool = true
-  additional_node_pools = [
-    {
-      name               = "primary"
-      machine_type       = var.machine_type
-      minimum_node_count = var.minimum_node_count
-      maximum_node_count = var.maximum_node_count
-      enable_secure_boot = true
-      taints = [{
-        key    = "terratest"
-        value  = "true"
-        effect = "NO_SCHEDULE"
-      }]
-      tags  = ["terratest"]
-      zones = ["asia-southeast2-a", "asia-southeast2-b", "asia-southeast2-c"]
-    },
-  ]
+  additional_node_pools          = var.additional_node_pools
+  maintenance_policy_config      = var.maintenance_policy_config
 }

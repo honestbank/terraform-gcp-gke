@@ -1,3 +1,8 @@
+variable "cluster_name" {
+  type        = string
+  description = "The name to set on the GKE cluster."
+}
+
 variable "create_gcp_router" {
   type        = bool
   description = "Set to `true` to create a router in the VPC network."
@@ -74,11 +79,6 @@ variable "nat_ip_address_self_links" {
   default     = []
 }
 
-variable "pods_ip_range_cidr" {
-  type        = string
-  description = "CIDR of the secondary IP range used for Kubernetes Pods."
-}
-
 variable "pods_ip_range_name" {
   type        = string
   description = "Name of the secondary IP range used for Kubernetes Pods."
@@ -88,11 +88,6 @@ variable "release_channel" {
   type        = string
   description = "(Beta) The release channel of this cluster. Accepted values are `UNSPECIFIED`, `RAPID`, `REGULAR` and `STABLE`. Defaults to `REGULAR`."
   default     = "RAPID"
-}
-
-variable "services_ip_range_cidr" {
-  type        = string
-  description = "CIDR of the secondary IP range used for Kubernetes Services."
 }
 
 variable "services_ip_range_name" {
@@ -138,4 +133,46 @@ variable "enable_cost_allocation_feature" {
   type        = bool
   description = "Whether to enable the cost allocation feature."
   default     = false
+}
+
+variable "enable_auto_upgrade" {
+  type        = bool
+  description = "Whether to enable auto upgrades in GKE cluster."
+  default     = true
+}
+
+variable "additional_node_pools" {
+  default     = []
+  description = "A list of objects used to configure additional node pools (in addition to the primary one created by this module by default)."
+  type = list(object({
+    name               = string
+    enable_secure_boot = bool
+    machine_type       = string
+    minimum_node_count = string
+    maximum_node_count = string
+    taints = list(object({
+      key    = string
+      value  = string
+      effect = string
+    }))
+    tags  = list(string)
+    zones = list(string)
+  }))
+  nullable = false
+}
+
+variable "maintenance_policy_config" {
+  type = list(object({
+    maintenance_start_time = string
+    maintenance_end_time   = string
+    maintenance_recurrence = string
+  }))
+  description = "(OPTIONAL) A list of objects used to configure maintenance policy "
+  default     = []
+}
+
+variable "deletion_protection" {
+  type        = string
+  description = "(Optional) Whether or not to allow Terraform to destroy the cluster. https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/container_cluster#nested_taint:~:text=Cloud)%20Learn%20tutorial-,Note,-On%20version%205.0.0"
+  default     = true
 }

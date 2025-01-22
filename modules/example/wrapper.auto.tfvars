@@ -43,7 +43,7 @@ enable_l4_ilb_subsetting       = true
 deletion_protection            = false
 
 release_channel    = "RAPID"
-kubernetes_version = "1.30.2-gke.1587003"
+kubernetes_version = "1.32.0-gke.1709000"
 
 additional_node_pools = [
   {

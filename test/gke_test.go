@@ -27,6 +27,8 @@ func TestTerraformGcpGkeTemplate(t *testing.T) {
 	// Create all resources in the following zone
 	gcpIndonesiaRegion := "asia-southeast2"
 
+    os.Setenv("GOOGLE_APPLICATION_CREDENTIALS", os.Getenv("TERRATEST_GOOGLE_CREDENTIALS_COMPUTE"))
+    os.Setenv("USE_GKE_GCLOUD_AUTH_PLUGIN","true")
 	// GCP projects
 	computeProject := "compute-df9f"
 	networkingProject := "tf-shared-vpc-host-78a3"
@@ -61,6 +63,7 @@ func TestTerraformGcpGkeTemplate(t *testing.T) {
 					"vpc_primary_subnet_name":              clusterName + "-primary-subnet",
 					"vpc_secondary_ip_range_pods_name":     clusterName + "-pods-subnet",
 					"vpc_secondary_ip_range_services_name": clusterName + "-services-subnet",
+					"shared_vpc_host_google_credentials":   os.Getenv("TERRATEST_GOOGLE_CREDENTIALS_NETWORK"),
 				},
 				EnvVars: map[string]string{},
 			})
@@ -90,8 +93,7 @@ func TestTerraformGcpGkeTemplate(t *testing.T) {
 
 		// GKE cluster
 		test_structure.RunTestStage(t, "create_test_copy", func() {
-			tempTestDir = test_structure.CopyTerraformFolderToTemp(t, "../modules/gcp-gke", ".")
-			logger.Logf(t, "path to test folder %s\n", tempTestDir)
+			tempTestDir = test_structure.CopyTerraformFolderToTemp(t, "../modules", ".")
 			test_structure.SaveString(t, workingDir, "gkeClusterTerraformModulePath", tempTestDir)
 		})
 
@@ -100,7 +102,7 @@ func TestTerraformGcpGkeTemplate(t *testing.T) {
 			// export TF_VAR_google_credentials=$(cat KEYFILE.json)
 			// export TF_VAR_shared_vpc_host_google_credentials=$(cat KEYFILE.json)
 			gkeClusterTerratestOptions := &terraform.Options{
-				TerraformDir: tempTestDir,
+				TerraformDir: tempTestDir+"/example",
 				Vars: map[string]interface{}{
 					"cluster_name":           clusterName,
 					"pods_ip_range_name":     terraform.Output(t, vpcBootstrapTerraformOptions, "pods_subnet_name"),
@@ -108,28 +110,14 @@ func TestTerraformGcpGkeTemplate(t *testing.T) {
 					"shared_vpc_self_link":   terraform.Output(t, vpcBootstrapTerraformOptions, "shared_vpc_self_link"),
 					"shared_vpc_id":          terraform.Output(t, vpcBootstrapTerraformOptions, "shared_vpc_id"),
 					"subnetwork_self_link":   terraform.Output(t, vpcBootstrapTerraformOptions, "primary_subnet_self_link"),
+                    "shared_vpc_host_google_credentials":   os.Getenv("TERRATEST_GOOGLE_CREDENTIALS_NETWORK"),
+                    "google_credentials":   os.Getenv("TERRATEST_GOOGLE_CREDENTIALS_COMPUTE"),
 				},
 			}
 
 			logger.Logf(t, "gkeClusterTerratestOptions: %v\n", gkeClusterTerratestOptions)
 			test_structure.SaveTerraformOptions(t, workingDir, gkeClusterTerratestOptions)
 		})
-
-		// Copy supporting files
-		varFile := "wrapper.auto.tfvars"
-		providerFile := "gcp_gke_providers.tf"
-		testFileSourceDir, getTestDirErr := os.Getwd()
-		if getTestDirErr != nil {
-			fmt.Println("calling t.FailNow(): could not execute os.Getwd(): ", getTestDirErr)
-			t.FailNow()
-		}
-
-		fmt.Println("test working directory is: ", testFileSourceDir)
-
-		filesToCopy := []string{varFile, providerFile}
-
-		fmt.Println("copying files: ", filesToCopy, " to temporary test dir: ", tempTestDir)
-		copyFiles(t, filesToCopy, testFileSourceDir, tempTestDir)
 
 		defer test_structure.RunTestStage(t, "gke_cleanup", func() {
 			gkeClusterTerratestOptions := test_structure.LoadTerraformOptions(t, workingDir)
@@ -161,6 +149,30 @@ func TestTerraformGcpGkeTemplate(t *testing.T) {
 
 			logger.Log(t, "working directory is: "+workingDir)
 			gkeClusterTerraformModulePath := test_structure.LoadString(t, workingDir, "gkeClusterTerraformModulePath")
+
+            // Check if GOOGLE_APPLICATION_CREDENTIALS contains credentials JSON
+            credentials := os.Getenv("GOOGLE_APPLICATION_CREDENTIALS")
+            require.NotEmpty(t, credentials, "GOOGLE_APPLICATION_CREDENTIALS must contain credentials JSON")
+
+            // Write the credentials JSON to a temporary file
+            tmpCredentialsPath := filepath.Join(os.TempDir(), "google-credentials.json")
+            err := os.WriteFile(tmpCredentialsPath, []byte(credentials), 0600)
+            require.NoError(t, err, "Failed to write GOOGLE_APPLICATION_CREDENTIALS to temporary file")
+            defer os.Remove(tmpCredentialsPath) // Clean up the temporary file
+
+            // Set the environment variable to point to the temporary file
+            os.Setenv("GOOGLE_APPLICATION_CREDENTIALS", tmpCredentialsPath)
+
+            // Authenticate with gcloud using the temporary file
+            authCmd := shell.Command{
+                Command: "gcloud",
+                Args: []string{
+                    "auth",
+                    "activate-service-account",
+                    "--key-file", tmpCredentialsPath,
+                },
+            }
+            shell.RunCommand(t, authCmd)
 
 			clusterName = strings.ReplaceAll(clusterName, "\"", "")
 			cmd := shell.Command{

@@ -32,3 +32,13 @@ output "service_account" {
   description = "The default service account used for running nodes."
   value       = module.gke.node_pool_service_account_email
 }
+
+output "cluster_primary_node_pool_tag" {
+  description = "Tag applied to the node pool instances - used for network/firewall rules."
+  value       = module.gke.cluster_primary_node_pool_tag
+}
+
+output "cluster_all_primary_node_pool_tags" {
+  description = "List of tags applied to the node pool instances. This included the managed-by-GCP tags."
+  value       = module.gke.cluster_all_primary_node_pool_tags
+}

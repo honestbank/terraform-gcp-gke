@@ -207,3 +207,9 @@ variable "deletion_protection" {
   description = "(Optional) Whether or not to allow Terraform to destroy the cluster. https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/container_cluster#nested_taint:~:text=Cloud)%20Learn%20tutorial-,Note,-On%20version%205.0.0"
   default     = true
 }
+
+variable "enable_auto_upgrade" {
+  type        = bool
+  description = "Whether to enable auto upgrades in GKE cluster."
+  default     = true
+}

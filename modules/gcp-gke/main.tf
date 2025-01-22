@@ -3,21 +3,31 @@ terraform {
 
   required_providers {
     google = {
-      version               = ">= 4.0, < 6.0"
-      source                = "hashicorp/google"
-      configuration_aliases = [google.compute, google.vpc]
+      version = ">= 4.0, < 6.0"
+      source  = "hashicorp/google"
     }
 
     google-beta = {
-      version               = ">= 4.0, < 6.0"
-      source                = "hashicorp/google-beta"
-      configuration_aliases = [google-beta.compute-beta]
+      version = ">= 4.0, < 6.0"
+      source  = "hashicorp/google-beta"
     }
 
     random = {
       version = ">= 3.0, < 4.0"
     }
   }
+}
+
+provider "google" {
+  alias = "compute"
+}
+
+provider "google" {
+  alias = "vpc"
+}
+
+provider "google-beta" {
+  alias = "compute-beta"
 }
 
 # Shared VPC Permissions
@@ -257,7 +267,7 @@ resource "google_container_node_pool" "primary_node_pool" {
 
   management {
     auto_repair  = true
-    auto_upgrade = true
+    auto_upgrade = var.enable_auto_upgrade
   }
 
   node_config {
