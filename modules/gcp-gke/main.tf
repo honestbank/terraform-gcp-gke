@@ -257,7 +257,7 @@ resource "google_container_node_pool" "primary_node_pool" {
 
   management {
     auto_repair  = true
-    auto_upgrade = true
+    auto_upgrade = var.enable_auto_upgrade
   }
 
   node_config {

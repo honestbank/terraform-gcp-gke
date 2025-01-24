@@ -43,28 +43,14 @@ enable_l4_ilb_subsetting       = true
 deletion_protection            = false
 
 release_channel    = "RAPID"
-kubernetes_version = "1.30.2-gke.1587003"
+kubernetes_version = "1.32.0-gke.1709000"
 
 additional_node_pools = [
   {
-    name               = "highmem",
-    machine_type       = "e2-highmem-4"
-    minimum_node_count = 1
-    maximum_node_count = 3
-    enable_secure_boot = true
-    taints = [{
-      key    = "highmem"
-      value  = "true"
-      effect = "NO_SCHEDULE"
-    }]
-    tags  = ["terratest"]
-    zones = ["asia-southeast2-a", "asia-southeast2-b", "asia-southeast2-c"]
-  },
-  {
     name               = "standard",
-    machine_type       = "e2-highmem-4"
+    machine_type       = "e2-standard-2"
     minimum_node_count = 1
-    maximum_node_count = 3
+    maximum_node_count = 1
     enable_secure_boot = true
     taints             = []
     tags               = ["terratest"]
