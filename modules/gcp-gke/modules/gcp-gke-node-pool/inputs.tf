@@ -103,3 +103,9 @@ variable "nodepool_ops_timeouts" {
     "delete" : "60m"
   }
 }
+
+variable "enable_auto_upgrade" {
+  type        = bool
+  description = "Whether to enable auto upgrades in GKE cluster."
+  default     = true
+}

@@ -6,14 +6,15 @@ module "node_pools" {
     google-beta = google-beta.compute-beta
   }
 
-  name               = each.value.name
-  machine_type       = each.value.machine_type
-  maximum_node_count = each.value.maximum_node_count
-  minimum_node_count = each.value.minimum_node_count
-  taints             = each.value.taints
-  tags               = concat([local.gke_node_pool_tag], each.value.tags)
-  zones              = each.value.zones
-  enable_secure_boot = each.value.enable_secure_boot
+  name                = each.value.name
+  machine_type        = each.value.machine_type
+  maximum_node_count  = each.value.maximum_node_count
+  minimum_node_count  = each.value.minimum_node_count
+  taints              = each.value.taints
+  tags                = concat([local.gke_node_pool_tag], each.value.tags)
+  zones               = each.value.zones
+  enable_secure_boot  = each.value.enable_secure_boot
+  enable_auto_upgrade = var.enable_auto_upgrade
 
   google_region               = var.google_region
   autoscaling_location_policy = var.autoscaling_location_policy
