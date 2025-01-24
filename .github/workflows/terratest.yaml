@@ -4,11 +4,14 @@ on:
     branches: [test, dev, qa, prod, main]
   push:
     branches: [test, dev, qa, prod, main]
+
+permissions:
+  contents: read  # Only read access to repository contents
+  id-token: write # Required for Google Actions auth
+
 env:
-  AWS_ACCESS_KEY_ID: ${{ secrets.TERRATEST_AWS_ACCESS_KEY_ID }}
-  AWS_SECRET_KEY: ${{ secrets.TERRATEST_AWS_SECRET_ACCESS_KEY }}
-  AWS_DEFAULT_REGION: ${{ secrets.TERRATEST_AWS_REGION }}
-  AWS_REGION: ${{ secrets.TERRATEST_AWS_REGION }}
+  TERRATEST_GOOGLE_CREDENTIALS_NETWORK: ${{secrets.TERRATEST_GOOGLE_CREDENTIALS_NETWORK}}
+  TERRATEST_GOOGLE_CREDENTIALS_COMPUTE: ${{secrets.TERRATEST_GOOGLE_CREDENTIALS_COMPUTE}}
 jobs:
   terratest:
     name: terratest
@@ -21,8 +24,21 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
-          go-version: 1.20
+          go-version: 1.22
         id: go
+      - name: Install Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.9.0"
+      - name: 'auth'
+        uses: 'google-github-actions/auth@v2'
+        with:
+          credentials_json: '${{ secrets.TERRATEST_GOOGLE_CREDENTIALS_COMPUTE }}'
+      - name: 'Set up Cloud SDK'
+        uses: 'google-github-actions/setup-gcloud@v2'
+        with:
+          version: '>= 363.0.0'
+          install_components: 'gke-gcloud-auth-plugin'
       - name: Run 'go test -v -timeout 60m'
         run: |
           cd test

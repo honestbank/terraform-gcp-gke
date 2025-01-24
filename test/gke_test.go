@@ -27,6 +27,8 @@ func TestTerraformGcpGkeTemplate(t *testing.T) {
 	// Create all resources in the following zone
 	gcpIndonesiaRegion := "asia-southeast2"
 
+    os.Setenv("USE_GKE_GCLOUD_AUTH_PLUGIN","True")
+
 	// GCP projects
 	computeProject := "compute-df9f"
 	networkingProject := "tf-shared-vpc-host-78a3"
@@ -61,6 +63,7 @@ func TestTerraformGcpGkeTemplate(t *testing.T) {
 					"vpc_primary_subnet_name":              clusterName + "-primary-subnet",
 					"vpc_secondary_ip_range_pods_name":     clusterName + "-pods-subnet",
 					"vpc_secondary_ip_range_services_name": clusterName + "-services-subnet",
+					"shared_vpc_host_google_credentials":   os.Getenv("TERRATEST_GOOGLE_CREDENTIALS_NETWORK"),
 				},
 				EnvVars: map[string]string{},
 			})
@@ -102,12 +105,14 @@ func TestTerraformGcpGkeTemplate(t *testing.T) {
 			gkeClusterTerratestOptions := &terraform.Options{
 				TerraformDir: tempTestDir,
 				Vars: map[string]interface{}{
-					"cluster_name":           clusterName,
-					"pods_ip_range_name":     terraform.Output(t, vpcBootstrapTerraformOptions, "pods_subnet_name"),
-					"services_ip_range_name": terraform.Output(t, vpcBootstrapTerraformOptions, "services_subnet_name"),
-					"shared_vpc_self_link":   terraform.Output(t, vpcBootstrapTerraformOptions, "shared_vpc_self_link"),
-					"shared_vpc_id":          terraform.Output(t, vpcBootstrapTerraformOptions, "shared_vpc_id"),
-					"subnetwork_self_link":   terraform.Output(t, vpcBootstrapTerraformOptions, "primary_subnet_self_link"),
+					"cluster_name":                         clusterName,
+					"pods_ip_range_name":                   terraform.Output(t, vpcBootstrapTerraformOptions, "pods_subnet_name"),
+					"services_ip_range_name":               terraform.Output(t, vpcBootstrapTerraformOptions, "services_subnet_name"),
+					"shared_vpc_self_link":                 terraform.Output(t, vpcBootstrapTerraformOptions, "shared_vpc_self_link"),
+					"shared_vpc_id":                        terraform.Output(t, vpcBootstrapTerraformOptions, "shared_vpc_id"),
+					"subnetwork_self_link":                 terraform.Output(t, vpcBootstrapTerraformOptions, "primary_subnet_self_link"),
+					"shared_vpc_host_google_credentials":   os.Getenv("TERRATEST_GOOGLE_CREDENTIALS_NETWORK"),
+                    "google_credentials":                   os.Getenv("TERRATEST_GOOGLE_CREDENTIALS_COMPUTE"),
 				},
 			}
 
