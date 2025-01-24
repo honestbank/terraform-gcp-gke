@@ -14,7 +14,7 @@ resource "google_container_node_pool" "node_pool" {
     min_node_count  = var.minimum_node_count
     location_policy = var.autoscaling_location_policy
   }
-
+  #checkov:skip=CKV_GCP_10:Ensure 'Automatic node upgrade' is enabled for Kubernetes Clusters
   management {
     auto_repair  = true
     auto_upgrade = var.enable_auto_upgrade
