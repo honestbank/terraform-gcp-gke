@@ -60,6 +60,16 @@ repos:
         args: ["docs"]
         language: system
         pass_filenames: false
+      - id: commit-msg-spell-check
+        name: commit-msg-spell-check
+        entry: ./spell-check.sh
+        language: script
+        stages: [ "commit-msg" ]
+      - id: append-ticket-id
+        name: Append Ticket ID to Commit Message
+        entry: ./append-ticket-id.sh
+        language: script
+        stages: [ commit-msg ]
   # Run this at the end so that we don't end up in infinite loop
   # where the end of line fixer runs first and then the docs and fmt
   # and other hooks that modify files will break it again.
