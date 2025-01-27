@@ -84,6 +84,7 @@ To run E2E tests, navigate to the [test folder](../test) and run `go test -v -ti
 | <a name="input_maximum_node_count"></a> [maximum\_node\_count](#input\_maximum\_node\_count) | Maximum nodes for the node pool per-zone. | `any` | n/a | yes |
 | <a name="input_minimum_node_count"></a> [minimum\_node\_count](#input\_minimum\_node\_count) | Minimum nodes for the node pool per-zone. | `any` | n/a | yes |
 | <a name="input_nat_ip_address_self_links"></a> [nat\_ip\_address\_self\_links](#input\_nat\_ip\_address\_self\_links) | List of self links IP addresses to use for NAT | `list(string)` | `[]` | no |
+| <a name="input_notification_config_pub_sub_id"></a> [notification\_config\_pub\_sub\_id](#input\_notification\_config\_pub\_sub\_id) | The Pub/Sub topic ID for GKE notification configuration. Must be in the format: projects/{project}/topics/{topic}. | `string` | `""` | no |
 | <a name="input_pods_ip_range_name"></a> [pods\_ip\_range\_name](#input\_pods\_ip\_range\_name) | Name of the secondary IP range used for Kubernetes Pods. | `string` | n/a | yes |
 | <a name="input_release_channel"></a> [release\_channel](#input\_release\_channel) | (Beta) The release channel of this cluster. Accepted values are `UNSPECIFIED`, `RAPID`, `REGULAR` and `STABLE`. Defaults to `REGULAR`. | `string` | n/a | yes |
 | <a name="input_services_ip_range_name"></a> [services\_ip\_range\_name](#input\_services\_ip\_range\_name) | Name of the secondary IP range used for Kubernetes Services. | `string` | n/a | yes |
