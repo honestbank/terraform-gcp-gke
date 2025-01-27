@@ -111,6 +111,10 @@ variable "shared_vpc_self_link" {
 variable "release_channel" {
   type        = string
   description = "(Beta) The release channel of this cluster. Accepted values are `UNSPECIFIED`, `RAPID`, `REGULAR` and `STABLE`. Defaults to `REGULAR`."
+  validation {
+    condition     = var.enable_auto_upgrade || var.release_channel == "UNSPECIFIED"
+    error_message = "The variable 'release_channel' must be set to 'UNSPECIFIED' when 'enable_auto_upgrade' is set to false."
+  }
 }
 
 variable "shared_vpc_host_google_project" {
@@ -212,4 +216,15 @@ variable "enable_auto_upgrade" {
   type        = bool
   description = "Whether to enable auto upgrades in GKE cluster."
   default     = true
+}
+
+variable "notification_config_pub_sub_id" {
+  type        = string
+  description = "The Pub/Sub topic ID for GKE notification configuration. Must be in the format: projects/{project}/topics/{topic}."
+  default     = ""
+
+  validation {
+    condition     = can(regex("^projects/[^/]+/topics/[^/]+$", var.notification_config_pub_sub_id)) || var.notification_config_pub_sub_id == ""
+    error_message = "The Pub/Sub topic ID must be in the format 'projects/{project}/topics/{topic}' or left empty."
+  }
 }

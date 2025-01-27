@@ -107,6 +107,16 @@ resource "google_container_cluster" "primary" {
     }
   }
 
+  dynamic "notification_config" {
+    for_each = var.notification_config_pub_sub_id != "" ? [var.notification_config_pub_sub_id] : []
+    content {
+      pubsub {
+        enabled = true
+        topic   = notification_config.value
+      }
+    }
+  }
+
   workload_identity_config {
     workload_pool = "${data.google_project.service_project.project_id}.svc.id.goog"
   }
