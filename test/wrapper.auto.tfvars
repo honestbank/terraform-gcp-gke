@@ -43,7 +43,7 @@ enable_l4_ilb_subsetting       = true
 deletion_protection            = false
 
 release_channel    = "RAPID"
-kubernetes_version = "1.32.1-gke.1002000"
+kubernetes_version = "1.32.0-gke.1448000"
 
 additional_node_pools = [
   {
@@ -51,6 +51,7 @@ additional_node_pools = [
     machine_type       = "e2-standard-2"
     minimum_node_count = 1
     maximum_node_count = 1
+    spot_nodepool      = true
     enable_secure_boot = true
     taints             = []
     tags               = ["terratest"]
