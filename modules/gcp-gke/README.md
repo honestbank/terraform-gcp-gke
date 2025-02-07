@@ -16,17 +16,17 @@ To run E2E tests, navigate to the [test folder](../test) and run `go test -v -ti
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.8, < 2 |
-| <a name="requirement_google"></a> [google](#requirement\_google) | >= 4.0, < 6.0 |
-| <a name="requirement_google-beta"></a> [google-beta](#requirement\_google-beta) | >= 4.0, < 6.0 |
+| <a name="requirement_google"></a> [google](#requirement\_google) | >= 6.0, < 7.0 |
+| <a name="requirement_google-beta"></a> [google-beta](#requirement\_google-beta) | >= 6.0, < 7.0 |
 | <a name="requirement_random"></a> [random](#requirement\_random) | >= 3.0, < 4.0 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_google.compute"></a> [google.compute](#provider\_google.compute) | >= 4.0, < 6.0 |
-| <a name="provider_google.vpc"></a> [google.vpc](#provider\_google.vpc) | >= 4.0, < 6.0 |
-| <a name="provider_google-beta.compute-beta"></a> [google-beta.compute-beta](#provider\_google-beta.compute-beta) | >= 4.0, < 6.0 |
+| <a name="provider_google.compute"></a> [google.compute](#provider\_google.compute) | >= 6.0, < 7.0 |
+| <a name="provider_google.vpc"></a> [google.vpc](#provider\_google.vpc) | >= 6.0, < 7.0 |
+| <a name="provider_google-beta.compute-beta"></a> [google-beta.compute-beta](#provider\_google-beta.compute-beta) | >= 6.0, < 7.0 |
 | <a name="provider_random"></a> [random](#provider\_random) | >= 3.0, < 4.0 |
 
 ## Modules
@@ -59,7 +59,7 @@ To run E2E tests, navigate to the [test folder](../test) and run `go test -v -ti
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_additional_node_pools"></a> [additional\_node\_pools](#input\_additional\_node\_pools) | A list of objects used to configure additional node pools (in addition to the primary one created by this module by default). | <pre>list(object({<br>    name               = string<br>    enable_secure_boot = bool<br>    machine_type       = string<br>    minimum_node_count = string<br>    maximum_node_count = string<br>    taints = list(object({<br>      key    = string<br>      value  = string<br>      effect = string<br>    }))<br>    tags  = list(string)<br>    zones = list(string)<br>  }))</pre> | `[]` | no |
+| <a name="input_additional_node_pools"></a> [additional\_node\_pools](#input\_additional\_node\_pools) | A list of objects used to configure additional node pools (in addition to the primary one created by this module by default). | <pre>list(object({<br/>    name               = string<br/>    enable_secure_boot = bool<br/>    machine_type       = string<br/>    minimum_node_count = string<br/>    maximum_node_count = string<br/>    spot_nodepool      = bool<br/>    taints = list(object({<br/>      key    = string<br/>      value  = string<br/>      effect = string<br/>    }))<br/>    tags  = list(string)<br/>    zones = list(string)<br/>  }))</pre> | `[]` | no |
 | <a name="input_allow_k8s_control_plane"></a> [allow\_k8s\_control\_plane](#input\_allow\_k8s\_control\_plane) | List of ports to allow k8s control plane to communicate with the node pool | `list(string)` | `[]` | no |
 | <a name="input_autoscaling_location_policy"></a> [autoscaling\_location\_policy](#input\_autoscaling\_location\_policy) | (Optional) Location policy specifies the algorithm used when scaling-up the node pool. \ "BALANCED" - Is a best effort policy that aims to balance the sizes of available zones. \ "ANY" - Instructs the cluster autoscaler to prioritize utilization of unused reservations, and reduce preemption risk for Spot VMs. | `string` | `"BALANCED"` | no |
 | <a name="input_cluster_name"></a> [cluster\_name](#input\_cluster\_name) | The name to set on the GKE cluster. | `string` | n/a | yes |
@@ -78,7 +78,7 @@ To run E2E tests, navigate to the [test folder](../test) and run `go test -v -ti
 | <a name="input_initial_node_count"></a> [initial\_node\_count](#input\_initial\_node\_count) | Initial node count, per-zone for regional clusters. | `any` | n/a | yes |
 | <a name="input_kubernetes_version"></a> [kubernetes\_version](#input\_kubernetes\_version) | The Kubernetes version to install on the master and node pool - must be a valid version from the specified `var.release_channel` | `string` | n/a | yes |
 | <a name="input_machine_type"></a> [machine\_type](#input\_machine\_type) | Machine types to use for the node pool. | `any` | n/a | yes |
-| <a name="input_maintenance_policy_config"></a> [maintenance\_policy\_config](#input\_maintenance\_policy\_config) | (OPTIONAL) A list of objects used to configure maintenance policy | <pre>list(object({<br>    maintenance_start_time = string<br>    maintenance_end_time   = string<br>    maintenance_recurrence = string<br>  }))</pre> | `[]` | no |
+| <a name="input_maintenance_policy_config"></a> [maintenance\_policy\_config](#input\_maintenance\_policy\_config) | (OPTIONAL) A list of objects used to configure maintenance policy | <pre>list(object({<br/>    maintenance_start_time = string<br/>    maintenance_end_time   = string<br/>    maintenance_recurrence = string<br/>  }))</pre> | `[]` | no |
 | <a name="input_master_authorized_networks"></a> [master\_authorized\_networks](#input\_master\_authorized\_networks) | List of master authorized networks to access the control plane. If none are provided, disallow external access (except the cluster node IPs, which GKE automatically whitelists). | `list(object({ cidr_block = string, display_name = string }))` | `[]` | no |
 | <a name="input_master_ipv4_cidr_block"></a> [master\_ipv4\_cidr\_block](#input\_master\_ipv4\_cidr\_block) | The IP range to set for master nodes, passed to master\_ipv4\_cidr\_block - /28 required by Google. | `any` | n/a | yes |
 | <a name="input_maximum_node_count"></a> [maximum\_node\_count](#input\_maximum\_node\_count) | Maximum nodes for the node pool per-zone. | `any` | n/a | yes |
@@ -91,10 +91,10 @@ To run E2E tests, navigate to the [test folder](../test) and run `go test -v -ti
 | <a name="input_shared_vpc_host_google_project"></a> [shared\_vpc\_host\_google\_project](#input\_shared\_vpc\_host\_google\_project) | The GCP project that hosts the VPC to place the GKE cluster in - can be an in-project VPC or a shared VPC. In the case of a shared VPC, the Service Account used to run this module must have permissions to create a Router/NAT in the VPC host project. | `any` | n/a | yes |
 | <a name="input_shared_vpc_id"></a> [shared\_vpc\_id](#input\_shared\_vpc\_id) | The id of the shared VPC. | `string` | n/a | yes |
 | <a name="input_shared_vpc_self_link"></a> [shared\_vpc\_self\_link](#input\_shared\_vpc\_self\_link) | self\_link of the shared VPC to place the GKE cluster in. | `string` | n/a | yes |
-| <a name="input_skip_create_built_in_node_pool"></a> [skip\_create\_built\_in\_node\_pool](#input\_skip\_create\_built\_in\_node\_pool) | Skip creation of the primary node pool that is created with the cluster, and instead use only the `additional_node_pools`.<br>    Note: setting var.skip\_create\_built\_in\_node\_pool to true requires at least one node pool specified in var.additional\_node\_pools" | `bool` | `false` | no |
+| <a name="input_skip_create_built_in_node_pool"></a> [skip\_create\_built\_in\_node\_pool](#input\_skip\_create\_built\_in\_node\_pool) | Skip creation of the primary node pool that is created with the cluster, and instead use only the `additional_node_pools`.<br/>    Note: setting var.skip\_create\_built\_in\_node\_pool to true requires at least one node pool specified in var.additional\_node\_pools" | `bool` | `false` | no |
 | <a name="input_stage"></a> [stage](#input\_stage) | Stage: [test, dev, prod...] used as prefix for all resources. | `string` | `"test"` | no |
 | <a name="input_subnetwork_self_link"></a> [subnetwork\_self\_link](#input\_subnetwork\_self\_link) | self\_link of the google\_compute\_subnetwork to place the GKE cluster in. | `string` | n/a | yes |
-| <a name="input_taints"></a> [taints](#input\_taints) | A list of Kubernetes taints to apply to nodes. GKE's API can only set this field on cluster creation | <pre>list(object({<br>    key    = string<br>    value  = string<br>    effect = string<br>  }))</pre> | `[]` | no |
+| <a name="input_taints"></a> [taints](#input\_taints) | A list of Kubernetes taints to apply to nodes. GKE's API can only set this field on cluster creation | <pre>list(object({<br/>    key    = string<br/>    value  = string<br/>    effect = string<br/>  }))</pre> | `[]` | no |
 
 ## Outputs
 

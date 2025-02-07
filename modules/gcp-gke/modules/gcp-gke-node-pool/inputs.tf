@@ -109,3 +109,9 @@ variable "enable_auto_upgrade" {
   description = "Whether to enable auto upgrades in GKE cluster."
   default     = true
 }
+
+variable "spot_nodepool" {
+  type        = bool
+  description = "Whether to provision the nodepool using spot instances."
+  default     = false
+}

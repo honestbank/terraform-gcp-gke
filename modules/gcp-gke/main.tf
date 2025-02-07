@@ -3,13 +3,13 @@ terraform {
 
   required_providers {
     google = {
-      version               = ">= 4.0, < 6.0"
+      version               = ">= 6.0, < 7.0"
       source                = "hashicorp/google"
       configuration_aliases = [google.compute, google.vpc]
     }
 
     google-beta = {
-      version               = ">= 4.0, < 6.0"
+      version               = ">= 6.0, < 7.0"
       source                = "hashicorp/google-beta"
       configuration_aliases = [google-beta.compute-beta]
     }
