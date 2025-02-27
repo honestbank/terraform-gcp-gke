@@ -41,6 +41,17 @@ resource "google_service_account" "default" {
   display_name = "${var.cluster_name} Service Account"
 }
 
+# Fix a permission issue whereby the service account running the GKE node lacks
+# the requisite minimum permissions to operate in a non-degraded state.
+# https://cloud.google.com/kubernetes-engine/docs/how-to/service-accounts#default-gke-service-agent
+resource "google_project_iam_member" "node_service_account" {
+  provider = google.compute
+
+  project = var.google_project
+  role    = "roles/container.defaultNodeServiceAccount"
+  member  = google_service_account.default.member
+}
+
 #tfsec:ignore:google-gke-enforce-pod-security-policy
 #tfsec:ignore:google-gke-metadata-endpoints-disabled (legacy metadata disabled by default since 1.12 https://registry.terraform.io/providers/hashicorp/google-beta/latest/docs/resources/container_cluster#nested_workload_identity_config)
 #tfsec:ignore:google-gke-enable-master-networks
