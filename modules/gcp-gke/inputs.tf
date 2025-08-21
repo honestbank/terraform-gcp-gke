@@ -1,3 +1,14 @@
+variable "binary_authorization_evaluation_mode" {
+  type        = string
+  description = "Binary Authorization evaluation mode for the GKE cluster. Allowed values: DISABLED, PROJECT_SINGLETON_POLICY_ENFORCE."
+  default     = "DISABLED"
+
+  validation {
+    condition     = contains(["DISABLED", "PROJECT_SINGLETON_POLICY_ENFORCE"], var.binary_authorization_evaluation_mode)
+    error_message = "Invalid value for binary_authorization_evaluation_mode. Allowed values are: DISABLED, PROJECT_SINGLETON_POLICY_ENFORCE."
+  }
+}
+
 variable "cluster_name" {
   type        = string
   description = "The name to set on the GKE cluster."

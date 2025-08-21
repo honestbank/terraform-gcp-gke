@@ -78,7 +78,7 @@ resource "google_container_cluster" "primary" {
 
   #checkov:skip=CKV_GCP_66:Property renamed from 'enable_binary_authorization' to 'binary_authorization' but Checkov not updated.
   binary_authorization {
-    evaluation_mode = "PROJECT_SINGLETON_POLICY_ENFORCE"
+    evaluation_mode = var.binary_authorization_evaluation_mode
   }
 
   dynamic "authenticator_groups_config" {
