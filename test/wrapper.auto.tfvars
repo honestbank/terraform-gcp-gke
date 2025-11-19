@@ -43,7 +43,7 @@ enable_l4_ilb_subsetting       = true
 deletion_protection            = false
 
 release_channel    = "RAPID"
-kubernetes_version = "1.32.7-gke.1079000"
+kubernetes_version = "1.33.5-gke.1697000"
 
 additional_node_pools = [
   {
@@ -51,6 +51,7 @@ additional_node_pools = [
     machine_type       = "e2-standard-2"
     minimum_node_count = 1
     maximum_node_count = 1
+    max_pods_per_node  = 110
     spot_nodepool      = true
     enable_secure_boot = true
     taints             = []
