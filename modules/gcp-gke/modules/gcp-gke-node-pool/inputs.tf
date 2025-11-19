@@ -115,3 +115,9 @@ variable "spot_nodepool" {
   description = "Whether to provision the nodepool using spot instances."
   default     = false
 }
+
+variable "max_pods_per_node" {
+  type        = number
+  description = "(Optional) The maximum number of pods per node in this node pool. Note that this does not work on node pools which are \"route-based\" - that is, node pools belonging to clusters that do not have IP Aliasing enabled."
+  default     = 110
+}

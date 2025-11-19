@@ -10,6 +10,7 @@ module "node_pools" {
   machine_type        = each.value.machine_type
   maximum_node_count  = each.value.maximum_node_count
   minimum_node_count  = each.value.minimum_node_count
+  max_pods_per_node   = each.value.max_pods_per_node
   spot_nodepool       = each.value.spot_nodepool
   taints              = each.value.taints
   tags                = concat([local.gke_node_pool_tag], each.value.tags)

@@ -9,6 +9,8 @@ resource "google_container_node_pool" "node_pool" {
   node_count     = var.minimum_node_count
   cluster        = var.cluster_name
 
+  max_pods_per_node = var.max_pods_per_node
+
   autoscaling {
     max_node_count  = var.maximum_node_count
     min_node_count  = var.minimum_node_count

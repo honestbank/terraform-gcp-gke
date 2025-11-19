@@ -164,6 +164,7 @@ variable "additional_node_pools" {
     machine_type       = string
     minimum_node_count = string
     maximum_node_count = string
+    max_pods_per_node  = number
     spot_nodepool      = bool
     taints = list(object({
       key    = string
