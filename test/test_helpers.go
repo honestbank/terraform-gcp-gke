@@ -52,6 +52,15 @@ func verifyGkeNodesAreReady(t *testing.T, kubectlOptions *k8s.KubectlOptions) {
 	logger.Log(t, "k8s.GetReadyNodes returned: ", len(readyNodes), " nodes.")
 }
 
+func copyFileWithNewName(t *testing.T, src string, dest string) {
+	if copyErr := files.CopyFile(src, dest); copyErr != nil {
+		fmt.Println("😩 calling t.FailNow(): failed copying from: ", src, " to: ", dest, " with error: ", copyErr)
+		t.FailNow()
+	} else {
+		fmt.Println("✌️ Success! Copied from: ", src, " to: ", dest)
+	}
+}
+
 func copyFiles(t *testing.T, filesToCopy []string, source string, destination string) {
 	for _, file := range filesToCopy {
 		src := source + "/" + file

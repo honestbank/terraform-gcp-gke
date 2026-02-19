@@ -70,7 +70,6 @@ func TestTerraformGcpGkeTemplate(t *testing.T) {
 
 			// Copy supporting files needed for VPC build
 			varFile := "vpc.auto.tfvars"
-			providerFile := "vpc_providers.tf"
 			testFileSourceDir, getTestDirErr := os.Getwd()
 			if getTestDirErr != nil {
 				fmt.Println("calling t.FailNow(): could not execute os.Getwd(): ", getTestDirErr)
@@ -79,8 +78,12 @@ func TestTerraformGcpGkeTemplate(t *testing.T) {
 
 			fmt.Println("test working directory is: ", testFileSourceDir)
 
-			filesToCopy := []string{varFile, providerFile}
+			filesToCopy := []string{varFile}
 			copyFiles(t, filesToCopy, testFileSourceDir, vpcBootstrapWorkingDir)
+
+			// vpc_providers.tf is stored as .tmpl to avoid terraform_validate conflicts;
+			// copy it with the correct .tf name to the temp VPC directory.
+			copyFileWithNewName(t, testFileSourceDir+"/vpc_providers.tf.tmpl", vpcBootstrapWorkingDir+"/vpc_providers.tf")
 		})
 
 		defer test_structure.RunTestStage(t, "vpc_cleanup", func() {
