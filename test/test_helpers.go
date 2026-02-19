@@ -38,7 +38,7 @@ func kubeWaitUntilNumNodes(t *testing.T, kubectlOptions *k8s.KubectlOptions, num
 		logger.Logf(t, "Error waiting for expected number of nodes: %s", err)
 		t.Fatal(err)
 	}
-	logger.Logf(t, message)
+	logger.Logf(t, "%s", message)
 }
 
 // Verify that all the nodes in the cluster reach the Ready state.
