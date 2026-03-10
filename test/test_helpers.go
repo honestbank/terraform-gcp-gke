@@ -38,7 +38,7 @@ func kubeWaitUntilNumNodes(t *testing.T, kubectlOptions *k8s.KubectlOptions, num
 		logger.Logf(t, "Error waiting for expected number of nodes: %s", err)
 		t.Fatal(err)
 	}
-	logger.Logf(t, message)
+	logger.Logf(t, "%s", message)
 }
 
 // Verify that all the nodes in the cluster reach the Ready state.
@@ -50,6 +50,15 @@ func verifyGkeNodesAreReady(t *testing.T, kubectlOptions *k8s.KubectlOptions) {
 
 	readyNodes := k8s.GetReadyNodes(t, kubectlOptions)
 	logger.Log(t, "k8s.GetReadyNodes returned: ", len(readyNodes), " nodes.")
+}
+
+func copyFileWithNewName(t *testing.T, src string, dest string) {
+	if copyErr := files.CopyFile(src, dest); copyErr != nil {
+		fmt.Println("😩 calling t.FailNow(): failed copying from: ", src, " to: ", dest, " with error: ", copyErr)
+		t.FailNow()
+	} else {
+		fmt.Println("✌️ Success! Copied from: ", src, " to: ", dest)
+	}
 }
 
 func copyFiles(t *testing.T, filesToCopy []string, source string, destination string) {

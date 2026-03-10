@@ -1,8 +1,6 @@
 module github.com/honestbank/terraform-gcp-gke/v2
 
-go 1.22.0
-
-toolchain go1.22.6
+go 1.26
 
 require (
 	github.com/gruntwork-io/go-commons v0.17.2
