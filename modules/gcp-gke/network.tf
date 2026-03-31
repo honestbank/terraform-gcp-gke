@@ -27,7 +27,7 @@ resource "google_compute_firewall" "gke_private_cluster_master_to_nodepool" {
   }
 
   source_ranges = [var.master_ipv4_cidr_block]
-  target_tags   = local.all_primary_node_pool_tags
+  target_tags   = [local.gke_node_pool_tag]
 
   lifecycle {
     create_before_destroy = true

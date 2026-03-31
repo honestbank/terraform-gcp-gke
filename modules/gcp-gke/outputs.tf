@@ -34,6 +34,6 @@ output "cluster_primary_node_pool_tag" {
 }
 
 output "cluster_all_primary_node_pool_tags" {
-  description = "List of tags applied to the node pool instances. This included the managed-by-GCP tags."
-  value       = local.all_primary_node_pool_tags
+  description = "List of tags applied to the node pool instances."
+  value       = [local.gke_node_pool_tag]
 }

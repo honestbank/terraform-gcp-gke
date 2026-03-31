@@ -240,7 +240,7 @@ func TestTerraformGcpGkeTemplate(t *testing.T) {
 			tags := terraform.OutputList(t, gkeClusterTerratestOptions, "cluster_all_primary_node_pool_tags")
 
 			assert.NotNil(t, tags)
-			assert.GreaterOrEqual(t, len(tags), 2)
+			assert.GreaterOrEqual(t, len(tags), 1)
 		})
 	})
 }
