@@ -121,3 +121,9 @@ variable "max_pods_per_node" {
   description = "(Optional) The maximum number of pods per node in this node pool. Note that this does not work on node pools which are \"route-based\" - that is, node pools belonging to clusters that do not have IP Aliasing enabled."
   default     = 110
 }
+
+variable "disk_size_gb" {
+  type        = number
+  description = "Size of the boot disk in GB for each node."
+  default     = 100
+}

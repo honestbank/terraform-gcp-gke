@@ -27,6 +27,7 @@ resource "google_container_node_pool" "node_pool" {
     image_type   = "COS_CONTAINERD"
     machine_type = var.machine_type
     spot         = var.spot_nodepool
+    disk_size_gb = var.disk_size_gb
 
     # Google recommends custom service accounts that have cloud-platform scope and permissions granted via IAM Roles.
     service_account = var.gcp_service_account_email

@@ -15,6 +15,7 @@ module "node_pools" {
   taints              = each.value.taints
   tags                = concat([local.gke_node_pool_tag], each.value.tags)
   zones               = each.value.zones
+  disk_size_gb        = each.value.disk_size_gb
   enable_secure_boot  = each.value.enable_secure_boot
   enable_auto_upgrade = var.enable_auto_upgrade
 

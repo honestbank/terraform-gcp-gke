@@ -171,8 +171,9 @@ variable "additional_node_pools" {
       value  = string
       effect = string
     }))
-    tags  = list(string)
-    zones = list(string)
+    tags         = list(string)
+    zones        = list(string)
+    disk_size_gb = optional(number, 100)
   }))
   nullable = false
 }
