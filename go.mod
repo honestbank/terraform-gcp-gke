@@ -1,3 +1,5 @@
 module gke
 
-go 1.14
+go 1.26
+
+toolchain go1.26.3

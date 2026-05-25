@@ -14,7 +14,7 @@ To run E2E tests, navigate to the [test folder](../test) and run `go test -v -ti
 ## Requirements
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.8, < 2 |
 | <a name="requirement_google"></a> [google](#requirement\_google) | >= 6.0, < 7.0 |
 | <a name="requirement_google-beta"></a> [google-beta](#requirement\_google-beta) | >= 6.0, < 7.0 |
@@ -23,7 +23,7 @@ To run E2E tests, navigate to the [test folder](../test) and run `go test -v -ti
 ## Providers
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | <a name="provider_google.compute"></a> [google.compute](#provider\_google.compute) | >= 6.0, < 7.0 |
 | <a name="provider_google.vpc"></a> [google.vpc](#provider\_google.vpc) | >= 6.0, < 7.0 |
 | <a name="provider_google-beta.compute-beta"></a> [google-beta.compute-beta](#provider\_google-beta.compute-beta) | >= 6.0, < 7.0 |
@@ -32,13 +32,13 @@ To run E2E tests, navigate to the [test folder](../test) and run `go test -v -ti
 ## Modules
 
 | Name | Source | Version |
-|------|--------|---------|
+| ---- | ------ | ------- |
 | <a name="module_node_pools"></a> [node\_pools](#module\_node\_pools) | ./modules/gcp-gke-node-pool | n/a |
 
 ## Resources
 
 | Name | Type |
-|------|------|
+| ---- | ---- |
 | [google-beta_google_container_cluster.primary](https://registry.terraform.io/providers/hashicorp/google-beta/latest/docs/resources/google_container_cluster) | resource |
 | [google-beta_google_container_node_pool.primary_node_pool](https://registry.terraform.io/providers/hashicorp/google-beta/latest/docs/resources/google_container_node_pool) | resource |
 | [google_compute_firewall.gke_private_cluster_master_to_nodepool](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_firewall) | resource |
@@ -50,8 +50,6 @@ To run E2E tests, navigate to the [test folder](../test) and run `go test -v -ti
 | [random_id.node_pool_tag](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/id) | resource |
 | [google-beta_google_client_config.default](https://registry.terraform.io/providers/hashicorp/google-beta/latest/docs/data-sources/google_client_config) | data source |
 | [google-beta_google_container_cluster.current_cluster](https://registry.terraform.io/providers/hashicorp/google-beta/latest/docs/data-sources/google_container_cluster) | data source |
-| [google_compute_instance.exemplar_node_pool_instance](https://registry.terraform.io/providers/hashicorp/google/latest/docs/data-sources/compute_instance) | data source |
-| [google_compute_instance_group.exemplar_node_pool_instance_group](https://registry.terraform.io/providers/hashicorp/google/latest/docs/data-sources/compute_instance_group) | data source |
 | [google_container_cluster.primary](https://registry.terraform.io/providers/hashicorp/google/latest/docs/data-sources/container_cluster) | data source |
 | [google_project.host_project](https://registry.terraform.io/providers/hashicorp/google/latest/docs/data-sources/project) | data source |
 | [google_project.service_project](https://registry.terraform.io/providers/hashicorp/google/latest/docs/data-sources/project) | data source |
@@ -59,7 +57,7 @@ To run E2E tests, navigate to the [test folder](../test) and run `go test -v -ti
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
+| ---- | ----------- | ---- | ------- | :------: |
 | <a name="input_additional_node_pools"></a> [additional\_node\_pools](#input\_additional\_node\_pools) | A list of objects used to configure additional node pools (in addition to the primary one created by this module by default). | <pre>list(object({<br/>    name               = string<br/>    enable_secure_boot = bool<br/>    machine_type       = string<br/>    minimum_node_count = string<br/>    maximum_node_count = string<br/>    max_pods_per_node  = number<br/>    spot_nodepool      = bool<br/>    taints = list(object({<br/>      key    = string<br/>      value  = string<br/>      effect = string<br/>    }))<br/>    tags         = list(string)<br/>    zones        = list(string)<br/>    disk_size_gb = optional(number, 100)<br/>  }))</pre> | `[]` | no |
 | <a name="input_allow_k8s_control_plane"></a> [allow\_k8s\_control\_plane](#input\_allow\_k8s\_control\_plane) | List of ports to allow k8s control plane to communicate with the node pool | `list(string)` | `[]` | no |
 | <a name="input_autoscaling_location_policy"></a> [autoscaling\_location\_policy](#input\_autoscaling\_location\_policy) | (Optional) Location policy specifies the algorithm used when scaling-up the node pool. \ "BALANCED" - Is a best effort policy that aims to balance the sizes of available zones. \ "ANY" - Instructs the cluster autoscaler to prioritize utilization of unused reservations, and reduce preemption risk for Spot VMs. | `string` | `"BALANCED"` | no |
@@ -101,10 +99,10 @@ To run E2E tests, navigate to the [test folder](../test) and run `go test -v -ti
 ## Outputs
 
 | Name | Description |
-|------|-------------|
+| ---- | ----------- |
 | <a name="output_ca_certificate"></a> [ca\_certificate](#output\_ca\_certificate) | n/a |
 | <a name="output_client_token"></a> [client\_token](#output\_client\_token) | n/a |
-| <a name="output_cluster_all_primary_node_pool_tags"></a> [cluster\_all\_primary\_node\_pool\_tags](#output\_cluster\_all\_primary\_node\_pool\_tags) | List of tags applied to the node pool instances. This included the managed-by-GCP tags. |
+| <a name="output_cluster_all_primary_node_pool_tags"></a> [cluster\_all\_primary\_node\_pool\_tags](#output\_cluster\_all\_primary\_node\_pool\_tags) | List of tags applied to the node pool instances. |
 | <a name="output_cluster_name"></a> [cluster\_name](#output\_cluster\_name) | The GKE cluster name that was built |
 | <a name="output_cluster_primary_node_pool_tag"></a> [cluster\_primary\_node\_pool\_tag](#output\_cluster\_primary\_node\_pool\_tag) | Tag applied to the node pool instances - used for network/firewall rules. |
 | <a name="output_cluster_project"></a> [cluster\_project](#output\_cluster\_project) | The project hosting the GKE cluster. |
