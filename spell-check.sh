@@ -89,7 +89,6 @@ rolesets
 rtrw
 rudderstack
 schemaregistry
-snyk
 strimzi
 terratest
 ulid
