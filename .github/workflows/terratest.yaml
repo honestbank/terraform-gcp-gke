@@ -6,6 +6,9 @@ on:
     branches: [test, dev, qa, prod, main]
 permissions:
   contents: read
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 env:
   AWS_ACCESS_KEY_ID: ${{ secrets.TERRATEST_AWS_ACCESS_KEY_ID }}
   AWS_SECRET_KEY: ${{ secrets.TERRATEST_AWS_SECRET_ACCESS_KEY }}
@@ -16,6 +19,9 @@ jobs:
   terratest:
     name: terratest
     runs-on: ubuntu-latest
+    # go test is capped at 30 minutes; the rest covers checkout, toolchain
+    # setup, and module download. Successful runs top out around 43 minutes.
+    timeout-minutes: 90
     steps:
       - name: Checkout
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
