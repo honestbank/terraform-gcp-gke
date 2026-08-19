@@ -1,0 +1,23 @@
+# yamllint disable rule:line-length
+# Use template from https://github.com/honestbank/workflows/tree/main/examples/repository-workflows
+---
+name: "repository-opengrep-public-comment"
+permissions:
+  actions: read
+  pull-requests: write
+  security-events: write
+
+on:  # yamllint disable-line rule:truthy
+  workflow_run:
+    workflows:
+      - "repository-opengrep-public-scan"
+    types:
+      - completed
+
+jobs:
+  repository-opengrep-public-comment:
+    name: repository-opengrep-public-comment
+    uses: honestbank/workflows/.github/workflows/shared-opengrep-public-comment.yaml@main
+    with:
+      scan_workflow_run_id: ${{ github.event.workflow_run.id }}
+    secrets: inherit

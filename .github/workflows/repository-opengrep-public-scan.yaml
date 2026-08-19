@@ -1,0 +1,17 @@
+# yamllint disable rule:line-length
+# Use template from https://github.com/honestbank/workflows/tree/main/examples/repository-workflows
+---
+name: "repository-opengrep-public-scan"
+permissions:
+  contents: read
+
+on:  # yamllint disable-line rule:truthy
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  repository-opengrep-public-scan:
+    name: repository-opengrep-public-scan
+    uses: honestbank/workflows/.github/workflows/shared-opengrep-public-scan.yaml@main
+    secrets: inherit
