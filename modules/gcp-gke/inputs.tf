@@ -242,3 +242,9 @@ variable "notification_config_pub_sub_id" {
     error_message = "The Pub/Sub topic ID must be in the format 'projects/{project}/topics/{topic}' or left empty."
   }
 }
+
+variable "disk_type" {
+  type        = string
+  description = "Boot disk type for the built-in node pool. Machine families such as N4 and C4 only support hyperdisk-balanced."
+  default     = "pd-balanced"
+}
