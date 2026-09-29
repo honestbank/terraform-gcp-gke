@@ -29,6 +29,12 @@ variable "create_public_https_firewall_rule" {
   description = "Set to `true` to create a firewall rule allowing 0.0.0.0/0:443 on TCP to all worker nodes."
 }
 
+variable "default_node_pool_machine_type" {
+  type        = string
+  default     = "e2-medium"
+  description = "Machine type for the throwaway default node pool that GKE requires at cluster creation and `remove_default_node_pool` deletes immediately afterwards. It must still be large enough for the node's system DaemonSets to become healthy, otherwise the cluster finishes creation in an ERROR state and the pool is never removed. Dataplane V2 clusters additionally run the anetd agent on every node, which does not fit in 1 GB."
+}
+
 variable "allow_k8s_control_plane" {
   type        = list(string)
   description = "List of ports to allow k8s control plane to communicate with the node pool"

@@ -64,8 +64,10 @@ resource "google_container_cluster" "primary" {
   location = var.google_region
 
   # We can't create a cluster with no node pool defined, but we want to only use
-  # separately managed node pools. So we create the smallest possible default
-  # node pool and immediately delete it.
+  # separately managed node pools. So we create a throwaway default node pool and
+  # delete it as soon as the cluster is up. It still has to be big enough to run
+  # the node's system DaemonSets, or the cluster never becomes healthy and the
+  # pool is never removed - see var.default_node_pool_machine_type.
   remove_default_node_pool = true
   initial_node_count       = 1
   enable_shielded_nodes    = true
@@ -134,7 +136,7 @@ resource "google_container_cluster" "primary" {
 
   node_config {
     image_type   = "COS_CONTAINERD"
-    machine_type = "e2-micro" # smallest possible, is going to be deleted
+    machine_type = var.default_node_pool_machine_type
 
     workload_metadata_config {
       mode = "GKE_METADATA"
