@@ -178,6 +178,14 @@ resource "google_container_cluster" "primary" {
     enabled = false
   }
 
+  # Vertical Pod Autoscaling installs the recommender, updater and admission
+  # controller. On its own it changes nothing - a workload is only affected once
+  # a VerticalPodAutoscaler object selects it.
+  # https://cloud.google.com/kubernetes-engine/docs/concepts/verticalpodautoscaler
+  vertical_pod_autoscaling {
+    enabled = var.enable_vertical_pod_autoscaling
+  }
+
   # Intranode visibility configures networking on each node in the cluster so that traffic sent from one Pod to another
   # Pod is processed by the cluster's Virtual Private Cloud (VPC) network, even if the Pods are on the same node.
   # https://cloud.google.com/kubernetes-engine/docs/how-to/intranode-visibility
