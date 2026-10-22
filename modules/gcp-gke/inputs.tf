@@ -232,6 +232,12 @@ variable "enable_vertical_pod_autoscaling" {
   default     = false
 }
 
+variable "enable_config_connector" {
+  type        = bool
+  description = "Whether to enable the Config Connector add-on, which manages Google Cloud resources as Kubernetes objects. Enabling it installs the operator only: nothing is managed until a ConfigConnector object sets the mode and a ConfigConnectorContext gives a namespace a Google service account. The cluster uses Workload Identity, which the add-on requires."
+  default     = false
+}
+
 variable "deletion_protection" {
   type        = string
   description = "(Optional) Whether or not to allow Terraform to destroy the cluster. https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/container_cluster#nested_taint:~:text=Cloud)%20Learn%20tutorial-,Note,-On%20version%205.0.0"
