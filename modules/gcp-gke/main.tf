@@ -170,6 +170,14 @@ resource "google_container_cluster" "primary" {
     istio_config {
       disabled = true
     }
+
+    # Config Connector manages Google Cloud resources (Pub/Sub topics, BigQuery
+    # tables, IAM bindings) as Kubernetes objects. The add-on installs the operator
+    # only. It needs Workload Identity (workload_identity_config above).
+    # https://cloud.google.com/config-connector/docs/how-to/install-upgrade-uninstall
+    config_connector_config {
+      enabled = var.enable_config_connector
+    }
   }
 
   # Autoscaling/Node Auto-Provisioning
