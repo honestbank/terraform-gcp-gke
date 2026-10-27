@@ -266,3 +266,14 @@ variable "disk_type" {
   description = "Boot disk type for the built-in node pool. Machine families such as N4 and C4 only support hyperdisk-balanced."
   default     = "pd-balanced"
 }
+
+variable "database_encryption_key_name" {
+  type        = string
+  description = "Cloud KMS crypto key used for application-layer secrets encryption, in the format projects/{project}/locations/{location}/keyRings/{ring}/cryptoKeys/{key}. The key must be in the same location as the cluster and the GKE service agent needs roles/cloudkms.cryptoKeyEncrypterDecrypter on it. Leave empty to keep the current setting. Turning it on is an in-place update: GKE re-encrypts the existing Secrets."
+  default     = ""
+
+  validation {
+    condition     = var.database_encryption_key_name == "" || can(regex("^projects/[^/]+/locations/[^/]+/keyRings/[^/]+/cryptoKeys/[^/]+$", var.database_encryption_key_name))
+    error_message = "The key name must be in the format 'projects/{project}/locations/{location}/keyRings/{ring}/cryptoKeys/{key}' or left empty."
+  }
+}
