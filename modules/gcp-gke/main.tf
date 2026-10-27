@@ -130,6 +130,18 @@ resource "google_container_cluster" "primary" {
     }
   }
 
+  # Application-layer secrets encryption: GKE envelope-encrypts Secrets in etcd
+  # with a data key that is wrapped by this Cloud KMS key. When the key is empty
+  # we leave the block out, so the provider keeps the current (computed) state.
+  # https://cloud.google.com/kubernetes-engine/docs/how-to/encrypting-secrets
+  dynamic "database_encryption" {
+    for_each = var.database_encryption_key_name != "" ? [var.database_encryption_key_name] : []
+    content {
+      state    = "ENCRYPTED"
+      key_name = database_encryption.value
+    }
+  }
+
   workload_identity_config {
     workload_pool = "${data.google_project.service_project.project_id}.svc.id.goog"
   }
