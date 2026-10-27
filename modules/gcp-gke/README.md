@@ -16,17 +16,17 @@ To run E2E tests, navigate to the [test folder](../test) and run `go test -v -ti
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.8, < 2 |
-| <a name="requirement_google"></a> [google](#requirement\_google) | >= 6.0, < 7.0 |
-| <a name="requirement_google-beta"></a> [google-beta](#requirement\_google-beta) | >= 6.0, < 7.0 |
+| <a name="requirement_google"></a> [google](#requirement\_google) | >= 7.30, < 9.0 |
+| <a name="requirement_google-beta"></a> [google-beta](#requirement\_google-beta) | >= 7.30, < 9.0 |
 | <a name="requirement_random"></a> [random](#requirement\_random) | >= 3.0, < 4.0 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_google.compute"></a> [google.compute](#provider\_google.compute) | >= 6.0, < 7.0 |
-| <a name="provider_google.vpc"></a> [google.vpc](#provider\_google.vpc) | >= 6.0, < 7.0 |
-| <a name="provider_google-beta.compute-beta"></a> [google-beta.compute-beta](#provider\_google-beta.compute-beta) | >= 6.0, < 7.0 |
+| <a name="provider_google.compute"></a> [google.compute](#provider\_google.compute) | >= 7.30, < 9.0 |
+| <a name="provider_google.vpc"></a> [google.vpc](#provider\_google.vpc) | >= 7.30, < 9.0 |
+| <a name="provider_google-beta.compute-beta"></a> [google-beta.compute-beta](#provider\_google-beta.compute-beta) | >= 7.30, < 9.0 |
 | <a name="provider_random"></a> [random](#provider\_random) | >= 3.0, < 4.0 |
 
 ## Modules
