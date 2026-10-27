@@ -32,6 +32,14 @@ data "google_project" "host_project" {
 locals {
   project_number = data.google_project.service_project.number
   project_id     = data.google_project.service_project.project_id
+
+  # Effective application-layer secrets encryption state: an explicit
+  # database_encryption_state wins; otherwise a key name means ENCRYPTED, and
+  # no key means "" (leave the current state alone).
+  database_encryption_state = (
+    var.database_encryption_state != "" ? var.database_encryption_state :
+    var.database_encryption_key_name != "" ? "ENCRYPTED" : ""
+  )
 }
 
 resource "google_service_account" "default" {
@@ -131,14 +139,15 @@ resource "google_container_cluster" "primary" {
   }
 
   # Application-layer secrets encryption: GKE envelope-encrypts Secrets in etcd
-  # with a data key that is wrapped by this Cloud KMS key. When the key is empty
-  # we leave the block out, so the provider keeps the current (computed) state.
+  # with a data key that is wrapped by this Cloud KMS key. With no key and no
+  # state we leave the block out, so the provider keeps the current (computed)
+  # state. database_encryption_state = "DECRYPTED" rolls the encryption back.
   # https://cloud.google.com/kubernetes-engine/docs/how-to/encrypting-secrets
   dynamic "database_encryption" {
-    for_each = var.database_encryption_key_name != "" ? [var.database_encryption_key_name] : []
+    for_each = local.database_encryption_state != "" ? [local.database_encryption_state] : []
     content {
-      state    = "ENCRYPTED"
-      key_name = database_encryption.value
+      state    = database_encryption.value
+      key_name = database_encryption.value == "ENCRYPTED" ? var.database_encryption_key_name : ""
     }
   }
 
@@ -255,6 +264,11 @@ resource "google_container_cluster" "primary" {
       node_config,
       master_auth[0].client_certificate_config[0].issue_client_certificate,
     ]
+
+    precondition {
+      condition     = local.database_encryption_state != "ENCRYPTED" || var.database_encryption_key_name != ""
+      error_message = "database_encryption_state = \"ENCRYPTED\" needs database_encryption_key_name."
+    }
   }
 
   depends_on = [google_service_account.default]

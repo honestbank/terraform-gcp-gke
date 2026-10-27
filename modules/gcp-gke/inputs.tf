@@ -269,11 +269,22 @@ variable "disk_type" {
 
 variable "database_encryption_key_name" {
   type        = string
-  description = "Cloud KMS crypto key used for application-layer secrets encryption, in the format projects/{project}/locations/{location}/keyRings/{ring}/cryptoKeys/{key}. The key must be in the same location as the cluster and the GKE service agent needs roles/cloudkms.cryptoKeyEncrypterDecrypter on it. Leave empty to keep the current setting. Turning it on is an in-place update: GKE re-encrypts the existing Secrets."
+  description = "Cloud KMS crypto key used for application-layer secrets encryption, in the format projects/{project}/locations/{location}/keyRings/{ring}/cryptoKeys/{key}. The key must be in the same location as the cluster and the GKE service agent needs roles/cloudkms.cryptoKeyEncrypterDecrypter on it. Leave empty to keep the current setting. Turning it on is an in-place update: GKE re-encrypts the existing Secrets. To roll back, set database_encryption_state to DECRYPTED."
   default     = ""
 
   validation {
     condition     = var.database_encryption_key_name == "" || can(regex("^projects/[^/]+/locations/[^/]+/keyRings/[^/]+/cryptoKeys/[^/]+$", var.database_encryption_key_name))
     error_message = "The key name must be in the format 'projects/{project}/locations/{location}/keyRings/{ring}/cryptoKeys/{key}' or left empty."
+  }
+}
+
+variable "database_encryption_state" {
+  type        = string
+  description = "Application-layer secrets encryption state: ENCRYPTED, DECRYPTED, or empty. Empty means ENCRYPTED when database_encryption_key_name is set, and otherwise keeps the current setting. DECRYPTED rolls the encryption back in place: GKE decrypts the existing Secrets. Keep the Cloud KMS key enabled until the cluster shows DECRYPTED."
+  default     = ""
+
+  validation {
+    condition     = contains(["", "ENCRYPTED", "DECRYPTED"], var.database_encryption_state)
+    error_message = "database_encryption_state must be ENCRYPTED, DECRYPTED or empty."
   }
 }
