@@ -20,4 +20,3 @@ jobs:
     uses: honestbank/workflows/.github/workflows/shared-opengrep-public-comment.yaml@main
     with:
       scan_workflow_run_id: ${{ github.event.workflow_run.id }}
-    secrets: inherit
